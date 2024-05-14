@@ -4,14 +4,11 @@ import 'package:fashionhub/viewmodel/signup_viewmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'home_screen.dart';
-
 class SignUpScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController displayNameController = TextEditingController();
-  final SignUpViewModel _signUpViewModel =
-      SignUpViewModel(authenticationService: AuthenticationService());
+  final SignUpViewModel _signUpViewModel = SignUpViewModel(authenticationService: AuthenticationService());
 
   @override
   Widget build(BuildContext context) {
@@ -47,18 +44,24 @@ class SignUpScreen extends StatelessWidget {
                 String email = emailController.text.trim();
                 String password = passwordController.text.trim();
                 String displayName = displayNameController.text.trim();
-                User? user =
-                    await _signUpViewModel.signUp(email, password, displayName);
+
+                print("Attempting to sign up with email: $email");
+
+                User? user = await _signUpViewModel.signUp(email, password, displayName);
                 if (user != null) {
+                  print("Sign up successful, user: ${user.email}");
                   ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Sign up successful')));
+                    SnackBar(content: Text('Sign up successful'))
+                  );
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LoginScreen()),
                   );
                 } else {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text('Sign up failed')));
+                  print("Sign up failed");
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Sign up failed'))
+                  );
                 }
               },
               child: Text('Sign Up'),
