@@ -24,7 +24,7 @@ class AuthenticationService {
 
       if (user != null) {
         UserModel newUser = UserModel(uid: user.uid, email: email, displayName: displayName);
-        await _firestore.collection('users').doc(user.uid).set(newUser.toMap());
+        await _firestore.collection('user').doc(user.uid).set(newUser.toMap());
       }
 
       return user;
