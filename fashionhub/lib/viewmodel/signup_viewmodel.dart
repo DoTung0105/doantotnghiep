@@ -8,9 +8,11 @@ class SignUpViewModel extends ChangeNotifier {
   SignUpViewModel({required AuthenticationService authenticationService})
       : _authenticationService = authenticationService;
 
-  Future<User?> signUp(String email, String password, String displayName) async {
+  Future<User?> signUp(
+      String email, String password, String displayName, String address) async {
     try {
-      return await _authenticationService.signUpWithEmailAndPassword(email, password, displayName);
+      return await _authenticationService.signUpWithEmailAndPassword(
+          email, password, displayName, address);
     } catch (e) {
       print("Error signing up: $e");
       return null;
