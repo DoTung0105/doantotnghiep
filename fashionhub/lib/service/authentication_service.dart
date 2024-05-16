@@ -10,6 +10,12 @@ class AuthenticationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
    //final String _emailValidationApiKey = '1ef80c1476ca43808c17fdd9d6ca66c2';
 
+  //kiểm tra định dạng mail
+     Future<bool> isEmailValid(String email) async {
+    return email.contains('@') && email.endsWith('@gmail.com');
+  }
+
+
   Future<User?> signUpWithEmailAndPassword(
       String email, String password, String displayName, String address) async {
     try {
