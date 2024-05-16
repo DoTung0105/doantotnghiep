@@ -18,4 +18,9 @@ class SignUpViewModel extends ChangeNotifier {
       return null;
     }
   }
+
+  //kiểm tra định dạng mail
+   Future<bool> isEmailValid(String email) async {
+    return await _authenticationService.isEmailValid(email);
+  }
 }
