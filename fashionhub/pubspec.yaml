@@ -39,6 +39,8 @@ dependencies:
   firebase_auth: ^4.17.8
   cloud_firestore: ^4.15.8
   http: ^1.2.1
+  animations: ^2.0.11
+  simple_animations: ^5.0.2
 
 dev_dependencies:
   flutter_test:
