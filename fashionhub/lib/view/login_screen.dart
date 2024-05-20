@@ -1,10 +1,10 @@
 import 'package:fashionhub/animation/animation.dart';
 import 'package:fashionhub/service/authentication_service.dart';
+import 'package:fashionhub/view/forgotpass_screen.dart';
 import 'package:fashionhub/view/signup_screen.dart';
 import 'package:fashionhub/viewmodel/login_viewmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 
 import 'home_screen.dart';
 
@@ -18,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   final LoginViewModel _loginViewModel =
       LoginViewModel(authenticationService: AuthenticationService());
-
+  bool obscurePassword = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,12 +73,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       0.3,
                       TextFormField(
                         controller: passwordController,
-                        obscureText: true,
+                        obscureText: obscurePassword,
                         obscuringCharacter: '*',
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.white,
                           prefixIcon: Icon(Icons.password_outlined),
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  obscurePassword = !obscurePassword;
+                                });
+                              },
+                              icon: Icon(obscurePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off)),
                           labelText: 'Password',
                           hintText: 'Enter your Password',
                           hintStyle: TextStyle(color: Colors.black26),
@@ -97,12 +106,45 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 25.0),
+                    SizedBox(
+                      height: 10,
+                    ),
                     FadeAnimation(
                       0.4,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ForgotpassScreen()),
+                              );
+                            },
+                            child: const Text(
+                              'Quên mật khẩu',
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 25.0),
+                    FadeAnimation(
+                      0.5,
                       SizedBox(
                         width: 150,
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20)),
                           onPressed: () async {
                             String email = emailController.text.trim();
                             String password = passwordController.text.trim();
@@ -119,13 +161,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                   SnackBar(content: Text('Login failed')));
                             }
                           },
-                          child: Text('Login'),
+                          child: Text(
+                            'Đăng nhập',
+                            style: TextStyle(fontSize: 20, color: Colors.black),
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 25.0),
                     FadeAnimation(
-                      0.5,
+                      0.6,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -159,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 30.0),
                     FadeAnimation(
-                      0.6,
+                      0.7,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
