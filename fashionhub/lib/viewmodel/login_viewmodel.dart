@@ -25,7 +25,7 @@ class LoginViewModel extends ChangeNotifier {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
     } catch (e) {
-      throw e; // Xử lý lỗi ở UI
+      throw e;
     }
   }
 
@@ -35,5 +35,9 @@ class LoginViewModel extends ChangeNotifier {
 
   User? getCurrentUser() {
     return _authenticationService.getCurrentUser();
+  }
+
+  Future<bool> isLoggedIn() async {
+    return await _authenticationService.isLoggedIn();
   }
 }

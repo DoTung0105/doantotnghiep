@@ -3,9 +3,15 @@ class UserModel {
   final String email;
   final String displayName;
   final String address;
+  final String password; // Thêm trường password
 
-  UserModel(
-      {required this.uid, required this.email, required this.displayName,required this.address});
+  UserModel({
+    required this.uid,
+    required this.email,
+    required this.displayName,
+    required this.address,
+    required this.password, // Thêm vào constructor
+  });
 
   Map<String, dynamic> toMap() {
     return {
@@ -13,6 +19,7 @@ class UserModel {
       'email': email,
       'displayName': displayName,
       'address': address,
+      'password': password, // Thêm vào map
     };
   }
 
@@ -21,7 +28,8 @@ class UserModel {
       uid: map['uid'],
       email: map['email'],
       displayName: map['displayName'],
-      address:  map['address']
+      address: map['address'],
+      password: map['password'], // Thêm vào fromMap
     );
   }
 }
