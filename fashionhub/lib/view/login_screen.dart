@@ -2,6 +2,7 @@ import 'package:fashionhub/animation/animation.dart';
 import 'package:fashionhub/service/authentication_service.dart';
 import 'package:fashionhub/view/forgotpass_screen.dart';
 import 'package:fashionhub/view/signup_screen.dart';
+import 'package:fashionhub/viewmodel/ForgotPassword_viewModel.dart';
 import 'package:fashionhub/viewmodel/login_viewmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -151,6 +152,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             User? user = await _loginViewModel
                                 .signInWithEmailAndPassword(email, password);
                             if (user != null) {
+                              await AuthenticationService()
+                                  .updatePassword(password);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

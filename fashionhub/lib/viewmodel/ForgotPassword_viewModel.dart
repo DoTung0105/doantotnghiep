@@ -26,4 +26,19 @@ class ForgotPasswordViewModel {
   Future<void> resetPassword(String email) async {
     await _auth.sendPasswordResetEmail(email: email);
   }
+
+    // Cập nhật mật khẩu mới sau khi đặt lại thành công
+  Future<void> updatePassword(String email, String newPassword) async {
+    try {
+      var querySnapshot = await _firestore.collection('users').where('email', isEqualTo: email).get();
+      if (querySnapshot.docs.isNotEmpty) {
+        var docId = querySnapshot.docs.first.id;
+        await _firestore.collection('users').doc(docId).update({
+          'password': newPassword,
+        });
+      }
+    } catch (e) {
+      print('Error updating password: $e');
+    }
+  }
 }
