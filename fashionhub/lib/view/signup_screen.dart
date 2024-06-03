@@ -4,6 +4,7 @@ import 'package:fashionhub/view/login_screen.dart';
 import 'package:fashionhub/viewmodel/signup_viewmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -47,6 +48,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               FadeAnimation(
                 0.2,
                 TextFormField(
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                  ],
                   controller: emailController,
                   decoration: InputDecoration(
                     filled: true,
@@ -76,6 +80,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               FadeAnimation(
                 0.3,
                 TextFormField(
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                  ],
                   controller: passwordController,
                   obscureText: _obscurePassword,
                   obscuringCharacter: '*',
@@ -119,6 +126,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               FadeAnimation(
                 0.4,
                 TextFormField(
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                  ],
                   controller: displayNameController,
                   decoration: InputDecoration(
                     filled: true,
@@ -148,6 +158,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               FadeAnimation(
                 0.5,
                 TextFormField(
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                  ],
                   controller: addressController,
                   decoration: InputDecoration(
                     filled: true,

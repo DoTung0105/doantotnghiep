@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fashionhub/viewmodel/ForgotPassword_viewModel.dart';
+import 'package:flutter/services.dart';
 
 class ForgotpassScreen extends StatefulWidget {
   const ForgotpassScreen({Key? key}) : super(key: key);
@@ -12,7 +13,6 @@ class _ForgotpassScreenState extends State<ForgotpassScreen> {
   final TextEditingController _emailController = TextEditingController();
   final ForgotPasswordViewModel _viewModel = ForgotPasswordViewModel();
   bool _passwordResetSuccessful = false;
-  
 
   // Hàm kiểm tra định dạng email
   bool _isEmailValid(String email) {
@@ -33,29 +33,32 @@ class _ForgotpassScreenState extends State<ForgotpassScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextFormField(
+              inputFormatters: [
+                FilteringTextInputFormatter.deny(RegExp(r'\s')),
+              ],
               controller: _emailController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
-                prefixIcon: Icon(Icons.email_outlined),
+                prefixIcon: const Icon(Icons.email_outlined),
                 labelText: 'Email',
                 hintText: 'Enter your Email',
-                hintStyle: TextStyle(color: Colors.black26),
+                hintStyle: const TextStyle(color: Colors.black26),
                 border: OutlineInputBorder(
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: Colors.white, // Default border color
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: Colors.white, // Default border color
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -66,7 +69,7 @@ class _ForgotpassScreenState extends State<ForgotpassScreen> {
                 // Kiểm tra định dạng email trước khi thực hiện các bước khác
                 if (!_isEmailValid(email)) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Email không hợp lệ'),
                     ),
                   );
@@ -95,20 +98,20 @@ class _ForgotpassScreenState extends State<ForgotpassScreen> {
                   }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Email chưa được đăng ký'),
                     ),
                   );
                 }
               },
-              child: Text(
+              child: const Text(
                 'Đặt lại mật khẩu',
                 style: TextStyle(fontSize: 20, color: Colors.black),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             if (_passwordResetSuccessful)
-              Icon(
+              const Icon(
                 Icons.check_circle,
                 color: Colors.green,
                 size: 24,
