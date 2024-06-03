@@ -6,6 +6,7 @@ import 'package:fashionhub/viewmodel/ForgotPassword_viewModel.dart';
 import 'package:fashionhub/viewmodel/login_viewmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'home_screen.dart';
 
@@ -23,7 +24,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Color.fromRGBO(89, 180, 195, 1.0)),
+      appBar: AppBar(
+        backgroundColor: Color.fromRGBO(89, 180, 195, 1.0),
+        
+      ),
       body: Column(
         children: [
           Expanded(
@@ -46,6 +50,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     FadeAnimation(
                       0.2,
                       TextFormField(
+                        inputFormatters: [
+                          FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                        ],
                         controller: emailController,
                         decoration: InputDecoration(
                           filled: true,
@@ -73,6 +80,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     FadeAnimation(
                       0.3,
                       TextFormField(
+                        inputFormatters: [
+                          FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                        ],
                         controller: passwordController,
                         obscureText: obscurePassword,
                         obscuringCharacter: '*',

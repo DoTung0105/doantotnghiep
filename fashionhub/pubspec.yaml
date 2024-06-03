@@ -43,6 +43,11 @@ dependencies:
   simple_animations: ^5.0.2
   firebase_app_check: ^0.2.2+5
   shared_preferences: ^2.2.3
+  image_picker: ^1.1.1
+  provider: ^6.1.2
+  firebase_storage: ^11.7.7
+  uuid: ^4.4.0
+  file_picker: ^8.0.3
 
 dev_dependencies:
   flutter_test:
