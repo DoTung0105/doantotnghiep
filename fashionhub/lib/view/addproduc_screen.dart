@@ -88,7 +88,98 @@ class AddProductPage extends StatelessWidget {
                 ),
                 onChanged: viewModel.setSize,
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'branch',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white, // Default border color
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white, // Default border color
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onChanged: viewModel.setBranch,
+              ),
+              SizedBox(height: 10),
+              DropdownButtonFormField<String>(
+                value: viewModel.color.isNotEmpty ? viewModel.color : null,
+                decoration: InputDecoration(
+                  labelText: 'Color',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                items: viewModel.coloroption.map((String color) {
+                  return DropdownMenuItem<String>(
+                    value: color,
+                    child: Text(color),
+                  );
+                }).toList(),
+                onChanged: viewModel.setColor,
+              ),
+              SizedBox(height: 10),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'name',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white, // Default border color
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white, // Default border color
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onChanged: viewModel.setName,
+              ),
+              SizedBox(height: 10),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Sold',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white, // Default border color
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white, // Default border color
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onChanged: viewModel.setSold,
+              ),
+              SizedBox(height: 10),
               viewModel.image == null
                   ? Text('No image selected.')
                   : Image.file(viewModel.image!),
@@ -118,6 +209,9 @@ class AddProductPage extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Product added successfully')),
                     );
+                    //viewModel.resetFields();
+                    viewModel.resetImage();
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => screenproducts()),
