@@ -1,4 +1,5 @@
 import 'package:fashionhub/view/addproduc_screen.dart';
+import 'package:fashionhub/view/list_product.dart';
 import 'package:fashionhub/view/login_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +24,14 @@ class HomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => AddProductPage()),
+                );
+              },
+              child: Icon(Icons.abc)),
+               ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => screenproducts()),
                 );
               },
               child: Icon(Icons.abc))
