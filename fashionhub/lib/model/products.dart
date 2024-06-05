@@ -10,6 +10,8 @@ class Product {
   String name;
   String sold;
 
+  String warehouse;
+
   Product(
       {required this.id,
       required this.imageUrl,
@@ -19,7 +21,9 @@ class Product {
       required this.branch,
       required this.color,
       required this.name,
-      required this.sold});
+      required this.sold,
+      //them kho
+      required this.warehouse});
 
   Map<String, dynamic> toMap() {
     return {
@@ -28,10 +32,11 @@ class Product {
       'description': description,
       'price': price,
       'size': size,
-      'branch':branch,
-      'color':color,
-      'name':name,
-      'sold':sold
+      'branch': branch,
+      'color': color,
+      'name': name,
+      'sold': sold,
+      'warehouse':warehouse
     };
   }
 
@@ -46,15 +51,15 @@ class Product {
   // }
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
-      id: map['id'] ?? '',
-      imageUrl: map['imageUrl'] ?? '',
-      description: map['description'] ?? '',
-      price: (map['price'] ?? 0).toDouble(),
-      size: map['size'] ?? '',
-      branch: map['branch']??'',
-      color: map['color']??'',
-      name: map['name']??'',
-      sold: map['sold']??''
-    );
+        id: map['id'] ?? '',
+        imageUrl: map['imageUrl'] ?? '',
+        description: map['description'] ?? '',
+        price: (map['price'] ?? 0).toDouble(),
+        size: map['size'] ?? '',
+        branch: map['branch'] ?? '',
+        color: map['color'] ?? '',
+        name: map['name'] ?? '',
+        sold: map['sold'] ?? '',
+        warehouse: map['warehouse']);
   }
 }

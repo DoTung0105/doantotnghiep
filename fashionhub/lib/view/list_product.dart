@@ -27,8 +27,16 @@ class ListProductPage extends StatelessWidget {
                   margin: EdgeInsets.all(8.0),
                   padding: EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8.0),
+                    color: Colors.white, // Màu nền của container
+                    borderRadius: BorderRadius.circular(12.0), // Bo góc
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5), // Màu bóng mờ
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // Vị trí của bóng
+                      ),
+                    ],
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,9 +46,10 @@ class ListProductPage extends StatelessWidget {
                         width: 100,
                         child: Image.network(
                           products[index].imageUrl,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                      SizedBox(width: 20),
+                      SizedBox(width: 10),
                       // Thông tin sản phẩm nằm bên phải
                       Expanded(
                         child: Column(
@@ -53,48 +62,53 @@ class ListProductPage extends StatelessWidget {
                             Text('Color: ${products[index].color}'),
                             Text('Name: ${products[index].name}'),
                             Text('Sold: ${products[index].sold}'),
+                            Text('Warehouse: ${products[index].warehouse}')
                           ],
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text('Delete Product'),
-                              content: Text(
-                                  'Are you sure you want to delete this product?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Provider.of<ProductViewModel>(context,
-                                            listen: false)
-                                        .deleteProduct(products[index].id);
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('Delete'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        child: Text('Delete'),
+                      Column(
+                        children: [
+                          ElevatedButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text('Delete Product'),
+                                    content: Text(
+                                        'Are you sure you want to delete this product?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Provider.of<ProductViewModel>(context,
+                                                  listen: false)
+                                              .deleteProduct(
+                                                  products[index].id);
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('Delete'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              child: Text("Del")),
+                          ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditProductPage(
+                                            product: products[index])));
+                              },
+                              child: Text('Edit'))
+                        ],
                       ),
-                      ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => EditProductPage(
-                                        product: products[index])));
-                          },
-                          child: Text('Edit'))
                     ],
                   ),
                 );
@@ -142,6 +156,7 @@ class _EditProductPageState extends State<EditProductPage> {
   late TextEditingController _branchController;
   late TextEditingController _nameController;
   late TextEditingController _soldController;
+  late TextEditingController _warehouseController;
   String? _selectedColor;
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
@@ -158,6 +173,8 @@ class _EditProductPageState extends State<EditProductPage> {
     _branchController = TextEditingController(text: widget.product.branch);
     _nameController = TextEditingController(text: widget.product.name);
     _soldController = TextEditingController(text: widget.product.sold);
+    _warehouseController =
+        TextEditingController(text: widget.product.warehouse);
     _selectedColor = widget.product.color;
   }
 
@@ -169,6 +186,7 @@ class _EditProductPageState extends State<EditProductPage> {
     _branchController.dispose();
     _nameController.dispose();
     _soldController.dispose();
+    _warehouseController.dispose();
     super.dispose();
   }
 
@@ -243,6 +261,11 @@ class _EditProductPageState extends State<EditProductPage> {
                   decoration: InputDecoration(labelText: 'Sold'),
                   keyboardType: TextInputType.number,
                 ),
+                TextField(
+                  controller: _warehouseController,
+                  decoration: InputDecoration(labelText: 'warehouse'),
+                  keyboardType: TextInputType.number,
+                ),
                 SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () async {
@@ -260,6 +283,7 @@ class _EditProductPageState extends State<EditProductPage> {
                       color: _selectedColor!,
                       name: _nameController.text,
                       sold: _soldController.text,
+                      warehouse: _warehouseController.text,
                     );
                     await viewModel.updateProduct(updatedProduct);
                     Navigator.pop(context);
