@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
- import 'dart:io';
+import 'dart:io';
 
 class ProductViewModel with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -29,6 +29,7 @@ class ProductViewModel with ChangeNotifier {
   String _color = '';
   String _name = '';
   String _sold = '';
+  String _warehouse = '';
 
   String get description => _description;
   double get price => _price;
@@ -38,6 +39,7 @@ class ProductViewModel with ChangeNotifier {
   String get name => _name;
   String get sold => _sold;
   String get color => _color;
+  String get warehouse => _warehouse;
 
 //them data
   File? get image => _image;
@@ -99,6 +101,11 @@ class ProductViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  void serWarehouse(String warehouse) {
+    _warehouse = warehouse;
+    notifyListeners();
+  }
+
   Future<void> pickImage() async {
     if (_isPickingImage) return;
 
@@ -132,7 +139,8 @@ class ProductViewModel with ChangeNotifier {
                   branch: branch,
                   name: name,
                   sold: sold,
-                  color: color)
+                  color: color,
+                  warehouse: warehouse)
               .toMap());
       await docRef.update({'id': docRef.id});
       print('Product added successfully');
@@ -167,7 +175,7 @@ class ProductViewModel with ChangeNotifier {
     }
   }
 
-   Future<String> uploadImage(File image) async {
+  Future<String> uploadImage(File image) async {
     try {
       TaskSnapshot snapshot =
           await _storage.ref().child('products/${uuid.v4()}').putFile(image);
@@ -177,7 +185,7 @@ class ProductViewModel with ChangeNotifier {
       throw e;
     }
   }
- 
+
   void resetImage() {
     _image = null;
     notifyListeners();
