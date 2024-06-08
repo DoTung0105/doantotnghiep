@@ -16,6 +16,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController displayNameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+
   final SignUpViewModel _signUpViewModel =
       SignUpViewModel(authenticationService: AuthenticationService());
 
@@ -188,6 +190,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               SizedBox(height: 20),
               FadeAnimation(
+                0.5,
+                TextFormField(
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                  ],
+                  controller: phoneController,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    prefixIcon: Icon(Icons.phone),
+                    labelText: 'Phone',
+                    hintText: 'Enter your Phone',
+                    hintStyle: TextStyle(
+                      color: Colors.black26,
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              FadeAnimation(
                 0.6,
                 ElevatedButton(
                   onPressed: () async {
@@ -195,6 +230,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     String password = passwordController.text.trim();
                     String displayName = displayNameController.text.trim();
                     String address = addressController.text.trim();
+                    String phone = phoneController.text.trim();
                     print("Attempting to sign up with email: $email");
 
                     if (email.isEmpty ||
@@ -205,7 +241,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           content: Text('Vui lòng điền đầy đủ các thông tin')));
                       return;
                     }
-
+//kiểm tra email tồn tại
+                    AuthenticationService view = AuthenticationService();
+                    bool isEmailInUse = await view.isEmailAlreadyInUse(email);
+                    if (isEmailInUse) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Email đã được sử dụng.'),
+                      ));
+                      return;
+                    }
                     // Kiểm tra mật khẩu
                     final passwordRegex =
                         RegExp(r'^(?=.*[A-Z])(?=.*\W)(?!.*\s).{6,}$');
@@ -225,11 +269,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       return;
                     }
                     User? user = await _signUpViewModel.signUp(
-                      email,
-                      password,
-                      displayName,
-                      address,
-                    );
+                        email, password, displayName, address, phone);
                     if (user != null) {
                       print("Sign up successful, user: ${user.email}");
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -246,6 +286,79 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   },
                   child: Text('Sign Up'),
                 ),
+
+                // ElevatedButton(
+                //   onPressed: () async {
+                //     String email = emailController.text.trim();
+                //     String password = passwordController.text.trim();
+                //     String displayName = displayNameController.text.trim();
+                //     String address = addressController.text.trim();
+                //     String phone = phoneController.text.trim();
+                //     print("Attempting to sign up with email: $email");
+
+                //     if (email.isEmpty ||
+                //         password.isEmpty ||
+                //         displayName.isEmpty ||
+                //         address.isEmpty) {
+                //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //           content: Text('Vui lòng điền đầy đủ các thông tin')));
+                //       return;
+                //     }
+                //     //kiểm tra email tồn tại
+                //     AuthenticationService view = AuthenticationService();
+                //     bool isEmailInUse = await view.isEmailAlreadyInUse(email);
+                //     if (isEmailInUse) {
+                //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //         content: Text('Email đã được sử dụng.'),
+                //       ));
+                //       return;
+                //     }
+                //     // Kiểm tra mật khẩu
+                //     final passwordRegex =
+                //         RegExp(r'^(?=.*[A-Z])(?=.*\W)(?!.*\s).{6,}$');
+                //     if (!passwordRegex.hasMatch(password)) {
+                //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //           content: Text(
+                //               'Mật khẩu phải có ít nhất 6 ký tự, chứa ít nhất một chữ hoa, một ký tự đặc biệt và không chứa khoảng trắng')));
+                //       return;
+                //     }
+                //     // Kiểm tra định dạng email
+                //     final emailRegex =
+                //         RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                //     if (!emailRegex.hasMatch(email) ||
+                //         !email.endsWith('@gmail.com')) {
+                //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //           content: Text('Địa chỉ email không hợp lệ')));
+                //       return;
+                //     }
+
+                //     try {
+                //       User? user = await _signUpViewModel.signUp(
+                //           email, password, displayName, address, phone);
+                //       if (user != null) {
+                //         print("Sign up successful, user: ${user.email}");
+                //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //             content: Text(
+                //                 'Đăng ký thành công. Vui lòng xác nhận email của bạn.')));
+                //         Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: (context) => LoginScreen()),
+                //         );
+                //       }
+                //     } on FirebaseAuthException catch (e) {
+                //       if (e.code == 'email-already-in-use') {
+                //         // Hiển thị thông báo cho người dùng khi email đã được sử dụng
+                //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                //             content: Text(
+                //                 'Email đã được sử dụng. Vui lòng sử dụng một email khác.')));
+                //       } else {
+                //         print('Lỗi khi đăng ký: ${e.message}');
+                //       }
+                //     }
+                //   },
+                //   child: Text('Sign Up'),
+                // ),
               ),
             ],
           ),

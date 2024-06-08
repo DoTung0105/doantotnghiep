@@ -13,8 +13,64 @@ class AuthenticationService {
     return email.contains('@') && email.endsWith('@gmail.com');
   }
 
-  Future<User?> signUpWithEmailAndPassword(
-      String email, String password, String displayName, String address) async {
+  // Future<User?> signUpWithEmailAndPassword(String email, String password,
+  //     String displayName, String address, String phone) async {
+  //   try {
+  //     UserCredential userCredential = await _firebaseAuth
+  //         .createUserWithEmailAndPassword(email: email, password: password);
+  //     User? user = userCredential.user;
+
+  //     if (user != null) {
+  //       UserModel newUser = UserModel(
+  //           uid: user.uid,
+  //           email: email,
+  //           displayName: displayName,
+  //           address: address,
+  //           password: password,
+  //           phone: phone);
+  //       await _firestore.collection('users').doc(user.uid).set(newUser.toMap());
+
+  //       await user.sendEmailVerification();
+  //     }
+
+  //     return user;
+  //   } catch (e) {
+  //     print("Error signing up: $e");
+  //     return null;
+  //   }
+  // }
+
+
+
+Future<bool> isEmailAlreadyInUse(String email) async {
+  try {
+    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: email,
+      password: 'randomPassword', // Dùng một mật khẩu tạm thời để kiểm tra tồn tại email
+    );
+    // Nếu không có lỗi xảy ra, tức là email chưa được sử dụng
+    await userCredential.user?.delete(); // Xóa người dùng tạo ra để kiểm tra
+
+    return false;
+  } on FirebaseAuthException catch (e) {
+    // Nếu xảy ra lỗi 'email-already-in-use', tức là email đã tồn tại
+    if (e.code == 'email-already-in-use') {
+      return true;
+    } else {
+      // Xử lý các lỗi khác nếu cần
+      print('Error: $e');
+      return false;
+    }
+  } catch (e) {
+    // Xử lý các lỗi khác nếu cần
+    print('Error: $e');
+    return false;
+  }
+}
+
+
+  Future<User?> signUpWithEmailAndPassword(String email, String password,
+      String displayName, String address, String phone) async {
     try {
       UserCredential userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
@@ -26,21 +82,36 @@ class AuthenticationService {
             email: email,
             displayName: displayName,
             address: address,
-            password: password
-            );
+            password: password,
+            phone: phone);
         await _firestore.collection('users').doc(user.uid).set(newUser.toMap());
-        
+
         await user.sendEmailVerification();
       }
 
       return user;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        // Nếu email đã được sử dụng, đưa ra thông báo cho người dùng
+        throw FirebaseAuthException(
+          code: 'email-already-in-use',
+          message: 'Email đã được sử dụng.',
+        );
+      } else {
+        // Nếu có lỗi khác, xử lý theo cách bạn muốn ở đây
+        throw FirebaseAuthException(
+          code: e.code,
+          message: e.message,
+        );
+      }
     } catch (e) {
-      print("Error signing up: $e");
-      return null;
+      print("Lỗi đăng ký: $e");
+      throw Exception("Lỗi đăng ký không xác định.");
     }
   }
 
-  Future<User?> signInWithEmailAndPassword(String email, String password) async {
+  Future<User?> signInWithEmailAndPassword(
+      String email, String password) async {
     try {
       UserCredential userCredential = await _firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
@@ -83,7 +154,7 @@ class AuthenticationService {
     return prefs.getBool('isLoggedIn') ?? false;
   }
 
-   Future<void> updatePassword(String newPassword) async {
+  Future<void> updatePassword(String newPassword) async {
     User? user = _firebaseAuth.currentUser;
     if (user != null) {
       await user.updatePassword(newPassword);
@@ -93,5 +164,9 @@ class AuthenticationService {
         'password': newPassword,
       });
     }
+  }
+
+  Future<DocumentSnapshot> getUserDetails(String uid) async {
+    return await _firestore.collection('users').doc(uid).get();
   }
 }

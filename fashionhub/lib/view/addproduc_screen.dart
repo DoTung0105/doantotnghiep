@@ -198,6 +198,7 @@ class AddProductPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
+                  keyboardType: TextInputType.number,
                   onChanged: viewModel.setSold,
                 ),
               ),
@@ -222,6 +223,7 @@ class AddProductPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
+                  keyboardType: TextInputType.number,
                   onChanged: viewModel.serWarehouse,
                 ),
               ),
@@ -234,9 +236,9 @@ class AddProductPage extends StatelessWidget {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
+                          borderRadius: BorderRadius.circular(50)),
                       padding:
-                          EdgeInsets.symmetric(vertical: 20, horizontal: 30)),
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 100)),
                   onPressed: viewModel.pickImage,
                   child: Text(
                     'Pick Image',
@@ -251,9 +253,9 @@ class AddProductPage extends StatelessWidget {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
+                          borderRadius: BorderRadius.circular(50)),
                       padding:
-                          EdgeInsets.symmetric(vertical: 20, horizontal: 30)),
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 100)),
                   onPressed: () async {
                     try {
                       await viewModel.addProduct();
