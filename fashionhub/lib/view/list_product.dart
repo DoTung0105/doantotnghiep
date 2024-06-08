@@ -45,10 +45,11 @@ class ListProductPage extends StatelessWidget {
                       SizedBox(
                         width: 100,
                         child: Image.network(
-                          products[index].imageUrl,
+                          products[index].imagePath,
                           fit: BoxFit.cover,
                         ),
                       ),
+
                       SizedBox(width: 10),
                       // Thông tin sản phẩm nằm bên phải
                       Expanded(
@@ -58,11 +59,11 @@ class ListProductPage extends StatelessWidget {
                             Text('Description: ${products[index].description}'),
                             Text('Price: ${products[index].price}'),
                             Text('Size: ${products[index].size}'),
-                            Text('Branch: ${products[index].branch}'),
+                            Text('Branch: ${products[index].brand}'),
                             Text('Color: ${products[index].color}'),
                             Text('Name: ${products[index].name}'),
                             Text('Sold: ${products[index].sold}'),
-                            Text('Warehouse: ${products[index].warehouse}')
+                            Text('Warehouse: ${products[index].wareHouse}')
                           ],
                         ),
                       ),
@@ -170,11 +171,11 @@ class _EditProductPageState extends State<EditProductPage> {
     _priceController =
         TextEditingController(text: widget.product.price.toString());
     _sizeController = TextEditingController(text: widget.product.size);
-    _branchController = TextEditingController(text: widget.product.branch);
+    _branchController = TextEditingController(text: widget.product.brand);
     _nameController = TextEditingController(text: widget.product.name);
     _soldController = TextEditingController(text: widget.product.sold);
     _warehouseController =
-        TextEditingController(text: widget.product.warehouse);
+        TextEditingController(text: widget.product.wareHouse);
     _selectedColor = widget.product.color;
   }
 
@@ -217,7 +218,7 @@ class _EditProductPageState extends State<EditProductPage> {
                   onTap: _pickImage,
                   child: _imageFile != null
                       ? Image.file(_imageFile!)
-                      : Image.network(widget.product.imageUrl),
+                      : Image.network(widget.product.imagePath),
                 ),
                 SizedBox(height: 16.0),
                 TextField(
@@ -269,21 +270,21 @@ class _EditProductPageState extends State<EditProductPage> {
                 SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () async {
-                    String imageUrl = widget.product.imageUrl;
+                    String imagePath = widget.product.imagePath;
                     if (_imageFile != null) {
-                      imageUrl = await viewModel.uploadImage(_imageFile!);
+                      imagePath = await viewModel.uploadImage(_imageFile!);
                     }
                     Product updatedProduct = Product(
                       id: widget.product.id,
-                      imageUrl: imageUrl,
+                      imagePath: imagePath,
                       description: _descriptionController.text,
                       price: double.parse(_priceController.text),
                       size: _sizeController.text,
-                      branch: _branchController.text,
+                      brand: _branchController.text,
                       color: _selectedColor!,
                       name: _nameController.text,
                       sold: _soldController.text,
-                      warehouse: _warehouseController.text,
+                      wareHouse: _warehouseController.text,
                     );
                     await viewModel.updateProduct(updatedProduct);
                     Navigator.pop(context);

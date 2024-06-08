@@ -29,7 +29,7 @@ class ProductViewModel with ChangeNotifier {
   String _color = '';
   String _name = '';
   String _sold = '';
-  String _warehouse = '';
+  String _wareHouse = '';
 
   String get description => _description;
   double get price => _price;
@@ -39,7 +39,7 @@ class ProductViewModel with ChangeNotifier {
   String get name => _name;
   String get sold => _sold;
   String get color => _color;
-  String get warehouse => _warehouse;
+  String get wareHouse => _wareHouse;
 
 //them data
   File? get image => _image;
@@ -102,7 +102,7 @@ class ProductViewModel with ChangeNotifier {
   }
 
   void serWarehouse(String warehouse) {
-    _warehouse = warehouse;
+    _wareHouse = warehouse;
     notifyListeners();
   }
 
@@ -132,15 +132,15 @@ class ProductViewModel with ChangeNotifier {
       DocumentReference docRef =
           await _firestore.collection('products').add(Product(
                   id: "", // Firestore sẽ tự sinh ID mới
-                  imageUrl: imageUrl,
+                  imagePath: imageUrl,
                   description: description,
                   price: price,
                   size: size,
-                  branch: branch,
+                  brand: branch,
                   name: name,
                   sold: sold,
                   color: color,
-                  warehouse: warehouse)
+                  wareHouse: wareHouse)
               .toMap());
       await docRef.update({'id': docRef.id});
       print('Product added successfully');

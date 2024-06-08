@@ -1,7 +1,13 @@
+
+
+import 'package:fashionhub/service/authentication_service.dart';
+import 'package:fashionhub/service/drawer.dart';
 import 'package:fashionhub/view/addproduc_screen.dart';
 import 'package:fashionhub/view/list_product.dart';
 import 'package:fashionhub/view/login_screen.dart';
+import 'package:fashionhub/view/user_profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -9,11 +15,18 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        leading: Icon(Icons.abc),
-        actions: [IconButton(onPressed: () {
-          //thoat dang nhap tai khoan moi
-        }, icon: Icon(Icons.logout))],
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
       ),
+      drawer: DrawerMenu(),
       body: Column(
         children: [
           Center(
@@ -26,15 +39,25 @@ class HomeScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => AddProductPage()),
                 );
               },
-              child: Icon(Icons.abc)),
-               ElevatedButton(
+              child: Text("Add products")),
+          ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => screenproducts()),
                 );
               },
-              child: Icon(Icons.abc))
+              child: Text("List products")),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ProfilePage(authService: AuthenticationService())),
+                );
+              },
+              child: Text("User profile"))
         ],
       ),
     );
