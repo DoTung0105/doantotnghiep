@@ -251,7 +251,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       return;
                     }
                     // Kiểm tra mật khẩu
-                    final passwordRegex = RegExp(r'^[a-zA-Z0-9]{6,}$');
+                    final passwordRegex = RegExp(r'^[a-z0-9]{6,}$');
+
                     if (!passwordRegex.hasMatch(password)) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(
