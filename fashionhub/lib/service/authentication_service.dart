@@ -10,7 +10,8 @@ class AuthenticationService {
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
   Future<bool> isEmailValid(String email) async {
-    return email.contains('@') && email.endsWith('@gmail.com');
+    return email.contains('@') && email.endsWith('@gmail.com')
+    ||email.endsWith('@gmail.com.vn');
   }
 
   // Future<User?> signUpWithEmailAndPassword(String email, String password,
@@ -40,34 +41,33 @@ class AuthenticationService {
   //   }
   // }
 
+  Future<bool> isEmailAlreadyInUse(String email) async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password:
+            'randomPassword', // Dùng một mật khẩu tạm thời để kiểm tra tồn tại email
+      );
+      // Nếu không có lỗi xảy ra, tức là email chưa được sử dụng
+      await userCredential.user?.delete(); // Xóa người dùng tạo ra để kiểm tra
 
-
-Future<bool> isEmailAlreadyInUse(String email) async {
-  try {
-    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: email,
-      password: 'randomPassword', // Dùng một mật khẩu tạm thời để kiểm tra tồn tại email
-    );
-    // Nếu không có lỗi xảy ra, tức là email chưa được sử dụng
-    await userCredential.user?.delete(); // Xóa người dùng tạo ra để kiểm tra
-
-    return false;
-  } on FirebaseAuthException catch (e) {
-    // Nếu xảy ra lỗi 'email-already-in-use', tức là email đã tồn tại
-    if (e.code == 'email-already-in-use') {
-      return true;
-    } else {
+      return false;
+    } on FirebaseAuthException catch (e) {
+      // Nếu xảy ra lỗi 'email-already-in-use', tức là email đã tồn tại
+      if (e.code == 'email-already-in-use') {
+        return true;
+      } else {
+        // Xử lý các lỗi khác nếu cần
+        print('Error: $e');
+        return false;
+      }
+    } catch (e) {
       // Xử lý các lỗi khác nếu cần
       print('Error: $e');
       return false;
     }
-  } catch (e) {
-    // Xử lý các lỗi khác nếu cần
-    print('Error: $e');
-    return false;
   }
-}
-
 
   Future<User?> signUpWithEmailAndPassword(String email, String password,
       String displayName, String address, String phone) async {
