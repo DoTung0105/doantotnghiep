@@ -251,12 +251,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       return;
                     }
                     // Kiểm tra mật khẩu
-                    final passwordRegex =
-                        RegExp(r'^(?=.*[A-Z])(?=.*\W)(?!.*\s).{6,}$');
+                    final passwordRegex = RegExp(r'^[a-zA-Z0-9]{6,}$');
                     if (!passwordRegex.hasMatch(password)) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(
-                              'Mật khẩu phải có ít nhất 6 ký tự, chứa ít nhất một chữ hoa, một ký tự đặc biệt và không chứa khoảng trắng')));
+                              'Mật khẩu phải có ít nhất 6 ký tự, gồm chữ hoặc số và k có kí tự đặc biệt và chữ hoa')));
                       return;
                     }
                     // Kiểm tra định dạng email
