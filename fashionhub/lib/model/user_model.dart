@@ -5,18 +5,21 @@ class UserModel {
   final String address;
   final String password; // Thêm trường password
   final String phone;
+  final String role;
+  bool? locked;
 
+  UserModel(
+      {required this.uid,
+      required this.email,
+      required this.displayName,
+      required this.address,
+      required this.password,
+      required this.phone,
+      required this.role,
+      this.locked = false
 
-  UserModel({
-    required this.uid,
-    required this.email,
-    required this.displayName,
-    required this.address,
-    required this.password,
-    required this.phone,
-   
-     // Thêm vào constructor
-  });
+      // Thêm vào constructor
+      });
 
   Map<String, dynamic> toMap() {
     return {
@@ -25,22 +28,24 @@ class UserModel {
       'displayName': displayName,
       'address': address,
       'password': password,
-      'phone':phone,
-     
-       // Thêm vào map
+      'phone': phone,
+      'role': role,
+      'locked': locked
+      // Thêm vào map
     };
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      uid: map['uid'],
-      email: map['email'],
-      displayName: map['displayName'],
-      address: map['address'],
-      password: map['password'],
-      phone:map['phone'],
-      
-       // Thêm vào fromMap
-    );
+        uid: map['uid'],
+        email: map['email'],
+        displayName: map['displayName'],
+        address: map['address'],
+        password: map['password'],
+        phone: map['phone'],
+        role: map['role'],
+        locked: map['locked'] ?? false
+        // Thêm vào fromMap
+        );
   }
 }
