@@ -17,6 +17,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController displayNameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final role = "user";
+  final locked = false;
 
   final SignUpViewModel _signUpViewModel =
       SignUpViewModel(authenticationService: AuthenticationService());
@@ -251,11 +253,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       return;
                     }
                     // Kiểm tra mật khẩu
-                    final passwordRegex = RegExp(r'^[a-zA-Z0-9]{6,}$');
+                    final passwordRegex = RegExp(r'^.{6,}$');
+
                     if (!passwordRegex.hasMatch(password)) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              'Mật khẩu phải có ít nhất 6 ký tự, gồm chữ hoặc số và k có kí tự đặc biệt và chữ hoa')));
+                          content: Text('Mật khẩu phải có ít nhất 6 ký tự')));
                       return;
                     }
                     // Kiểm tra định dạng email
@@ -267,8 +269,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           content: Text('Địa chỉ email không hợp lệ')));
                       return;
                     }
-                    User? user = await _signUpViewModel.signUp(
-                        email, password, displayName, address, phone);
+                    User? user = await _signUpViewModel.signUp(email, password,
+                        displayName, address, phone, role, locked == false);
                     if (user != null) {
                       print("Sign up successful, user: ${user.email}");
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

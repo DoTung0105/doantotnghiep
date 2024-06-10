@@ -2,12 +2,12 @@ import 'package:fashionhub/firebase_options.dart';
 
 import 'package:fashionhub/view/welcome.dart';
 import 'package:fashionhub/viewmodel/products_viewmodel.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:fashionhub/viewmodel/user_ViewModel.dart';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:provider/provider.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ProductViewModel()),
+        
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

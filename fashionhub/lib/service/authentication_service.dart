@@ -10,8 +10,8 @@ class AuthenticationService {
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
   Future<bool> isEmailValid(String email) async {
-    return email.contains('@') && email.endsWith('@gmail.com')
-    ||email.endsWith('@gmail.com.vn');
+    return email.contains('@') && email.endsWith('@gmail.com') ||
+        email.endsWith('@gmail.com.vn');
   }
 
   // Future<User?> signUpWithEmailAndPassword(String email, String password,
@@ -69,8 +69,14 @@ class AuthenticationService {
     }
   }
 
-  Future<User?> signUpWithEmailAndPassword(String email, String password,
-      String displayName, String address, String phone) async {
+  Future<User?> signUpWithEmailAndPassword(
+      String email,
+      String password,
+      String displayName,
+      String address,
+      String phone,
+      String role,
+      bool locked) async {
     try {
       UserCredential userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
@@ -83,7 +89,9 @@ class AuthenticationService {
             displayName: displayName,
             address: address,
             password: password,
-            phone: phone);
+            phone: phone,
+            role: role,
+            locked: false);
         await _firestore.collection('users').doc(user.uid).set(newUser.toMap());
 
         await user.sendEmailVerification();
