@@ -258,16 +258,15 @@
 //   }
 // }
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fashionhub/animation/animation.dart';
 import 'package:fashionhub/service/authentication_service.dart';
 import 'package:fashionhub/view/forgotpass_screen.dart';
+import 'package:fashionhub/view/intro_page.dart';
 import 'package:fashionhub/view/signup_screen.dart';
 import 'package:fashionhub/viewmodel/login_viewmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'home_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -442,7 +441,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => HomeScreen(),
+                                    builder: (context) => IntroPage(),
                                   ),
                                 );
                               }

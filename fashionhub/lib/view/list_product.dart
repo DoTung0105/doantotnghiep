@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:fashionhub/model/products.dart';
+import 'package:fashionhub/viewmodel/products_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:fashionhub/viewmodel/products_viewmodel.dart';
-import 'package:fashionhub/model/products.dart';
 
 class ListProductPage extends StatelessWidget {
   @override
@@ -55,12 +55,12 @@ class ListProductPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Description: ${products[index].description}'),
-                            Text('Price: ${products[index].price}'),
-                            Text('Size: ${products[index].size}'),
-                            Text('Branch: ${products[index].brand}'),
-                            Text('Color: ${products[index].color}'),
                             Text('Name: ${products[index].name}'),
+                            Text('Price: ${products[index].price}'),
+                            Text('Description: ${products[index].description}'),
+                            Text('Size: ${products[index].size}'),
+                            Text('Color: ${products[index].color}'),
+                            Text('Branch: ${products[index].brand}'),
                             Text('Sold: ${products[index].sold}'),
                             Text('Warehouse: ${products[index].wareHouse}')
                           ],
@@ -175,9 +175,12 @@ class _EditProductPageState extends State<EditProductPage> {
 
     _branchController = TextEditingController(text: widget.product.brand);
     _nameController = TextEditingController(text: widget.product.name);
-    _soldController = TextEditingController(text: widget.product.sold);
-    _warehouseController =
-        TextEditingController(text: widget.product.wareHouse);
+    _soldController = TextEditingController(
+        text: widget.product.sold
+            .toString()); // 11.6 - Thịnh sửa lại kiểu dl cho sold
+    _warehouseController = TextEditingController(
+        text: widget.product.wareHouse
+            .toString()); // 11.6 - Thịnh sửa lại kiểu dl cho wareHouse
     _colorController = TextEditingController(text: widget.product.color);
     //  _selectedColor = widget.product.color;
     _setSize = widget.product.size;
@@ -307,8 +310,10 @@ class _EditProductPageState extends State<EditProductPage> {
                       brand: _branchController.text,
                       color: _colorController.text,
                       name: _nameController.text,
-                      sold: _soldController.text,
-                      wareHouse: _warehouseController.text,
+                      sold: int.parse(_soldController
+                          .text), // 11.6 - Thịnh sửa lại kiểu dl cho sold
+                      wareHouse: int.parse(_warehouseController
+                          .text), // 11.6 - Thịnh sửa lại kiểu dl cho wareHouse
                     );
                     await viewModel.updateProduct(updatedProduct);
                     Navigator.pop(context);

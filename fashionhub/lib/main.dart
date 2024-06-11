@@ -1,12 +1,9 @@
 import 'package:fashionhub/firebase_options.dart';
-
-import 'package:fashionhub/view/welcome.dart';
+import 'package:fashionhub/model/cart.dart';
+import 'package:fashionhub/view/login_screen.dart';
 import 'package:fashionhub/viewmodel/products_viewmodel.dart';
-import 'package:fashionhub/viewmodel/user_ViewModel.dart';
-
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -22,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ProductViewModel()),
-        
+        ChangeNotifierProvider(create: (_) => Cart()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -30,7 +27,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         debugShowCheckedModeBanner: false,
-        home: Welcome(),
+        home: LoginScreen(),
       ),
     );
   }

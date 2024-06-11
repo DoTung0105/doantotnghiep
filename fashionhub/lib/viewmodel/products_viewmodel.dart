@@ -1,17 +1,12 @@
-import 'dart:math';
-
-import 'dart:ui';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fashionhub/model/products.dart';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
-import 'dart:io';
 
 class ProductViewModel with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -27,10 +22,10 @@ class ProductViewModel with ChangeNotifier {
   bool _isPickingImage = false;
   String _branch = '';
   //List<String> coloroption = ['Red', 'Green', 'Blue', 'Black', 'White'];
-  List<String> sizeoption = ['S', 'M', 'L', 'XL'];
+  List<String> sizeoption = ['M', 'L', 'XL'];
   String _color = '';
   String _name = '';
-  String _sold = '';
+  int _sold = 0; // 11.6 - Thịnh gán giá trị mặc định cho sold
   String _wareHouse = '';
 
   String get description => _description;
@@ -40,7 +35,7 @@ class ProductViewModel with ChangeNotifier {
   //them data
   String get branch => _branch;
   String get name => _name;
-  String get sold => _sold;
+  int get sold => _sold;
   String get color => _color;
   String get wareHouse => _wareHouse;
 
@@ -103,7 +98,7 @@ class ProductViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void setSold(String sold) {
+  void setSold(int sold) {
     _sold = sold;
     notifyListeners();
   }
@@ -138,17 +133,18 @@ class ProductViewModel with ChangeNotifier {
       String imageUrl = await uploadImage(_image!);
       DocumentReference docRef =
           await _firestore.collection('products').add(Product(
-                  id: "", // Firestore sẽ tự sinh ID mới
-                  imagePath: imageUrl,
-                  description: description,
-                  price: price,
-                  size: size,
-                  brand: branch,
-                  name: name,
-                  sold: sold,
-                  color: color,
-                  wareHouse: wareHouse)
-              .toMap());
+                id: "", // Firestore sẽ tự sinh ID mới
+                imagePath: imageUrl,
+                description: description,
+                price: price,
+                size: size,
+                brand: branch,
+                name: name,
+                sold: sold, // 11.6 - Thịnh sửa lại kiểu dl cho sold
+                color: color,
+                wareHouse: int.parse(
+                    wareHouse), // 11.6 - Thịnh sửa lại kiểu dl cho wareHouse
+              ).toMap());
       await docRef.update({'id': docRef.id});
       print('Product added successfully');
     } catch (e) {
@@ -200,7 +196,7 @@ class ProductViewModel with ChangeNotifier {
     _branch = '';
     _color = '';
     _name = '';
-    _sold = '';
+    _sold = 0; // 11.6 - Thịnh gán giá trị mặc định cho sold
     _wareHouse = '';
     _image = null;
     notifyListeners();
