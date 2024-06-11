@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class Product {
   String id;
   String imagePath;
@@ -11,9 +9,9 @@ class Product {
   String brand;
   String color;
   String name;
-  String sold;
+  int sold;
 
-  String wareHouse;
+  int wareHouse;
 
   Product(
       {required this.id,
