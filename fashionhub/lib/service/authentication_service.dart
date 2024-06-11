@@ -162,6 +162,7 @@ class AuthenticationService {
     return prefs.getBool('isLoggedIn') ?? false;
   }
 
+//update sau khi quên mật khẩu, đăng nhập băng mk mới sẽ update lên firestore
   Future<void> updatePassword(String newPassword) async {
     User? user = _firebaseAuth.currentUser;
     if (user != null) {
@@ -176,5 +177,17 @@ class AuthenticationService {
 
   Future<DocumentSnapshot> getUserDetails(String uid) async {
     return await _firestore.collection('users').doc(uid).get();
+  }
+
+  // thêm phương thức lấy vai trò người dùng 11/6
+  Future<String?> getUserRole(String uid) async {
+    try {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(uid).get();
+      return userDoc['role'] as String?;
+    } catch (e) {
+      print("Error getting user role: $e");
+      return null;
+    }
   }
 }
