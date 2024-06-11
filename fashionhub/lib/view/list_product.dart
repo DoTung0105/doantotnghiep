@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -153,12 +152,14 @@ class EditProductPage extends StatefulWidget {
 class _EditProductPageState extends State<EditProductPage> {
   late TextEditingController _descriptionController;
   late TextEditingController _priceController;
-  late TextEditingController _sizeController;
+  // late TextEditingController _sizeController;
   late TextEditingController _branchController;
   late TextEditingController _nameController;
   late TextEditingController _soldController;
   late TextEditingController _warehouseController;
-  String? _selectedColor;
+  late TextEditingController _colorController;
+  String? _setSize;
+  // String? _selectedColor;
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
   ProductViewModel viewModel = ProductViewModel();
@@ -170,24 +171,28 @@ class _EditProductPageState extends State<EditProductPage> {
         TextEditingController(text: widget.product.description);
     _priceController =
         TextEditingController(text: widget.product.price.toString());
-    _sizeController = TextEditingController(text: widget.product.size);
+    //  _sizeController = TextEditingController(text: widget.product.size);
+
     _branchController = TextEditingController(text: widget.product.brand);
     _nameController = TextEditingController(text: widget.product.name);
     _soldController = TextEditingController(text: widget.product.sold);
     _warehouseController =
         TextEditingController(text: widget.product.wareHouse);
-    _selectedColor = widget.product.color;
+    _colorController = TextEditingController(text: widget.product.color);
+    //  _selectedColor = widget.product.color;
+    _setSize = widget.product.size;
   }
 
   @override
   void dispose() {
     _descriptionController.dispose();
     _priceController.dispose();
-    _sizeController.dispose();
+    // _sizeController.dispose();
     _branchController.dispose();
     _nameController.dispose();
     _soldController.dispose();
     _warehouseController.dispose();
+    _colorController.dispose();
     super.dispose();
   }
 
@@ -230,17 +235,13 @@ class _EditProductPageState extends State<EditProductPage> {
                   decoration: InputDecoration(labelText: 'Price'),
                   keyboardType: TextInputType.number,
                 ),
-                TextField(
-                  controller: _sizeController,
-                  decoration: InputDecoration(labelText: 'Size'),
-                ),
-                TextField(
-                  controller: _branchController,
-                  decoration: InputDecoration(labelText: 'Branch'),
-                ),
+                // TextField(
+                //   controller: _sizeController,
+                //   decoration: InputDecoration(labelText: 'Size'),
+                // ),
                 DropdownButtonFormField<String>(
-                  value: _selectedColor,
-                  items: viewModel.coloroption
+                  value: _setSize,
+                  items: viewModel.sizeoption
                       .map((color) => DropdownMenuItem<String>(
                             value: color,
                             child: Text(color),
@@ -248,9 +249,32 @@ class _EditProductPageState extends State<EditProductPage> {
                       .toList(),
                   onChanged: (value) {
                     setState(() {
-                      _selectedColor = value!;
+                      _setSize = value!;
                     });
                   },
+                  decoration: InputDecoration(labelText: 'Size'),
+                ),
+                TextField(
+                  controller: _branchController,
+                  decoration: InputDecoration(labelText: 'Branch'),
+                ),
+                // DropdownButtonFormField<String>(
+                //   value: _selectedColor,
+                //   items: viewModel.coloroption
+                //       .map((color) => DropdownMenuItem<String>(
+                //             value: color,
+                //             child: Text(color),
+                //           ))
+                //       .toList(),
+                //   onChanged: (value) {
+                //     setState(() {
+                //       _selectedColor = value!;
+                //     });
+                //   },
+                //   decoration: InputDecoration(labelText: 'Color'),
+                // ),
+                TextField(
+                  controller: _colorController,
                   decoration: InputDecoration(labelText: 'Color'),
                 ),
                 TextField(
@@ -279,9 +303,9 @@ class _EditProductPageState extends State<EditProductPage> {
                       imagePath: imagePath,
                       description: _descriptionController.text,
                       price: double.parse(_priceController.text),
-                      size: _sizeController.text,
+                      size: _setSize!,
                       brand: _branchController.text,
-                      color: _selectedColor!,
+                      color: _colorController.text,
                       name: _nameController.text,
                       sold: _soldController.text,
                       wareHouse: _warehouseController.text,

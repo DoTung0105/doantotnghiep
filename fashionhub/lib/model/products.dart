@@ -1,8 +1,11 @@
+import 'dart:ffi';
+
 class Product {
   String id;
   String imagePath;
   String description;
   double price;
+
   String size;
   //them data
   String brand;

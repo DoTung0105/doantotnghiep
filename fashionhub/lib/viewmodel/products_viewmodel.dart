@@ -21,11 +21,13 @@ class ProductViewModel with ChangeNotifier {
 
   String _description = '';
   double _price = 0.0;
+
   String _size = '';
   File? _image;
   bool _isPickingImage = false;
   String _branch = '';
-  List<String> coloroption = ['Red', 'Green', 'Blue', 'Black', 'White'];
+  //List<String> coloroption = ['Red', 'Green', 'Blue', 'Black', 'White'];
+  List<String> sizeoption = ['S', 'M', 'L', 'XL'];
   String _color = '';
   String _name = '';
   String _sold = '';
@@ -33,6 +35,7 @@ class ProductViewModel with ChangeNotifier {
 
   String get description => _description;
   double get price => _price;
+
   String get size => _size;
   //them data
   String get branch => _branch;
@@ -76,8 +79,8 @@ class ProductViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void setSize(String size) {
-    _size = size;
+  void setSize(String? size) {
+    _size = size ?? '';
     notifyListeners();
   }
 
@@ -86,10 +89,14 @@ class ProductViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void setColor(String? color) {
-    _color = color ?? '';
+  void setColor(String color) {
+    _color = color;
     notifyListeners();
   }
+  // void setColor(String? color) {
+  //   _color = color ?? '';
+  //   notifyListeners();
+  // }
 
   void setName(String name) {
     _name = name;
@@ -184,6 +191,19 @@ class ProductViewModel with ChangeNotifier {
       print('Error uploading image: $e');
       throw e;
     }
+  }
+
+  void resetFields() {
+    _description = '';
+    _price = 0.0; // Đặt lại giá trị price về 0.0
+    _size = '';
+    _branch = '';
+    _color = '';
+    _name = '';
+    _sold = '';
+    _wareHouse = '';
+    _image = null;
+    notifyListeners();
   }
 
   void resetImage() {
