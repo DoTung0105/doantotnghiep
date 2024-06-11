@@ -10,6 +10,7 @@ class UsersViewModel {
       return querySnapshot.docs.map((doc) {
         Map<String, dynamic> userData = doc.data() as Map<String, dynamic>;
         userData['uid'] = doc.id; // Thêm uid vào dữ liệu user
+
         return UserModel.fromMap(userData);
       }).toList();
     } catch (e) {
@@ -37,4 +38,10 @@ class UsersViewModel {
       return null;
     }
   }
+   
+
+
+ 
 }
+
+

@@ -81,6 +81,7 @@ class _UserListScreenState extends State<users_Screen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+
                       SizedBox(height: 8.0),
                       Text(user.email ?? ''),
                       SizedBox(height: 4.0),
