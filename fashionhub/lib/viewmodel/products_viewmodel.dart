@@ -103,7 +103,7 @@ class ProductViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void serWarehouse(String warehouse) {
+  void setWarehouse(String warehouse) {
     _wareHouse = warehouse;
     notifyListeners();
   }

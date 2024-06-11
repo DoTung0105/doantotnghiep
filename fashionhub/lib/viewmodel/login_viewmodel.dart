@@ -21,27 +21,9 @@ class LoginViewModel extends ChangeNotifier {
       print("Error signing in: $e");
       return null;
     }
-   }
+  }
 
-  // Future<User?> signInWithEmailAndPassword(
-  //     String email, String password) async {
-  //   try {
-  //     User? user = await _authenticationService.signInWithEmailAndPassword(
-  //         email, password);
-  //     if (user != null) {
-  //       // Kiểm tra xem tài khoản có bị khóa không
-  //       bool locked = await isAccountLocked(user.uid);
-  //       if (locked) {
-  //         // Hiển thị thông báo nếu tài khoản bị khóa
-  //         throw 'Tài khoản này đã bị khóa';
-  //       }
-  //     }
-  //     return user;
-  //   } catch (e) {
-  //     print("Error signing in: $e");
-  //     throw e; // Ném lại lỗi để xử lý ở phần gọi signInWithEmailAndPassword
-  //   }
-  // }
+ 
 
   Future<void> resetPassword(String email) async {
     try {
@@ -74,4 +56,9 @@ class LoginViewModel extends ChangeNotifier {
       return false;
     }
   }
+// tung 6/11
+ Future<String?> getUserRole(String uid) async {
+    return await _authenticationService.getUserRole(uid);
+  }
+
 }

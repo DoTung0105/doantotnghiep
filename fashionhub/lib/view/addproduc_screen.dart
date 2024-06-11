@@ -1,3 +1,5 @@
+
+
 import 'package:fashionhub/animation/animation.dart';
 import 'package:fashionhub/view/list_product.dart';
 import 'package:fashionhub/viewmodel/products_viewmodel.dart';
@@ -279,7 +281,7 @@ class AddProductPage extends StatelessWidget {
                   0.7,
                   TextFormField(
                     decoration: InputDecoration(
-                      hintText: 'Warehouse',
+                      hintText: 'Warehous',
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -302,7 +304,43 @@ class AddProductPage extends StatelessWidget {
                       }
                       return null;
                     },
-                    onChanged: viewModel.serWarehouse,
+                    onChanged: viewModel.setWarehouse,
+                  ),
+                ),
+                SizedBox(height: 10),
+                FadeAnimation(
+                  0.7,
+                  TextFormField(
+                    decoration: InputDecoration(
+                      hintText: 'sold',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white, // Default border color
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white, // Default border color
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Hãy điền thông tin đầy đủ';
+                      }
+                      return null;
+                    },
+                    onChanged: (value) {
+                      int? soldValue = int.tryParse(value);
+                      if (soldValue != null) {
+                        viewModel.setSold(soldValue);
+                      }
+                    },
                   ),
                 ),
                 SizedBox(height: 20),
