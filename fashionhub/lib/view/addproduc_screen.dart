@@ -1,5 +1,3 @@
-
-
 import 'package:fashionhub/animation/animation.dart';
 import 'package:fashionhub/view/list_product.dart';
 import 'package:fashionhub/viewmodel/products_viewmodel.dart';

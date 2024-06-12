@@ -145,7 +145,7 @@ class AuthenticationService {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
-    await _saveLoggedInState(false);
+   // await _saveLoggedInState(false);
   }
 
   User? getCurrentUser() {
@@ -188,6 +188,28 @@ class AuthenticationService {
     } catch (e) {
       print("Error getting user role: $e");
       return null;
+    }
+  }
+
+//kiểm tra mật khẩu có đúng k mới cho đổi mật khẩu
+  Future<bool> verifyCurrentPassword(String oldPassword) async {
+    try {
+      User? user = _firebaseAuth.currentUser;
+      if (user != null) {
+        // Xác thực lại người dùng bằng mật khẩu cũ
+        AuthCredential credential = EmailAuthProvider.credential(
+          email: user.email!,
+          password: oldPassword,
+        );
+
+        await user.reauthenticateWithCredential(credential);
+        
+        return true;
+      }
+      return false;
+    } on FirebaseAuthException catch (e) {
+      print("Error verifying current password: $e");
+      return false;
     }
   }
 }

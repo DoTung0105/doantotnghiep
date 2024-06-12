@@ -23,8 +23,6 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
 
- 
-
   Future<void> resetPassword(String email) async {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
@@ -56,9 +54,9 @@ class LoginViewModel extends ChangeNotifier {
       return false;
     }
   }
+
 // tung 6/11
- Future<String?> getUserRole(String uid) async {
+  Future<String?> getUserRole(String uid) async {
     return await _authenticationService.getUserRole(uid);
   }
-
 }

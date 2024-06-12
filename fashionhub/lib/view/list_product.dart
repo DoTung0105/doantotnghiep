@@ -55,14 +55,15 @@ class ListProductPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Name: ${products[index].name}'),
-                            Text('Price: ${products[index].price}'),
-                            Text('Description: ${products[index].description}'),
-                            Text('Size: ${products[index].size}'),
-                            Text('Color: ${products[index].color}'),
-                            Text('Branch: ${products[index].brand}'),
-                            Text('Sold: ${products[index].sold}'),
-                            Text('Warehouse: ${products[index].wareHouse}')
+                            Text('Name : ${products[index].name}'),
+                            Text('Price : ${products[index].price}'),
+                            Text(
+                                'Description : ${products[index].description}'),
+                            Text('Size : ${products[index].size}'),
+                            Text('Color : ${products[index].color}'),
+                            Text('Branch : ${products[index].brand}'),
+                            Text('Sold : ${products[index].sold}'),
+                            Text('Warehouse : ${products[index].wareHouse}')
                           ],
                         ),
                       ),
