@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:fashionhub/model/products.dart';
 import 'package:fashionhub/viewmodel/products_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ListProductPage extends StatelessWidget {
@@ -56,7 +58,9 @@ class ListProductPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('Name : ${products[index].name}'),
-                            Text('Price : ${products[index].price}'),
+                            // Text('Price : ${products[index].price}'),
+                            Text(
+                                'Price : ${NumberFormat('#,###').format(products[index].price)}'),
                             Text(
                                 'Description : ${products[index].description}'),
                             Text('Size : ${products[index].size}'),
@@ -172,8 +176,10 @@ class _EditProductPageState extends State<EditProductPage> {
     super.initState();
     _descriptionController =
         TextEditingController(text: widget.product.description);
-    _priceController =
-        TextEditingController(text: widget.product.price.toString());
+    // _priceController =
+    //     TextEditingController(text: widget.product.price.toString());
+    _priceController = TextEditingController(
+        text: NumberFormat('#,###').format(widget.product.price));
     //  _sizeController = TextEditingController(text: widget.product.size);
     _evaluateController =
         TextEditingController(text: widget.product.evaluate.toString());
@@ -239,15 +245,36 @@ class _EditProductPageState extends State<EditProductPage> {
                   controller: _descriptionController,
                   decoration: InputDecoration(labelText: 'Description'),
                 ),
+                // TextField(
+                //   controller: _priceController,
+                //   decoration: InputDecoration(labelText: 'Price'),
+                //   keyboardType: TextInputType.number,
+                // ),
                 TextField(
                   controller: _priceController,
                   decoration: InputDecoration(labelText: 'Price'),
                   keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    TextInputFormatter.withFunction(
+                      (oldValue, newValue) {
+                        // Định dạng lại giá trị để có dấu phân cách hàng nghìn
+                        final formatter = NumberFormat('#,###', 'en_US');
+                        if (newValue.text.isEmpty) {
+                          return TextEditingValue.empty; // Trường hợp nhập rỗng
+                        }
+                        final newString =
+                            formatter.format(int.parse(newValue.text));
+                        return TextEditingValue(
+                          text: newString,
+                          selection:
+                              TextSelection.collapsed(offset: newString.length),
+                        );
+                      },
+                    ),
+                  ],
                 ),
-                // TextField(
-                //   controller: _sizeController,
-                //   decoration: InputDecoration(labelText: 'Size'),
-                // ),
+
                 DropdownButtonFormField<String>(
                   value: _setSize,
                   items: viewModel.sizeoption
@@ -294,11 +321,13 @@ class _EditProductPageState extends State<EditProductPage> {
                   controller: _soldController,
                   decoration: InputDecoration(labelText: 'Sold'),
                   keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
                 TextField(
                   controller: _warehouseController,
                   decoration: InputDecoration(labelText: 'warehouse'),
                   keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
                 TextField(
                   controller: _evaluateController,
@@ -316,7 +345,9 @@ class _EditProductPageState extends State<EditProductPage> {
                       id: widget.product.id,
                       imagePath: imagePath,
                       description: _descriptionController.text,
-                      price: double.parse(_priceController.text),
+                      // price: double.parse(_priceController.text),
+                      price: double.parse(_priceController.text.replaceAll(',',
+                          '')), // Lưu giá trị với dấu phân cách vào Firestore
                       size: _setSize!,
                       evaluate: double.parse(_evaluateController.text),
                       brand: _branchController.text,

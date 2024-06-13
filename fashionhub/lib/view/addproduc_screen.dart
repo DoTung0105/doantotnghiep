@@ -2,6 +2,8 @@ import 'package:fashionhub/animation/animation.dart';
 import 'package:fashionhub/view/list_product.dart';
 import 'package:fashionhub/viewmodel/products_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class AddProductPage extends StatelessWidget {
@@ -30,7 +32,7 @@ class AddProductPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FadeAnimation(
-                      0.8,
+                      0.1,
                       GestureDetector(
                         onTap: viewModel.pickImage,
                         child: Container(
@@ -67,7 +69,7 @@ class AddProductPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         FadeAnimation(
-                          0.6,
+                          0.2,
                           SizedBox(
                             width: 210,
                             child: TextFormField(
@@ -100,7 +102,7 @@ class AddProductPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 15),
                         FadeAnimation(
-                          0.2,
+                          0.3,
                           SizedBox(
                             width: 210,
                             child: TextFormField(
@@ -121,14 +123,39 @@ class AddProductPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                TextInputFormatter.withFunction(
+                                  (oldValue, newValue) {
+                                    // Định dạng lại giá trị để có dấu phân cách hàng nghìn
+                                    final formatter =
+                                        NumberFormat('#,###', 'en_US');
+                                    if (newValue.text.isEmpty) {
+                                      return TextEditingValue
+                                          .empty; // Trường hợp nhập rỗng
+                                    }
+                                    final newString = formatter
+                                        .format(int.parse(newValue.text));
+                                    return TextEditingValue(
+                                      text: newString,
+                                      selection: TextSelection.collapsed(
+                                          offset: newString.length),
+                                    );
+                                  },
+                                ),
+                              ],
                               keyboardType: TextInputType.number,
+
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Hãy điền thông tin đầy đủ';
                                 }
                                 return null;
                               },
-                              onChanged: viewModel.setPrice,
+                              //   onChanged: viewModel.setPrice,
+                              onChanged: (value) {
+                                viewModel.setPrice(value);
+                              },
                             ),
                           ),
                         ),
@@ -138,7 +165,7 @@ class AddProductPage extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 FadeAnimation(
-                  0.1,
+                  0.4,
                   TextFormField(
                     decoration: InputDecoration(
                       hintText: 'Mô tả',
@@ -171,7 +198,7 @@ class AddProductPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     FadeAnimation(
-                      0.3,
+                      0.5,
                       SizedBox(
                         width: 133,
                         child: DropdownButtonFormField<String>(
@@ -211,7 +238,7 @@ class AddProductPage extends StatelessWidget {
                       ),
                     ),
                     FadeAnimation(
-                      0.5,
+                      0.6,
                       SizedBox(
                         width: 230,
                         child: TextFormField(
@@ -246,7 +273,7 @@ class AddProductPage extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 FadeAnimation(
-                  0.4,
+                  0.7,
                   TextFormField(
                     decoration: InputDecoration(
                       hintText: 'Tên thương hiệu',
@@ -276,7 +303,34 @@ class AddProductPage extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 FadeAnimation(
-                  0.7,
+                  0.8,
+                  // TextFormField(
+                  //   decoration: InputDecoration(
+                  //     hintText: 'Warehous',
+                  //     filled: true,
+                  //     fillColor: Colors.white,
+                  //     border: OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: Colors.white, // Default border color
+                  //       ),
+                  //       borderRadius: BorderRadius.circular(10),
+                  //     ),
+                  //     enabledBorder: OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: Colors.white, // Default border color
+                  //       ),
+                  //       borderRadius: BorderRadius.circular(10),
+                  //     ),
+                  //   ),
+                  //   keyboardType: TextInputType.number,
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return 'Hãy điền thông tin đầy đủ';
+                  //     }
+                  //     return null;
+                  //   },
+                  //   onChanged: viewModel.setWarehouse,
+                  // ),
                   TextFormField(
                     decoration: InputDecoration(
                       hintText: 'Warehous',
@@ -295,19 +349,60 @@ class AddProductPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.numberWithOptions(
+                        decimal: true), // Cho phép nhập số và số thập phân
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    // inputFormatters: [
+                    //   FilteringTextInputFormatter.allow(RegExp(
+                    //       r'^\d+\.?\d{0,2}$')), // Chỉ cho phép số và dấu chấm (.)
+                    // ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Hãy điền thông tin đầy đủ';
                       }
                       return null;
                     },
-                    onChanged: viewModel.setWarehouse,
+                    onChanged: (value) {
+                      viewModel
+                          .setWarehouse(value); // Lưu giá trị vào ViewModel
+                    },
                   ),
                 ),
                 SizedBox(height: 10),
                 FadeAnimation(
-                  0.7,
+                  0.9,
+                  // TextFormField(
+                  //   decoration: InputDecoration(
+                  //     hintText: 'sold',
+                  //     filled: true,
+                  //     fillColor: Colors.white,
+                  //     border: OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: Colors.white, // Default border color
+                  //       ),
+                  //       borderRadius: BorderRadius.circular(10),
+                  //     ),
+                  //     enabledBorder: OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: Colors.white, // Default border color
+                  //       ),
+                  //       borderRadius: BorderRadius.circular(10),
+                  //     ),
+                  //   ),
+                  //   keyboardType: TextInputType.number,
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return 'Hãy điền thông tin đầy đủ';
+                  //     }
+                  //     return null;
+                  //   },
+                  //   onChanged: (value) {
+                  //     int? soldValue = int.tryParse(value);
+                  //     if (soldValue != null) {
+                  //       viewModel.setSold(soldValue);
+                  //     }
+                  //   },
+                  // ),
                   TextFormField(
                     decoration: InputDecoration(
                       hintText: 'sold',
@@ -326,7 +421,9 @@ class AddProductPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.numberWithOptions(
+                        decimal: true), // Cho phép nhập số và số thập phân
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Hãy điền thông tin đầy đủ';
@@ -336,14 +433,15 @@ class AddProductPage extends StatelessWidget {
                     onChanged: (value) {
                       int? soldValue = int.tryParse(value);
                       if (soldValue != null) {
-                        viewModel.setSold(soldValue);
+                        viewModel
+                            .setSold(soldValue); // Lưu giá trị vào ViewModel
                       }
                     },
                   ),
                 ),
                 SizedBox(height: 10),
                 FadeAnimation(
-                  0.4,
+                  1,
                   TextFormField(
                     decoration: InputDecoration(
                       hintText: 'Evaluate',
@@ -362,6 +460,9 @@ class AddProductPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+                    keyboardType:
+                        TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Hãy điền thông tin đầy đủ';
@@ -373,7 +474,7 @@ class AddProductPage extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 FadeAnimation(
-                  0.9,
+                  1.1,
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(

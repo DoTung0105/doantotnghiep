@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 class ProductViewModel with ChangeNotifier {
@@ -73,8 +74,15 @@ class ProductViewModel with ChangeNotifier {
   }
 
   void setPrice(String price) {
-    _price = double.tryParse(price) ?? 0.0;
+    // _price = double.tryParse(price) ?? 0.0;
+    final cleanedPrice = price.replaceAll(RegExp(r'[^0-9.]'), '');
+    _price = double.tryParse(cleanedPrice) ?? 0.0;
     notifyListeners();
+  }
+
+  String getFormattedPrice() {
+    final formatter = NumberFormat('#,##0', 'en_US');
+    return formatter.format(_price);
   }
 
   void setEvaluate(String evaluate) {
@@ -120,7 +128,7 @@ class ProductViewModel with ChangeNotifier {
 
     _isPickingImage = true;
     try {
-      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      final pickedFile = await _picker.pickImage(source: ImageSource.camera);
       if (pickedFile != null) {
         _image = File(pickedFile.path);
         notifyListeners();
@@ -144,6 +152,7 @@ class ProductViewModel with ChangeNotifier {
                 imagePath: imageUrl,
                 description: description,
                 price: price,
+                //price:double.tryParse(_price.toString()) ?? 0.0,
                 size: size,
                 brand: branch,
                 name: name,
@@ -207,7 +216,7 @@ class ProductViewModel with ChangeNotifier {
     _sold = 0; // 11.6 - Thịnh gán giá trị mặc định cho sold
     _wareHouse = '';
     _image = null;
-    _evaluate = 0.0;
+    //_evaluate = 0.0;
     notifyListeners();
   }
 
