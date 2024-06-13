@@ -104,6 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         _obscurePassword
                             ? Icons.visibility
                             : Icons.visibility_off,
+                        color: _obscurePassword ? Colors.grey : Colors.blue,
                       ),
                     ),
                     labelText: 'Password',

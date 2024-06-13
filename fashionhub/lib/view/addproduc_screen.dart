@@ -341,6 +341,36 @@ class AddProductPage extends StatelessWidget {
                     },
                   ),
                 ),
+                SizedBox(height: 10),
+                FadeAnimation(
+                  0.4,
+                  TextFormField(
+                    decoration: InputDecoration(
+                      hintText: 'Evaluate',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white, // Default border color
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white, // Default border color
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Hãy điền thông tin đầy đủ';
+                      }
+                      return null;
+                    },
+                    onChanged: viewModel.setEvaluate,
+                  ),
+                ),
                 SizedBox(height: 20),
                 FadeAnimation(
                   0.9,

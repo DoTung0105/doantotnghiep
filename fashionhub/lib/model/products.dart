@@ -3,7 +3,7 @@ class Product {
   String imagePath;
   String description;
   double price;
-
+  double evaluate;
   String size;
   //them data
   String brand;
@@ -23,8 +23,11 @@ class Product {
       required this.color,
       required this.name,
       required this.sold,
+
       //them kho
-      required this.wareHouse});
+      required this.wareHouse,
+      // tung them 13/6
+      required this.evaluate});
 
   Map<String, dynamic> toMap() {
     return {
@@ -37,7 +40,8 @@ class Product {
       'color': color,
       'name': name,
       'sold': sold,
-      'wareHouse': wareHouse
+      'wareHouse': wareHouse,
+      'evaluate': evaluate
     };
   }
 
@@ -56,6 +60,7 @@ class Product {
         imagePath: map['imagePath'] ?? '',
         description: map['description'] ?? '',
         price: (map['price'] ?? 0).toDouble(),
+        evaluate: (map['evaluate'] ?? 0).toDouble(),
         size: map['size'] ?? '',
         brand: map['brand'] ?? '',
         color: map['color'] ?? '',
