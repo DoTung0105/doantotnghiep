@@ -75,7 +75,7 @@ class _DetailPageState extends State<DetailPage> {
               child: ListView(
                 children: [
                   // Image
-                  Image.asset(
+                  Image.network(
                     widget.detailCol.imagePath,
                     height: 300,
                   ),

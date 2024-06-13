@@ -25,9 +25,12 @@ class ProductDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double price = double.parse(product.price.replaceAll('.', ''));
+    double price = double.parse(product.price);
     double totalPrice = price * quantityCount;
     final formattedTotalPrice = NumberFormat("#,###", "vi").format(totalPrice);
+    final formatter = NumberFormat('#,###', 'vi_VN');
+    String formattedPrice =
+        formatter.format(double.parse(product.price.replaceAll('.', '')));
 
     return Container(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10, top: 8),
@@ -39,7 +42,7 @@ class ProductDetails extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '₫${product.price}',
+                '₫$formattedPrice',
                 style: const TextStyle(
                   color: Colors.red,
                   fontSize: 23,

@@ -4,10 +4,11 @@ import 'package:fashionhub/model/clother.dart';
 import 'package:fashionhub/view/cart_page.dart';
 import 'package:fashionhub/view/detail_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchPage extends StatefulWidget {
-  final String? initialSearchQuery; // Define the initialSearchQuery parameter
+  final String? initialSearchQuery;
 
   const SearchPage({Key? key, this.initialSearchQuery}) : super(key: key);
 
@@ -27,10 +28,8 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    _searchController.text =
-        widget.initialSearchQuery ?? ''; // Initialize the search query
-    searchQuery =
-        widget.initialSearchQuery ?? ''; // Initialize the search query
+    _searchController.text = widget.initialSearchQuery ?? '';
+    searchQuery = widget.initialSearchQuery ?? '';
     loadSearchHistory();
     updateRecommendedItems();
   }
@@ -51,7 +50,6 @@ class _SearchPageState extends State<SearchPage> {
     if (query.isNotEmpty && !recentSearches.contains(query)) {
       setState(() {
         recentSearches.insert(0, query);
-        // Reset showAllRecentSearches flag when new search query is added
         if (recentSearches.length > 3) {
           showAllRecentSearches = false;
         }
@@ -63,7 +61,6 @@ class _SearchPageState extends State<SearchPage> {
   void removeSearchQuery(int index) {
     setState(() {
       recentSearches.removeAt(index);
-      // Reset showAllRecentSearches flag when search query is removed
       if (recentSearches.length <= 3) {
         showAllRecentSearches = false;
       }
@@ -93,23 +90,33 @@ class _SearchPageState extends State<SearchPage> {
       _searchController.text = query;
       updateRecommendedItems();
     });
-    addSearchQuery(query);
+  }
+
+  String removeDiacritics(String str) {
+    const withDiacritics = 'ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúýĂăĐđĨĩŨũƠơƯưẠ-ỹ';
+    const withoutDiacritics = 'AAAAEEEIIOOOOUUYaaaaeeeiioooouuyAaDdIiUuOoUuA-y';
+
+    for (int i = 0; i < withDiacritics.length; i++) {
+      str = str.replaceAll(withDiacritics[i], withoutDiacritics[i]);
+    }
+
+    return str;
   }
 
   void updateRecommendedItems() {
-    Cart cart = Cart();
+    Cart cart = Provider.of<Cart>(context, listen: false);
     List<Clother> sugProducts = cart.getClotherList();
 
     if (sugProducts.isNotEmpty) {
+      String normalizedQuery = removeDiacritics(searchQuery.toLowerCase());
+
       List<Clother> filteredProducts = sugProducts.where((item) {
-        return item.name.toLowerCase().contains(searchQuery.toLowerCase());
+        String normalizedItemName = removeDiacritics(item.name.toLowerCase());
+        return normalizedItemName.contains(normalizedQuery);
       }).toList();
 
-      List<Clother> topEvaluatedItems =
-          filteredProducts.where((item) => item.evaluate >= 4.5).toList();
-
       setState(() {
-        recommendedItems = topEvaluatedItems.map((item) {
+        recommendedItems = filteredProducts.map((item) {
           return {
             'name': item.name,
             'image': item.imagePath,
@@ -129,8 +136,7 @@ class _SearchPageState extends State<SearchPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
-          titlePadding: EdgeInsets.only(
-              top: 20, left: 20, right: 20), // Adjust padding to your needs
+          titlePadding: EdgeInsets.only(top: 20, left: 20, right: 20),
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 13),
           title: const Text(
             'Xóa lịch sử tìm kiếm?',
@@ -179,9 +185,9 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.grey[300],
+        backgroundColor: Colors.grey[200],
         iconTheme: IconThemeData(color: Colors.black),
         actions: [
           IconButton(
@@ -195,7 +201,7 @@ class _SearchPageState extends State<SearchPage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.only(left: 15, bottom: 15, right: 15),
+        padding: const EdgeInsets.only(left: 15, bottom: 15, right: 15, top: 3),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -212,22 +218,20 @@ class _SearchPageState extends State<SearchPage> {
                     : null,
                 contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
+                  borderSide: BorderSide(color: Colors.black),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
+                  borderSide: BorderSide(color: Colors.black),
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
               onChanged: (query) {
-                setState(() {
-                  searchQuery = query;
-                  updateRecommendedItems();
-                });
+                performSearch(query);
               },
               onSubmitted: (query) {
                 performSearch(query);
+                addSearchQuery(query);
               },
             ),
             const SizedBox(height: 10.0),
@@ -245,8 +249,7 @@ class _SearchPageState extends State<SearchPage> {
                       : (recentSearches.length > 3 ? 3 : recentSearches.length),
                   (index) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 2.0), // Reduced padding
+                      padding: const EdgeInsets.symmetric(vertical: 2.0),
                       child: SearchHistoryItem(
                         query: recentSearches[index],
                         onDelete: () {
@@ -287,24 +290,29 @@ class _SearchPageState extends State<SearchPage> {
             ),
             const SizedBox(height: 10),
             Expanded(
-              child: GridView.builder(
-                itemCount: recommendedItems.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 0.8,
-                ),
-                itemBuilder: (context, index) {
-                  return SuggestedProducts(
-                    sugPro: recommendedItems[index]['product'],
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => DetailPage(
-                            detailCol: recommendedItems[index]['product'],
-                          ),
-                        ),
+              child: Consumer<Cart>(
+                builder: (context, cart, child) {
+                  return GridView.builder(
+                    itemCount: recommendedItems.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: 0.8,
+                    ),
+                    itemBuilder: (context, index) {
+                      return SuggestedProducts(
+                        sugPro: recommendedItems[index]['product'],
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => DetailPage(
+                                detailCol: recommendedItems[index]['product'],
+                              ),
+                            ),
+                          );
+                        },
                       );
                     },
                   );
