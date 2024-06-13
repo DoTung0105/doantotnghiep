@@ -201,7 +201,8 @@ class _EditProductPageState extends State<EditProductPage> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    final pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery); // 13.6 - Thịnh đổi camera thành gallery
 
     if (pickedFile != null) {
       setState(() {

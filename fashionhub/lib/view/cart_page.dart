@@ -172,12 +172,18 @@ class _CartPageState extends State<CartPage> {
         builder: (context, value, child) {
           if (value.getUserCart().isEmpty) {
             return Center(
-              child: Text(
-                'Không có sản phẩm',
-                style: TextStyle(
-                  fontSize: 17,
-                  color: Colors.black,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('lib/images/cart.png'),
+                  Text(
+                    'Giỏ hàng hiện đang trống',
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
               ),
             );
           } else {

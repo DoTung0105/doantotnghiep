@@ -1,6 +1,6 @@
 import 'package:fashionhub/firebase_options.dart';
 import 'package:fashionhub/model/cart.dart';
-import 'package:fashionhub/view/login_screen.dart';
+import 'package:fashionhub/view/home_page.dart';
 import 'package:fashionhub/viewmodel/products_viewmodel.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -22,12 +22,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => Cart()),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
         debugShowCheckedModeBanner: false,
-        home: LoginScreen(),
+        home: HomePage(),
       ),
     );
   }

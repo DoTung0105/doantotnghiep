@@ -51,6 +51,20 @@ class _CartItemState extends State<CartItem>
     super.dispose();
   }
 
+  void incrementQuantity() {
+    setState(() {
+      widget.clother.quantity++;
+    });
+  }
+
+  void decrementQuantity() {
+    setState(() {
+      if (widget.clother.quantity > 1) {
+        widget.clother.quantity--;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -96,20 +110,46 @@ class _CartItemState extends State<CartItem>
                     widget.clother.name,
                     style: TextStyle(fontSize: 17),
                   ),
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.clother.price,
-                        style: TextStyle(color: Colors.red, fontSize: 16),
-                      ),
                       Text(
                         '${widget.clother.color},${widget.clother.size}',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(
-                        'Sl: ${widget.clother.quantity}',
-                        style: TextStyle(color: Colors.black),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            widget.clother.price,
+                            style: TextStyle(color: Colors.red, fontSize: 16),
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.remove,
+                                  color: Colors.grey[700],
+                                  size: 13,
+                                ),
+                                onPressed: decrementQuantity,
+                              ),
+                              Text(
+                                '${widget.clother.quantity}',
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 13),
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.add,
+                                  color: Colors.grey[700],
+                                  size: 13,
+                                ),
+                                onPressed: incrementQuantity,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ],
                   ),
