@@ -63,7 +63,8 @@ class ListProductPage extends StatelessWidget {
                             Text('Color : ${products[index].color}'),
                             Text('Branch : ${products[index].brand}'),
                             Text('Sold : ${products[index].sold}'),
-                            Text('Warehouse : ${products[index].wareHouse}')
+                            Text('Warehouse : ${products[index].wareHouse}'),
+                            Text('evaluate : ${products[index].evaluate}')
                           ],
                         ),
                       ),
@@ -153,6 +154,7 @@ class EditProductPage extends StatefulWidget {
 class _EditProductPageState extends State<EditProductPage> {
   late TextEditingController _descriptionController;
   late TextEditingController _priceController;
+  late TextEditingController _evaluateController;
   // late TextEditingController _sizeController;
   late TextEditingController _branchController;
   late TextEditingController _nameController;
@@ -173,7 +175,8 @@ class _EditProductPageState extends State<EditProductPage> {
     _priceController =
         TextEditingController(text: widget.product.price.toString());
     //  _sizeController = TextEditingController(text: widget.product.size);
-
+    _evaluateController =
+        TextEditingController(text: widget.product.evaluate.toString());
     _branchController = TextEditingController(text: widget.product.brand);
     _nameController = TextEditingController(text: widget.product.name);
     _soldController = TextEditingController(
@@ -197,6 +200,7 @@ class _EditProductPageState extends State<EditProductPage> {
     _soldController.dispose();
     _warehouseController.dispose();
     _colorController.dispose();
+    _evaluateController.dispose();
     super.dispose();
   }
 
@@ -296,6 +300,11 @@ class _EditProductPageState extends State<EditProductPage> {
                   decoration: InputDecoration(labelText: 'warehouse'),
                   keyboardType: TextInputType.number,
                 ),
+                TextField(
+                  controller: _evaluateController,
+                  decoration: InputDecoration(labelText: 'evaluate'),
+                  keyboardType: TextInputType.number,
+                ),
                 SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () async {
@@ -309,6 +318,7 @@ class _EditProductPageState extends State<EditProductPage> {
                       description: _descriptionController.text,
                       price: double.parse(_priceController.text),
                       size: _setSize!,
+                      evaluate: double.parse(_evaluateController.text),
                       brand: _branchController.text,
                       color: _colorController.text,
                       name: _nameController.text,

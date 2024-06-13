@@ -96,9 +96,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 obscurePassword = !obscurePassword;
                               });
                             },
-                            icon: Icon(obscurePassword
-                                ? Icons.visibility
-                                : Icons.visibility_off),
+                            icon: Icon(
+                              obscurePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color:
+                                  obscurePassword ? Colors.grey : Colors.blue,
+                            ),
                           ),
                           labelText: 'Password',
                           hintText: 'Enter your Password',

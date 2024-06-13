@@ -1,6 +1,7 @@
 import 'package:fashionhub/firebase_options.dart';
 import 'package:fashionhub/model/cart.dart';
 import 'package:fashionhub/view/home_page.dart';
+import 'package:fashionhub/view/login_screen.dart';
 import 'package:fashionhub/viewmodel/products_viewmodel.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: HomePage(),
+        home: LoginScreen(),
       ),
     );
   }

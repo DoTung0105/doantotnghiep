@@ -16,6 +16,7 @@ class ProductViewModel with ChangeNotifier {
 
   String _description = '';
   double _price = 0.0;
+  double _evaluate = 0.0;
 
   String _size = '';
   File? _image;
@@ -30,6 +31,8 @@ class ProductViewModel with ChangeNotifier {
 
   String get description => _description;
   double get price => _price;
+
+  double get evaluate => _evaluate; // tung them 13/6
 
   String get size => _size;
   //them data
@@ -72,6 +75,10 @@ class ProductViewModel with ChangeNotifier {
   void setPrice(String price) {
     _price = double.tryParse(price) ?? 0.0;
     notifyListeners();
+  }
+
+  void setEvaluate(String evaluate) {
+    _evaluate = double.tryParse(evaluate) ?? 0.0;
   }
 
   void setSize(String? size) {
@@ -142,6 +149,7 @@ class ProductViewModel with ChangeNotifier {
                 name: name,
                 sold: sold, // 11.6 - Thịnh sửa lại kiểu dl cho sold
                 color: color,
+                evaluate: evaluate,
                 wareHouse: int.parse(
                     wareHouse), // 11.6 - Thịnh sửa lại kiểu dl cho wareHouse
               ).toMap());
@@ -199,6 +207,7 @@ class ProductViewModel with ChangeNotifier {
     _sold = 0; // 11.6 - Thịnh gán giá trị mặc định cho sold
     _wareHouse = '';
     _image = null;
+    _evaluate = 0.0;
     notifyListeners();
   }
 

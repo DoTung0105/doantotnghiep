@@ -79,9 +79,11 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 controller: _oldPasswordController,
                 decoration: InputDecoration(
                   labelText: 'Mật khẩu cũ',
+                  filled: true,
+                  fillColor: Colors.white,
                   border: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Colors.black12, // Default border color
+                      color: Colors.amber, // Default border color
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -114,6 +116,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 controller: _newPasswordController,
                 decoration: InputDecoration(
                   labelText: 'Mật khẩu mới',
+                  filled: true,
+                  fillColor: Colors.white,
                   border: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.black12, // Default border color
@@ -151,6 +155,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               TextFormField(
                 controller: _confirmPasswordController,
                 decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
                   labelText: 'Xác nhận mật khẩu mới',
                   border: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -186,13 +192,24 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 120,
+                  ),
+                ),
                 onPressed: _changePassword,
-                child: Text('Đổi mật khẩu'),
+                child: Text('Đổi mật khẩu',
+                    style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
             ],
           ),
         ),
       ),
+      backgroundColor: Color.fromRGBO(89, 180, 195, 1.0),
     );
   }
 }
