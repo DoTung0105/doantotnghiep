@@ -250,7 +250,7 @@ class _CartPageState extends State<CartPage> {
                             ),
                             ...items.map((item) {
                               return CartItem(
-                                clother: item,
+                                cartItem: item,
                                 isChecked: selectedItems.contains(item),
                                 onCheckboxChanged: (isChecked) =>
                                     onItemCheckedChange(isChecked, item),

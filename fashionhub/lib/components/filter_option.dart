@@ -56,8 +56,8 @@ class _FilterOptionState extends State<FilterOption> {
 
     final cart = Provider.of<Cart>(context, listen: false);
     _allBranches = cart.getBranchesList();
-    _visibleBranches = _allBranches.sublist(0, 4);
-    _showMoreBranchesButton = _allBranches.length > 4;
+    _visibleBranches = _allBranches.sublist(0, 2);
+    _showMoreBranchesButton = _allBranches.length > 2;
 
     _minPriceFocusNode.addListener(_handleFocusChange);
     _maxPriceFocusNode.addListener(_handleFocusChange);

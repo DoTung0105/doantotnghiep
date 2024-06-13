@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CartItem extends StatefulWidget {
-  final Clother clother;
+  final Clother cartItem;
   final ValueChanged<bool?> onCheckboxChanged;
   final bool isChecked;
 
   CartItem({
     super.key,
-    required this.clother,
+    required this.cartItem,
     required this.onCheckboxChanged,
     required this.isChecked,
   });
@@ -53,20 +53,23 @@ class _CartItemState extends State<CartItem>
 
   void incrementQuantity() {
     setState(() {
-      widget.clother.quantity++;
+      widget.cartItem.quantity++;
     });
   }
 
   void decrementQuantity() {
     setState(() {
-      if (widget.clother.quantity > 1) {
-        widget.clother.quantity--;
+      if (widget.cartItem.quantity > 1) {
+        widget.cartItem.quantity--;
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final formatter = NumberFormat('#,###', 'vi_VN');
+    String formattedPrice = formatter
+        .format(double.parse(widget.cartItem.price.replaceAll('.', '')));
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       //
@@ -89,9 +92,9 @@ class _CartItemState extends State<CartItem>
                     builder: (context, child) {
                       final isUnderHalfway = _animation.value < 0.5;
                       final displayImage = isUnderHalfway
-                          ? widget.clother.imagePath
-                          : 'lib/images/check.png';
-                      final image = Image.asset(displayImage);
+                          ? widget.cartItem.imagePath
+                          : 'https://cdn-icons-png.flaticon.com/512/14026/14026656.png';
+                      final image = Image.network(displayImage);
                       return Transform(
                         transform:
                             Matrix4.rotationY(_animation.value * 3.14159),
@@ -107,21 +110,21 @@ class _CartItemState extends State<CartItem>
                     },
                   ),
                   title: Text(
-                    widget.clother.name,
+                    widget.cartItem.name,
                     style: TextStyle(fontSize: 17),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${widget.clother.color},${widget.clother.size}',
+                        '${widget.cartItem.color},${widget.cartItem.size}',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            widget.clother.price,
+                            '₫$formattedPrice',
                             style: TextStyle(color: Colors.red, fontSize: 16),
                           ),
                           Row(
@@ -130,20 +133,20 @@ class _CartItemState extends State<CartItem>
                                 icon: Icon(
                                   Icons.remove,
                                   color: Colors.grey[700],
-                                  size: 13,
+                                  size: 14,
                                 ),
                                 onPressed: decrementQuantity,
                               ),
                               Text(
-                                '${widget.clother.quantity}',
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 13),
+                                '${widget.cartItem.quantity}',
+                                style:
+                                    TextStyle(color: Colors.red, fontSize: 15),
                               ),
                               IconButton(
                                 icon: Icon(
                                   Icons.add,
                                   color: Colors.grey[700],
-                                  size: 13,
+                                  size: 14,
                                 ),
                                 onPressed: incrementQuantity,
                               ),

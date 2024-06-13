@@ -18,17 +18,21 @@ class SuggestedProducts extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(10),
+              bottomRight: Radius.circular(10)),
         ),
         child: Stack(
           children: [
             Column(
               children: [
-                Image.asset(
+                Image.network(
                   sugPro.imagePath,
-                  height: 170,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  height: MediaQuery.of(context).size.height * 0.2 - 10,
                   fit: BoxFit.cover,
                 ),
+                Divider(),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Text(
@@ -50,8 +54,8 @@ class SuggestedProducts extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.7),
                   borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(12),
-                      topLeft: Radius.circular(9)),
+                    bottomRight: Radius.circular(12),
+                  ),
                 ),
                 child: Row(
                   children: [
