@@ -25,7 +25,7 @@ class Cart extends ChangeNotifier {
       brand: 'PARADOX',
       color: 'Trắng',
       size: '',
-      evaluate: 4.9,
+      evaluate: 4.3,
       sold: 200,
       wareHouse: 1800,
     ),

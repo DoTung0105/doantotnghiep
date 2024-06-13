@@ -282,7 +282,7 @@ class _SearchPageState extends State<SearchPage> {
               ],
             ),
             const Text(
-              'Gợi ý tìm kiếm',
+              'Sản phẩm gợi ý',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
