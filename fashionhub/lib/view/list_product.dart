@@ -8,124 +8,346 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class ListProductPage extends StatelessWidget {
+// class ListProductPage extends StatefulWidget {
+//   @override
+//   State<ListProductPage> createState() => _ListProductPageState();
+// }
+
+// class _ListProductPageState extends State<ListProductPage> {
+//   Set<int> expandedIndexes = {};
+
+//   String truncateDescription(
+//       String description, int wordLimit, bool isExpanded) {
+//     List<String> words = description.split(' ');
+//     if (words.length > wordLimit && !isExpanded) {
+//       return words.sublist(0, wordLimit).join(' ') + '...';
+//     }
+//     return description;
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return FutureBuilder<List<Product>>(
+//       future: Provider.of<ProductViewModel>(context).getProducts(),
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return CircularProgressIndicator();
+//         } else if (snapshot.hasError) {
+//           return Text('Error: ${snapshot.error}');
+//         } else {
+//           List<Product>? products = snapshot.data;
+//           if (products != null && products.isNotEmpty) {
+//             return ListView.builder(
+//               itemCount: products.length,
+//               itemBuilder: (context, index) {
+//                 bool isExpanded = expandedIndexes.contains(index);
+//                 return Container(
+//                   margin: EdgeInsets.all(8.0),
+//                   padding: EdgeInsets.all(8.0),
+//                   decoration: BoxDecoration(
+//                     color: Colors.white, // Màu nền của container
+//                     borderRadius: BorderRadius.circular(12.0), // Bo góc
+//                     boxShadow: [
+//                       BoxShadow(
+//                         color: Colors.grey.withOpacity(0.5), // Màu bóng mờ
+//                         spreadRadius: 2,
+//                         blurRadius: 5,
+//                         offset: Offset(0, 3), // Vị trí của bóng
+//                       ),
+//                     ],
+//                   ),
+//                   child: Row(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       // Hình ảnh nằm bên trái
+//                       SizedBox(
+//                         width: 100,
+//                         child: Image.network(
+//                           products[index].imagePath,
+//                           fit: BoxFit.cover,
+//                         ),
+//                       ),
+
+//                       SizedBox(width: 10),
+//                       // Thông tin sản phẩm nằm bên phải
+//                       Expanded(
+//                         child: Column(
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             Text('Name : ${products[index].name}'),
+//                             // Text('Price : ${products[index].price}'),
+//                             Text(
+//                                 'Price : ${NumberFormat('#,###').format(products[index].price)}'),
+//                             // Text(
+//                             //     'Description : ${products[index].description}'),
+//                             Text(
+//                               'Description : ${truncateDescription(products[index].description, 40, isExpanded)}',
+//                             ),
+//                             // if (products[index].description.split(' ').length >
+//                             //     40)
+//                             //   GestureDetector(
+//                             //     onTap: () {
+//                             //       setState(() {
+//                             //         if (isExpanded) {
+//                             //           expandedIndexes.remove(index);
+//                             //         } else {
+//                             //           expandedIndexes.add(index);
+//                             //         }
+//                             //       });
+//                             //     },
+//                             //     child: Text(
+//                             //       isExpanded ? 'Thu gọn' : 'Xem thêm',
+//                             //       style: TextStyle(color: Colors.blue),
+//                             //     ),
+//                             //   ),
+
+//                             Text('Size : ${products[index].size}'),
+//                             Text('Color : ${products[index].color}'),
+//                             Text('Branch : ${products[index].brand}'),
+//                             Text('Sold : ${products[index].sold}'),
+//                             Text('Warehouse : ${products[index].wareHouse}'),
+//                             Text('evaluate : ${products[index].evaluate}')
+//                           ],
+//                         ),
+//                       ),
+//                       Column(
+//                         children: [
+//                           ElevatedButton(
+//                               onPressed: () {
+//                                 showDialog(
+//                                   context: context,
+//                                   builder: (context) => AlertDialog(
+//                                     title: Text('Delete Product'),
+//                                     content: Text(
+//                                         'Are you sure you want to delete this product?'),
+//                                     actions: [
+//                                       TextButton(
+//                                         onPressed: () {
+//                                           Navigator.of(context).pop();
+//                                         },
+//                                         child: Text('Cancel'),
+//                                       ),
+//                                       TextButton(
+//                                         onPressed: () {
+//                                           Provider.of<ProductViewModel>(context,
+//                                                   listen: false)
+//                                               .deleteProduct(
+//                                                   products[index].id);
+//                                           Navigator.of(context).pop();
+//                                         },
+//                                         child: Text('Delete'),
+//                                       ),
+//                                     ],
+//                                   ),
+//                                 );
+//                               },
+//                               child: Text("Del")),
+//                           ElevatedButton(
+//                               onPressed: () {
+//                                 Navigator.push(
+//                                     context,
+//                                     MaterialPageRoute(
+//                                         builder: (context) => EditProductPage(
+//                                             product: products[index])));
+//                               },
+//                               child: Text('Edit'))
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                 );
+//               },
+//             );
+//           } else {
+//             return Text('No products available');
+//           }
+//         }
+//       },
+//     );
+//   }
+// }
+
+class ListProductPage extends StatefulWidget {
+  @override
+  _ListProductPageState createState() => _ListProductPageState();
+}
+
+class _ListProductPageState extends State<ListProductPage> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Product>>(
-      future: Provider.of<ProductViewModel>(context).getProducts(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          List<Product>? products = snapshot.data;
-          if (products != null && products.isNotEmpty) {
-            return ListView.builder(
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.all(8.0),
-                  padding: EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white, // Màu nền của container
-                    borderRadius: BorderRadius.circular(12.0), // Bo góc
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5), // Màu bóng mờ
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: Offset(0, 3), // Vị trí của bóng
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Hình ảnh nằm bên trái
-                      SizedBox(
-                        width: 100,
-                        child: Image.network(
-                          products[index].imagePath,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-
-                      SizedBox(width: 10),
-                      // Thông tin sản phẩm nằm bên phải
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Name : ${products[index].name}'),
-                            // Text('Price : ${products[index].price}'),
-                            Text(
-                                'Price : ${NumberFormat('#,###').format(products[index].price)}'),
-                            Text(
-                                'Description : ${products[index].description}'),
-                            Text('Size : ${products[index].size}'),
-                            Text('Color : ${products[index].color}'),
-                            Text('Branch : ${products[index].brand}'),
-                            Text('Sold : ${products[index].sold}'),
-                            Text('Warehouse : ${products[index].wareHouse}'),
-                            Text('evaluate : ${products[index].evaluate}')
-                          ],
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          ElevatedButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text('Delete Product'),
-                                    content: Text(
-                                        'Are you sure you want to delete this product?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Provider.of<ProductViewModel>(context,
-                                                  listen: false)
-                                              .deleteProduct(
-                                                  products[index].id);
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text('Delete'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                              child: Text("Del")),
-                          ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => EditProductPage(
-                                            product: products[index])));
-                              },
-                              child: Text('Edit'))
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-          } else {
-            return Text('No products available');
-          }
-        }
-      },
+    return Scaffold(
+      body: Consumer<ProductViewModel>(
+        builder: (context, productViewModel, child) {
+          return FutureBuilder<List<Product>>(
+            future: productViewModel.getProducts(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                List<Product>? products = snapshot.data;
+                if (products != null && products.isNotEmpty) {
+                  return ListView.builder(
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      return ProductItem(product: products[index]);
+                    },
+                  );
+                } else {
+                  return Center(child: Text('No products available'));
+                }
+              }
+            },
+          );
+        },
+      ),
     );
+  }
+}
+
+class ProductItem extends StatefulWidget {
+  final Product product;
+
+  ProductItem({required this.product});
+
+  @override
+  _ProductItemState createState() => _ProductItemState();
+}
+
+class _ProductItemState extends State<ProductItem> {
+  bool isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Hình ảnh nằm bên trái
+          SizedBox(
+            width: 100,
+            child: Image.network(
+              widget.product.imagePath,
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          SizedBox(width: 10),
+          // Thông tin sản phẩm nằm bên phải
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Name : ${widget.product.name}'),
+                Text(
+                    'Price : ${NumberFormat('#,###').format(widget.product.price)}'),
+                AnimatedCrossFade(
+                  duration: Duration(milliseconds: 100),
+                  firstChild: Text(
+                    'Description : ${_truncateDescription(widget.product.description, 40)}',
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  secondChild: Text(
+                    'Description : ${widget.product.description}',
+                  ),
+                  crossFadeState: isExpanded
+                      ? CrossFadeState.showSecond
+                      : CrossFadeState.showFirst,
+                ),
+                if (widget.product.description.split(' ').length > 40)
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isExpanded = !isExpanded;
+                      });
+                    },
+                    child: Text(
+                      isExpanded ? 'Thu gọn' : 'Xem thêm',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ),
+                Text('Size : ${widget.product.size}'),
+                Text('Color : ${widget.product.color}'),
+                Text('Branch : ${widget.product.brand}'),
+                Text('Sold : ${widget.product.sold}'),
+                Text('Warehouse : ${widget.product.wareHouse}'),
+                Text('Evaluate : ${widget.product.evaluate}'),
+              ],
+            ),
+          ),
+          Column(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Delete Product'),
+                      content:
+                          Text('Are you sure you want to delete this product?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            // Handle delete action
+                            Provider.of<ProductViewModel>(context,
+                                    listen: false)
+                                .deleteProduct(widget.product.id);
+
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Delete'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: Text("Del"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              EditProductPage(product: widget.product)));
+                },
+                child: Text('Edit'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _truncateDescription(String description, int wordLimit) {
+    List<String> words = description.split(' ');
+    if (words.length > wordLimit) {
+      return words.sublist(0, wordLimit).join(' ') + '...';
+    }
+    return description;
   }
 }
 
@@ -243,16 +465,51 @@ class _EditProductPageState extends State<EditProductPage> {
                 SizedBox(height: 16.0),
                 TextField(
                   controller: _descriptionController,
-                  decoration: InputDecoration(labelText: 'Description'),
+                  decoration: InputDecoration(
+                    labelText: 'Description',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white, // Default border color
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black, // Default border color
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
                 // TextField(
                 //   controller: _priceController,
                 //   decoration: InputDecoration(labelText: 'Price'),
                 //   keyboardType: TextInputType.number,
                 // ),
+                SizedBox(
+                  height: 10,
+                ),
                 TextField(
                   controller: _priceController,
-                  decoration: InputDecoration(labelText: 'Price'),
+                  decoration: InputDecoration(
+                    labelText: 'Price',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white, // Default border color
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    // enabledBorder: OutlineInputBorder(
+                    //   borderSide: BorderSide(
+                    //     color: Colors.black, // Default border color
+                    //   ),
+                    //   borderRadius: BorderRadius.circular(10),
+                    // ),
+                  ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
@@ -274,7 +531,9 @@ class _EditProductPageState extends State<EditProductPage> {
                     ),
                   ],
                 ),
-
+                SizedBox(
+                  height: 10,
+                ),
                 DropdownButtonFormField<String>(
                   value: _setSize,
                   items: viewModel.sizeoption
@@ -288,11 +547,34 @@ class _EditProductPageState extends State<EditProductPage> {
                       _setSize = value!;
                     });
                   },
-                  decoration: InputDecoration(labelText: 'Size'),
+                  decoration: InputDecoration(
+                    labelText: 'Size',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white, // Default border color
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 TextField(
                   controller: _branchController,
-                  decoration: InputDecoration(labelText: 'Branch'),
+                  decoration: InputDecoration(
+                    labelText: 'Branch',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white, // Default border color
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
                 // DropdownButtonFormField<String>(
                 //   value: _selectedColor,
@@ -309,63 +591,143 @@ class _EditProductPageState extends State<EditProductPage> {
                 //   },
                 //   decoration: InputDecoration(labelText: 'Color'),
                 // ),
+                SizedBox(
+                  height: 10,
+                ),
                 TextField(
                   controller: _colorController,
-                  decoration: InputDecoration(labelText: 'Color'),
+                  decoration: InputDecoration(
+                    labelText: 'Color',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white, // Default border color
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 TextField(
                   controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white, // Default border color
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 TextField(
                   controller: _soldController,
-                  decoration: InputDecoration(labelText: 'Sold'),
+                  decoration: InputDecoration(
+                    labelText: 'Sold',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white, // Default border color
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 TextField(
                   controller: _warehouseController,
-                  decoration: InputDecoration(labelText: 'warehouse'),
+                  decoration: InputDecoration(
+                    labelText: 'warehouse',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white, // Default border color
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
+                SizedBox(
+                  height: 10,
+                ),
                 TextField(
                   controller: _evaluateController,
-                  decoration: InputDecoration(labelText: 'evaluate'),
+                  decoration: InputDecoration(
+                    labelText: 'evaluate',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white, // Default border color
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                   keyboardType: TextInputType.number,
                 ),
+
                 SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () async {
-                    String imagePath = widget.product.imagePath;
-                    if (_imageFile != null) {
-                      imagePath = await viewModel.uploadImage(_imageFile!);
-                    }
-                    Product updatedProduct = Product(
-                      id: widget.product.id,
-                      imagePath: imagePath,
-                      description: _descriptionController.text,
-                      // price: double.parse(_priceController.text),
-                      price: double.parse(_priceController.text.replaceAll(',',
-                          '')), // Lưu giá trị với dấu phân cách vào Firestore
-                      size: _setSize!,
-                      evaluate: double.parse(_evaluateController.text),
-                      brand: _branchController.text,
-                      color: _colorController.text,
-                      name: _nameController.text,
-                      sold: int.parse(_soldController
-                          .text), // 11.6 - Thịnh sửa lại kiểu dl cho sold
-                      wareHouse: int.parse(_warehouseController
-                          .text), // 11.6 - Thịnh sửa lại kiểu dl cho wareHouse
-                    );
-                    await viewModel.updateProduct(updatedProduct);
-                    Navigator.pop(context);
-                  },
-                  child: Text('Save Changes'),
+                SizedBox(
+                  width: 10,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 20, horizontal: 20)),
+                    onPressed: () async {
+                      String imagePath = widget.product.imagePath;
+                      if (_imageFile != null) {
+                        imagePath = await viewModel.uploadImage(_imageFile!);
+                      }
+                      Product updatedProduct = Product(
+                        id: widget.product.id,
+                        imagePath: imagePath,
+                        description: _descriptionController.text,
+                        // price: double.parse(_priceController.text),
+                        price: double.parse(_priceController.text.replaceAll(
+                            ',',
+                            '')), // Lưu giá trị với dấu phân cách vào Firestore
+                        size: _setSize!,
+                        evaluate: double.parse(_evaluateController.text),
+                        brand: _branchController.text,
+                        color: _colorController.text,
+                        name: _nameController.text,
+                        sold: int.parse(_soldController
+                            .text), // 11.6 - Thịnh sửa lại kiểu dl cho sold
+                        wareHouse: int.parse(_warehouseController
+                            .text), // 11.6 - Thịnh sửa lại kiểu dl cho wareHouse
+                      );
+                      await viewModel.updateProduct(updatedProduct);
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Save Changes',
+                      style: TextStyle(fontSize: 20, color: Colors.black),
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
+          backgroundColor: Color.fromRGBO(89, 180, 195, 1.0),
         );
       },
     );
