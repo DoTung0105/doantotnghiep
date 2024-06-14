@@ -1,3 +1,4 @@
+import 'package:fashionhub/animation/animation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fashionhub/service/authentication_service.dart';
@@ -75,135 +76,147 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     style: TextStyle(color: Colors.red),
                   ),
                 ),
-              TextFormField(
-                controller: _oldPasswordController,
-                decoration: InputDecoration(
-                  labelText: 'Mật khẩu cũ',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.amber, // Default border color
+              FadeAnimation(
+                0.1,
+                TextFormField(
+                  controller: _oldPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Mật khẩu cũ',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.amber, // Default border color
+                      ),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureOldPassword
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: _obscureOldPassword ? Colors.grey : Colors.blue,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureOldPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: _obscureOldPassword ? Colors.grey : Colors.blue,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureOldPassword = !_obscureOldPassword;
+                        });
+                      },
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureOldPassword = !_obscureOldPassword;
-                      });
-                    },
                   ),
+                  obscureText: _obscureOldPassword,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng nhập mật khẩu cũ';
+                    }
+                    return null;
+                  },
                 ),
-                obscureText: _obscureOldPassword,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng nhập mật khẩu cũ';
-                  }
-                  return null;
-                },
               ),
               SizedBox(
                 height: 10,
               ),
-              TextFormField(
-                controller: _newPasswordController,
-                decoration: InputDecoration(
-                  labelText: 'Mật khẩu mới',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black12, // Default border color
+              FadeAnimation(
+                0.2,
+                TextFormField(
+                  controller: _newPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Mật khẩu mới',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black12, // Default border color
+                      ),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureNewPassword
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: _obscureNewPassword ? Colors.grey : Colors.blue,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureNewPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: _obscureNewPassword ? Colors.grey : Colors.blue,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureNewPassword = !_obscureNewPassword;
+                        });
+                      },
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureNewPassword = !_obscureNewPassword;
-                      });
-                    },
                   ),
+                  obscureText: _obscureNewPassword,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng nhập mật khẩu mới';
+                    }
+                    if (value.length < 6) {
+                      return 'Mật khẩu mới phải có ít nhất 6 ký tự';
+                    }
+                    return null;
+                  },
                 ),
-                obscureText: _obscureNewPassword,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng nhập mật khẩu mới';
-                  }
-                  if (value.length < 6) {
-                    return 'Mật khẩu mới phải có ít nhất 6 ký tự';
-                  }
-                  return null;
-                },
               ),
               SizedBox(
                 height: 10,
               ),
-              TextFormField(
-                controller: _confirmPasswordController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  labelText: 'Xác nhận mật khẩu mới',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black12, // Default border color
+              FadeAnimation(
+                0.3,
+                TextFormField(
+                  controller: _confirmPasswordController,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    labelText: 'Xác nhận mật khẩu mới',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black12, // Default border color
+                      ),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureConfirmPassword
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color:
-                          _obscureConfirmPassword ? Colors.grey : Colors.blue,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureConfirmPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color:
+                            _obscureConfirmPassword ? Colors.grey : Colors.blue,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureConfirmPassword = !_obscureConfirmPassword;
+                        });
+                      },
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureConfirmPassword = !_obscureConfirmPassword;
-                      });
-                    },
                   ),
+                  obscureText: _obscureConfirmPassword,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng xác nhận mật khẩu mới';
+                    }
+                    if (value != _newPasswordController.text) {
+                      return 'Mật khẩu xác nhận không khớp';
+                    }
+                    return null;
+                  },
                 ),
-                obscureText: _obscureConfirmPassword,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng xác nhận mật khẩu mới';
-                  }
-                  if (value != _newPasswordController.text) {
-                    return 'Mật khẩu xác nhận không khớp';
-                  }
-                  return null;
-                },
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+              FadeAnimation(
+                0.4,
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 120,
+                    ),
                   ),
-                  padding: EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 120,
-                  ),
+                  onPressed: _changePassword,
+                  child: Text('Đổi mật khẩu',
+                      style: TextStyle(fontSize: 20, color: Colors.black)),
                 ),
-                onPressed: _changePassword,
-                child: Text('Đổi mật khẩu',
-                    style: TextStyle(fontSize: 20, color: Colors.black)),
               ),
             ],
           ),
