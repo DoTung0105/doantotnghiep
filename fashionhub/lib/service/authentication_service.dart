@@ -14,33 +14,6 @@ class AuthenticationService {
         email.endsWith('@gmail.com.vn');
   }
 
-  // Future<User?> signUpWithEmailAndPassword(String email, String password,
-  //     String displayName, String address, String phone) async {
-  //   try {
-  //     UserCredential userCredential = await _firebaseAuth
-  //         .createUserWithEmailAndPassword(email: email, password: password);
-  //     User? user = userCredential.user;
-
-  //     if (user != null) {
-  //       UserModel newUser = UserModel(
-  //           uid: user.uid,
-  //           email: email,
-  //           displayName: displayName,
-  //           address: address,
-  //           password: password,
-  //           phone: phone);
-  //       await _firestore.collection('users').doc(user.uid).set(newUser.toMap());
-
-  //       await user.sendEmailVerification();
-  //     }
-
-  //     return user;
-  //   } catch (e) {
-  //     print("Error signing up: $e");
-  //     return null;
-  //   }
-  // }
-
   Future<bool> isEmailAlreadyInUse(String email) async {
     try {
       UserCredential userCredential =
@@ -145,7 +118,7 @@ class AuthenticationService {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
-   // await _saveLoggedInState(false);
+    // await _saveLoggedInState(false);
   }
 
   User? getCurrentUser() {
@@ -203,7 +176,7 @@ class AuthenticationService {
         );
 
         await user.reauthenticateWithCredential(credential);
-        
+
         return true;
       }
       return false;

@@ -18,7 +18,7 @@ class UsersViewModel {
       return [];
     }
   }
-
+//phuong thức khóa hoặc mở khóa người dùng
   Future<void> lockOrUnlockUser(String uid, bool lock) async {
     try {
       await _firestore.collection('users').doc(uid).update({'locked': lock});
@@ -38,10 +38,16 @@ class UsersViewModel {
       return null;
     }
   }
-   
 
-
- 
+  // Future<String?> getUserRole(String uid) async {
+  //   try {
+  //     DocumentSnapshot userDoc =
+  //         await _firestore.collection('users').doc(uid).get();
+  //     return userDoc['role'] as String?;
+  //   } catch (e) {
+  //     print("Error getting user role: $e");
+  //     return null;
+  //   }
+  // }
+  
 }
-
-
