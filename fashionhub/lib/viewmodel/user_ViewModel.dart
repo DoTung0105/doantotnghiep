@@ -38,10 +38,4 @@ class UsersViewModel {
       return null;
     }
   }
-   
-
-
- 
 }
-
-

@@ -1,6 +1,7 @@
 import 'package:fashionhub/components/bottom_nav_bar.dart';
+import 'package:fashionhub/service/authentication_service.dart';
 import 'package:fashionhub/view/cart_page.dart';
-import 'package:fashionhub/view/intro_page.dart';
+import 'package:fashionhub/view/login_screen.dart';
 import 'package:fashionhub/view/profile_page.dart';
 import 'package:fashionhub/view/search_page.dart';
 import 'package:fashionhub/view/shop_page.dart';
@@ -27,6 +28,21 @@ class _HomePageState extends State<HomePage> {
     const CartPage(),
     const UserProfilePage(),
   ];
+
+  Future<void> _logout(BuildContext context) async {
+    try {
+      AuthenticationService authenticationService = AuthenticationService();
+      await authenticationService.signOut();
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    } catch (e) {
+      print('Error logging out: $e');
+      // Xử lý lỗi nếu cần
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,12 +144,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.only(left: 25.0, bottom: 25.0),
               child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => const IntroPage()),
-                    (Route<dynamic> route) => false,
-                  );
-                },
+                onTap: () => _logout(context), // Call the _logout method here
                 child: const ListTile(
                   leading: Icon(
                     Icons.logout,

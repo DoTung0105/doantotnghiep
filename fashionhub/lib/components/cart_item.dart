@@ -68,8 +68,8 @@ class _CartItemState extends State<CartItem>
   @override
   Widget build(BuildContext context) {
     final formatter = NumberFormat('#,###', 'vi_VN');
-    String formattedPrice = formatter
-        .format(double.parse(widget.cartItem.price.replaceAll('.', '')));
+    String formattedPrice =
+        formatter.format(double.parse(widget.cartItem.price));
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       //
@@ -186,8 +186,7 @@ class PaymentSection extends StatelessWidget {
     // Calculate total price of selected items
     double totalPrice = selectedItems.fold(
       0,
-      (sum, item) =>
-          sum + double.parse(item.price.replaceAll('.', '')) * item.quantity,
+      (sum, item) => sum + double.parse(item.price) * item.quantity,
     );
 
     // Format total price
