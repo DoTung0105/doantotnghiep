@@ -18,7 +18,7 @@ class UsersViewModel {
       return [];
     }
   }
-
+//phuong thức khóa hoặc mở khóa người dùng
   Future<void> lockOrUnlockUser(String uid, bool lock) async {
     try {
       await _firestore.collection('users').doc(uid).update({'locked': lock});
@@ -38,4 +38,5 @@ class UsersViewModel {
       return null;
     }
   }
+
 }
