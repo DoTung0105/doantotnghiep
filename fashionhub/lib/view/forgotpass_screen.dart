@@ -15,10 +15,13 @@ class _ForgotpassScreenState extends State<ForgotpassScreen> {
   bool _passwordResetSuccessful = false;
 
   // Hàm kiểm tra định dạng email
+  // bool _isEmailValid(String email) {
+  //   String emailPattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+  //   RegExp regex = RegExp(emailPattern);
+  //   return regex.hasMatch(email);
+  // }
   bool _isEmailValid(String email) {
-    String emailPattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
-    RegExp regex = RegExp(emailPattern);
-    return regex.hasMatch(email);
+    return email.contains('@');
   }
 
   @override
@@ -67,14 +70,15 @@ class _ForgotpassScreenState extends State<ForgotpassScreen> {
               onPressed: () async {
                 String email = _emailController.text.trim();
                 // Kiểm tra định dạng email trước khi thực hiện các bước khác
-                if (!_isEmailValid(email)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Email không hợp lệ'),
-                    ),
-                  );
-                  return;
-                }
+                // if (!_isEmailValid(email)) {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(
+                //       content: Text('Email không hợp lệ'),
+                //     ),
+                //   );
+                //   return;
+                // }
+                
                 bool emailExists = await _viewModel.checkEmailExists(email);
 
                 if (emailExists) {
