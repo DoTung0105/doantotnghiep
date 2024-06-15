@@ -9,10 +9,10 @@ class AuthenticationService {
 
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
-  Future<bool> isEmailValid(String email) async {
-    return email.contains('@') && email.endsWith('@gmail.com') ||
-        email.endsWith('@gmail.com.vn');
-  }
+  // Future<bool> isEmailValid(String email) async {
+  //   return email.contains('@') && email.endsWith('@gmail.com') ||
+  //       email.endsWith('@gmail.com.vn');
+  // }
 
   Future<bool> isEmailAlreadyInUse(String email) async {
     try {

@@ -261,11 +261,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           content: Text('Mật khẩu phải có ít nhất 6 ký tự')));
                       return;
                     }
+                   
                     // Kiểm tra định dạng email
-                    final emailRegex =
-                        RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                    if (!emailRegex.hasMatch(email) ||
-                        !email.endsWith('@gmail.com')) {
+                    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
+                    if (!emailRegex.hasMatch(email)) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text('Địa chỉ email không hợp lệ')));
                       return;
