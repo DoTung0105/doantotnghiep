@@ -24,8 +24,9 @@ class _ClotherTileState extends State<ClotherTile> {
   @override
   Widget build(BuildContext context) {
     final formatter = NumberFormat('#,###', 'vi_VN');
-    String formattedPrice =
-        formatter.format(double.parse(widget.cloTil.price.replaceAll('.', '')));
+
+    String formattedPrice = formatter.format(double.parse(widget.cloTil.price));
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[100],

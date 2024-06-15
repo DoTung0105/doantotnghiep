@@ -1,9 +1,7 @@
 import 'package:fashionhub/service/authentication_service.dart';
 import 'package:fashionhub/viewmodel/user_ViewModel.dart';
-
-import 'package:flutter/material.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class LoginViewModel extends ChangeNotifier {
   final AuthenticationService _authenticationService;

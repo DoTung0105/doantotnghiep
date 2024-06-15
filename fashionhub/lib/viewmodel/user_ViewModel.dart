@@ -39,15 +39,4 @@ class UsersViewModel {
     }
   }
 
-  // Future<String?> getUserRole(String uid) async {
-  //   try {
-  //     DocumentSnapshot userDoc =
-  //         await _firestore.collection('users').doc(uid).get();
-  //     return userDoc['role'] as String?;
-  //   } catch (e) {
-  //     print("Error getting user role: $e");
-  //     return null;
-  //   }
-  // }
-  
 }

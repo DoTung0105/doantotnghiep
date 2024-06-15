@@ -10,8 +10,7 @@ class CloSelling extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formatter = NumberFormat('#,###', 'vi_VN');
-    String formattedPrice =
-        formatter.format(double.parse(cloSel.price.replaceAll('.', '')));
+    String formattedPrice = formatter.format(double.parse(cloSel.price));
     String description = cloSel.description.length > 160
         ? cloSel.description.substring(0, 160) + '...'
         : cloSel.description;

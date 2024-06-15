@@ -29,8 +29,7 @@ class ProductDetails extends StatelessWidget {
     double totalPrice = price * quantityCount;
     final formattedTotalPrice = NumberFormat("#,###", "vi").format(totalPrice);
     final formatter = NumberFormat('#,###', 'vi_VN');
-    String formattedPrice =
-        formatter.format(double.parse(product.price.replaceAll('.', '')));
+    String formattedPrice = formatter.format(double.parse(product.price));
 
     return Container(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10, top: 8),
