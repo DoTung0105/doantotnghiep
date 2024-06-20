@@ -473,42 +473,67 @@ class AddProductPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20),
-                FadeAnimation(
-                  1.1,
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50)),
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 100)),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        try {
-                          await viewModel.addProduct();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Product added successfully')),
-                          );
-                          viewModel.resetImage();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => screenproducts()),
-                          );
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Failed to add product: $e')),
-                          );
-                        }
-                      }
-                    },
-                    child: Text(
-                      'Add Product',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.black),
+                Row(
+                  children: [
+                    FadeAnimation(
+                      1.1,
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 100)),
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            try {
+                              await viewModel.addProduct();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                        Text('Product added successfully')),
+                              );
+                              viewModel.resetImage();
+                              ProductViewModel productViewModel =
+                                  ProductViewModel();
+                              productViewModel.resetFields();
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => screenproducts()),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text('Failed to add product: $e')),
+                              );
+                            }
+                          }
+                        },
+                        child: Text(
+                          'Add Product',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.black),
+                        ),
+                      ),
                     ),
-                  ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState != null) {
+                          _formKey.currentState!.reset();
+                          // Reset values in ViewModel
+                          viewModel.resetFields();
+                        }
+                      },
+                      child: Text(
+                        'Clear',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

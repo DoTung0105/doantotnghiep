@@ -239,12 +239,62 @@ class _ProductItemState extends State<ProductItem> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Hình ảnh nằm bên trái
-          SizedBox(
-            width: 100,
-            child: Image.network(
-              widget.product.imagePath,
-              fit: BoxFit.cover,
-            ),
+          Column(
+            children: [
+              SizedBox(
+                width: 100,
+                child: Image.network(
+                  widget.product.imagePath,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Column(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Delete Product'),
+                          content: Text(
+                              'Are you sure you want to delete this product?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                // Handle delete action
+                                Provider.of<ProductViewModel>(context,
+                                        listen: false)
+                                    .deleteProduct(widget.product.id);
+
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    child: Text("Del"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  EditProductPage(product: widget.product)));
+                    },
+                    child: Text('Edit'),
+                  ),
+                ],
+              ),
+            ],
           ),
 
           SizedBox(width: 10),
@@ -260,7 +310,7 @@ class _ProductItemState extends State<ProductItem> {
                   duration: Duration(milliseconds: 100),
                   firstChild: Text(
                     'Description : ${_truncateDescription(widget.product.description, 40)}',
-                    maxLines: 4,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                   secondChild: Text(
@@ -282,60 +332,31 @@ class _ProductItemState extends State<ProductItem> {
                       style: TextStyle(color: Colors.blue),
                     ),
                   ),
-                Text('Size : ${widget.product.size}'),
-                Text('Color : ${widget.product.color}'),
-                Text('Branch : ${widget.product.brand}'),
-                Text('Sold : ${widget.product.sold}'),
-                Text('Warehouse : ${widget.product.wareHouse}'),
-                Text('Evaluate : ${widget.product.evaluate}'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(child: Text('Size : ${widget.product.size}')),
+                    Expanded(child: Text('Color : ${widget.product.color}')),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(child: Text('Branch : ${widget.product.brand}')),
+                    Expanded(
+                        child: Text('Evaluate : ${widget.product.evaluate}')),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(child: Text('Sold : ${widget.product.sold}')),
+                    Expanded(
+                        child: Text('Warehouse : ${widget.product.wareHouse}')),
+                  ],
+                ),
               ],
             ),
-          ),
-          Column(
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Delete Product'),
-                      content:
-                          Text('Are you sure you want to delete this product?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            // Handle delete action
-                            Provider.of<ProductViewModel>(context,
-                                    listen: false)
-                                .deleteProduct(widget.product.id);
-
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('Delete'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: Text("Del"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              EditProductPage(product: widget.product)));
-                },
-                child: Text('Edit'),
-              ),
-            ],
           ),
         ],
       ),
