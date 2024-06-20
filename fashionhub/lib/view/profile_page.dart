@@ -1,3 +1,5 @@
+import 'package:fashionhub/service/authentication_service.dart';
+import 'package:fashionhub/view/user_profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -10,6 +12,6 @@ class UserProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<UserProfilePage> {
   @override
   Widget build(BuildContext context) {
-    return const Text('Profile');
+    return ProfilePage(authService: AuthenticationService());
   }
 }
