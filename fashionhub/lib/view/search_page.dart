@@ -186,54 +186,72 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.grey[200],
-        iconTheme: IconThemeData(color: Colors.black),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => CartPage()),
-              );
-            },
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 0.0),
+          child: AppBar(
+            backgroundColor: Colors.grey[200],
+            automaticallyImplyLeading: false,
+            iconTheme: IconThemeData(color: Colors.black),
+            title: Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Tìm kiếm...',
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: searchQuery.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(Icons.dangerous_outlined),
+                              onPressed: clearSearchQuery,
+                            )
+                          : null,
+                      contentPadding:
+                          const EdgeInsets.symmetric(vertical: 10.0),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    onChanged: (query) {
+                      performSearch(query);
+                    },
+                    onSubmitted: (query) {
+                      performSearch(query);
+                      addSearchQuery(query);
+                    },
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.shopping_cart),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => CartPage()),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 15, bottom: 15, right: 15, top: 3),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Tìm kiếm...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: Icon(Icons.clear),
-                        onPressed: clearSearchQuery,
-                      )
-                    : null,
-                contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              onChanged: (query) {
-                performSearch(query);
-              },
-              onSubmitted: (query) {
-                performSearch(query);
-                addSearchQuery(query);
-              },
-            ),
             const SizedBox(height: 10.0),
             if (recentSearches.isNotEmpty)
               const Text(

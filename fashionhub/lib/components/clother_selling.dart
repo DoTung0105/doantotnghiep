@@ -1,6 +1,6 @@
+import 'package:fashionhub/components/layout_widget.dart';
 import 'package:fashionhub/model/clother.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class CloSelling extends StatelessWidget {
   final Clother cloSel;
@@ -9,8 +9,6 @@ class CloSelling extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatter = NumberFormat('#,###', 'vi_VN');
-    String formattedPrice = formatter.format(double.parse(cloSel.price));
     String description = cloSel.description.length > 160
         ? cloSel.description.substring(0, 160) + '...'
         : cloSel.description;
@@ -89,10 +87,10 @@ class CloSelling extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            '₫$formattedPrice',
-                            style: TextStyle(color: Colors.red, fontSize: 20),
-                          ),
+                          PriceWidget(
+                              price: cloSel.price,
+                              style:
+                                  TextStyle(color: Colors.red, fontSize: 20)),
                           const SizedBox(width: 10),
                         ],
                       ),

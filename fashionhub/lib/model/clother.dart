@@ -1,15 +1,15 @@
 class Clother {
   final String name;
-  final String price;
+  final double price;
   final String imagePath;
   final String description;
   final String brand;
   final String color;
   final String size;
-  int quantity;
-  double evaluate;
-  int sold;
-  int wareHouse;
+  final double evaluate;
+  final int sold;
+  final int wareHouse;
+  final int quantity;
 
   Clother({
     required this.name,
@@ -19,9 +19,9 @@ class Clother {
     required this.brand,
     required this.color,
     required this.size,
+    required this.evaluate,
+    required this.sold,
+    required this.wareHouse,
     this.quantity = 1,
-    this.evaluate = 0.0,
-    this.sold = 0,
-    this.wareHouse = 0,
   });
 }

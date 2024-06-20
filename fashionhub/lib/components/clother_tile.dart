@@ -1,6 +1,6 @@
+import 'package:fashionhub/components/layout_widget.dart';
 import 'package:fashionhub/model/clother.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class ClotherTile extends StatefulWidget {
   final Clother cloTil;
@@ -23,9 +23,13 @@ class _ClotherTileState extends State<ClotherTile> {
 
   @override
   Widget build(BuildContext context) {
-    final formatter = NumberFormat('#,###', 'vi_VN');
-
-    String formattedPrice = formatter.format(double.parse(widget.cloTil.price));
+    String formatPrice(double price) {
+      if (price == price.roundToDouble()) {
+        return price.toStringAsFixed(0);
+      } else {
+        return price.toString();
+      }
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -97,10 +101,9 @@ class _ClotherTileState extends State<ClotherTile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '₫$formattedPrice',
-                style: TextStyle(color: Colors.red, fontSize: 17),
-              ),
+              PriceWidget(
+                  price: widget.cloTil.price,
+                  style: TextStyle(color: Colors.red, fontSize: 17)),
               Text('Đã bán: ' + formatSold(widget.cloTil.sold)),
             ],
           ),

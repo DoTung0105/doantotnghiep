@@ -1,20 +1,21 @@
-import 'package:fashionhub/components/container_widget.dart';
+import 'package:fashionhub/components/layout_widget.dart';
 import 'package:fashionhub/model/cart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Import this for TextInputFormatter
 import 'package:provider/provider.dart';
 
 class FilterOption extends StatefulWidget {
   final String selectedSortOption;
   final int? minPrice;
   final int? maxPrice;
-  final List<String> selectedBranches; // Thêm thuộc tính này
+  final List<String> selectedBranches;
 
   const FilterOption({
     Key? key,
     required this.selectedSortOption,
     this.minPrice,
     this.maxPrice,
-    required this.selectedBranches, // Thêm thuộc tính này
+    required this.selectedBranches,
   }) : super(key: key);
 
   @override
@@ -25,7 +26,7 @@ class _FilterOptionState extends State<FilterOption> {
   late String _selectedSortOption;
   late TextEditingController _minPriceController;
   late TextEditingController _maxPriceController;
-  List<String> selectedBranches = []; // Lưu trữ danh sách thương hiệu đã chọn
+  List<String> selectedBranches = [];
 
   final List<String> _sortOptions = [
     'Mặc định',
@@ -51,8 +52,7 @@ class _FilterOptionState extends State<FilterOption> {
         text: widget.minPrice != null ? widget.minPrice.toString() : '');
     _maxPriceController = TextEditingController(
         text: widget.maxPrice != null ? widget.maxPrice.toString() : '');
-    selectedBranches = List.from(
-        widget.selectedBranches); // Khởi tạo từ danh sách thương hiệu đã chọn
+    selectedBranches = List.from(widget.selectedBranches);
 
     final cart = Provider.of<Cart>(context, listen: false);
     _allBranches = cart.getBranchesList();
@@ -112,8 +112,7 @@ class _FilterOptionState extends State<FilterOption> {
       'sortOption': _selectedSortOption,
       'minPrice': minPrice,
       'maxPrice': maxPrice,
-      'selectedBranches':
-          selectedBranches, // Truyền danh sách thương hiệu đã chọn
+      'selectedBranches': selectedBranches,
     });
   }
 
@@ -122,7 +121,7 @@ class _FilterOptionState extends State<FilterOption> {
       _selectedSortOption = 'Mặc định';
       _minPriceController.clear();
       _maxPriceController.clear();
-      selectedBranches.clear(); // Đặt lại danh sách thương hiệu
+      selectedBranches.clear();
     });
   }
 
@@ -201,6 +200,10 @@ class _FilterOptionState extends State<FilterOption> {
                                   focusNode: _minPriceFocusNode,
                                   controller: _minPriceController,
                                   keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    NonNegativeIntFormatter(),
+                                  ],
                                   decoration: const InputDecoration(
                                     hintText: 'Tối Thiểu',
                                     border: OutlineInputBorder(),
@@ -220,6 +223,10 @@ class _FilterOptionState extends State<FilterOption> {
                                   focusNode: _maxPriceFocusNode,
                                   controller: _maxPriceController,
                                   keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    NonNegativeIntFormatter(),
+                                  ],
                                   decoration: const InputDecoration(
                                     hintText: 'Tối Đa',
                                     border: OutlineInputBorder(),
@@ -241,10 +248,8 @@ class _FilterOptionState extends State<FilterOption> {
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0),
                         child: Wrap(
-                          spacing:
-                              10, // Khoảng cách giữa các ô theo chiều ngang
-                          runSpacing:
-                              10, // Khoảng cách giữa các dòng theo chiều dọc
+                          spacing: 10,
+                          runSpacing: 10,
                           children: _visibleBranches.map((branch) {
                             return BranchRangeContainer(
                               text: branch,
