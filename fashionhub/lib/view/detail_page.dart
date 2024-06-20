@@ -159,6 +159,7 @@ class _DetailPageState extends State<DetailPage> {
             decrementQuantity: decrementQuantity,
             selectedSize: selectedSize,
             selectSize: selectSize,
+            addToCart: addToCart, // Thêm addToCart vào đây
           ),
         ],
       ),

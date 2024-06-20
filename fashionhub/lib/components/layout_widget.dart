@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class BranchRangeContainer extends StatefulWidget {
   final String text;
@@ -44,5 +46,51 @@ class _BranchRangeContainerState extends State<BranchRangeContainer> {
         ),
       ),
     );
+  }
+}
+
+// Format Price
+class PriceWidget extends StatelessWidget {
+  final double price;
+  final TextStyle? style;
+
+  const PriceWidget({
+    Key? key,
+    required this.price,
+    this.style,
+  }) : super(key: key);
+
+  String formatPrice(double price) {
+    NumberFormat formatter = NumberFormat.currency(
+      locale: 'vi_VN',
+      symbol: '',
+      decimalDigits: 0,
+    );
+    return formatter.format(price).trim();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      '₫${formatPrice(price)}',
+      style: style ?? TextStyle(color: Colors.red, fontSize: 20),
+    );
+  }
+}
+
+class NonNegativeIntFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) {
+      return newValue;
+    }
+
+    final intValue = int.tryParse(newValue.text);
+    if (intValue == null || intValue < 0) {
+      return oldValue;
+    }
+
+    return newValue;
   }
 }

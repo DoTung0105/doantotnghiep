@@ -103,7 +103,7 @@ class _ShopPageState extends State<ShopPage> {
     }
 
     final filteredList = clotherList.where((clother) {
-      final price = double.tryParse(clother.price.replaceAll('.', ''));
+      final price = clother.price;
       if (price == null) return false;
 
       if (_minPrice != null && _maxPrice != null) {
@@ -233,7 +233,7 @@ class _ShopPageState extends State<ShopPage> {
                             fontWeight: FontWeight.bold, fontSize: 22),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.format_list_bulleted_rounded),
+                        icon: const Icon(Icons.dashboard_customize_outlined),
                         onPressed: _showFilterOptions,
                       ),
                     ],

@@ -1,9 +1,12 @@
-import 'package:fashionhub/model/clother.dart';
+import 'package:fashionhub/components/layout_widget.dart';
+import 'package:fashionhub/model/cart.dart';
+import 'package:fashionhub/model/userCart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class CartItem extends StatefulWidget {
-  final Clother cartItem;
+  final UserCart cartItem;
   final ValueChanged<bool?> onCheckboxChanged;
   final bool isChecked;
 
@@ -55,6 +58,8 @@ class _CartItemState extends State<CartItem>
     setState(() {
       widget.cartItem.quantity++;
     });
+    Provider.of<Cart>(context, listen: false)
+        .updateItemQuantity(widget.cartItem, widget.cartItem.quantity);
   }
 
   void decrementQuantity() {
@@ -63,16 +68,14 @@ class _CartItemState extends State<CartItem>
         widget.cartItem.quantity--;
       }
     });
+    Provider.of<Cart>(context, listen: false)
+        .updateItemQuantity(widget.cartItem, widget.cartItem.quantity);
   }
 
   @override
   Widget build(BuildContext context) {
-    final formatter = NumberFormat('#,###', 'vi_VN');
-    String formattedPrice =
-        formatter.format(double.parse(widget.cartItem.price));
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      //
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -117,14 +120,14 @@ class _CartItemState extends State<CartItem>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${widget.cartItem.color},${widget.cartItem.size}',
+                        '${widget.cartItem.color}, ${widget.cartItem.size}',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            '₫$formattedPrice',
+                          PriceWidget(
+                            price: widget.cartItem.price,
                             style: TextStyle(color: Colors.red, fontSize: 16),
                           ),
                           Row(
@@ -166,8 +169,9 @@ class _CartItemState extends State<CartItem>
   }
 }
 
+// Widget of Payment Container in CartPage
 class PaymentSection extends StatelessWidget {
-  final List<Clother> selectedItems;
+  final List<UserCart> selectedItems;
   final bool allItemsSelected;
   final ValueChanged<bool?> onSelectAllCheckedChange;
   final VoidCallback onPayment;
@@ -186,7 +190,7 @@ class PaymentSection extends StatelessWidget {
     // Calculate total price of selected items
     double totalPrice = selectedItems.fold(
       0,
-      (sum, item) => sum + double.parse(item.price) * item.quantity,
+      (sum, item) => sum + item.price * item.quantity,
     );
 
     // Format total price

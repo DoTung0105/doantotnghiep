@@ -1,6 +1,9 @@
 import 'package:fashionhub/firebase_options.dart';
 import 'package:fashionhub/model/cart.dart';
-import 'package:fashionhub/view/home_page.dart';
+
+import 'package:fashionhub/service/authentication_service.dart';
+
+
 import 'package:fashionhub/view/login_screen.dart';
 import 'package:fashionhub/viewmodel/products_viewmodel.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,7 +23,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ProductViewModel()),
-        ChangeNotifierProvider(create: (_) => Cart()),
+        ChangeNotifierProvider(
+          create: (_) => Cart(AuthenticationService()),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -1,9 +1,7 @@
-import 'package:fashionhub/model/cart.dart';
+import 'package:fashionhub/components/layout_widget.dart';
 import 'package:fashionhub/model/clother.dart';
 import 'package:fashionhub/view/payment_page.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class ProductDetails extends StatelessWidget {
   final Clother product;
@@ -12,6 +10,7 @@ class ProductDetails extends StatelessWidget {
   final VoidCallback decrementQuantity;
   final String selectedSize;
   final Function(String) selectSize;
+  final VoidCallback addToCart; // Thêm thuộc tính này
 
   const ProductDetails({
     Key? key,
@@ -21,15 +20,13 @@ class ProductDetails extends StatelessWidget {
     required this.decrementQuantity,
     required this.selectedSize,
     required this.selectSize,
+    required this.addToCart, // Khởi tạo thuộc tính này
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double price = double.parse(product.price);
+    double price = product.price;
     double totalPrice = price * quantityCount;
-    final formattedTotalPrice = NumberFormat("#,###", "vi").format(totalPrice);
-    final formatter = NumberFormat('#,###', 'vi_VN');
-    String formattedPrice = formatter.format(double.parse(product.price));
 
     return Container(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10, top: 8),
@@ -40,8 +37,8 @@ class ProductDetails extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '₫$formattedPrice',
+              PriceWidget(
+                price: product.price,
                 style: const TextStyle(
                   color: Colors.red,
                   fontSize: 23,
@@ -165,17 +162,8 @@ class ProductDetails extends StatelessWidget {
                         bottomLeft: Radius.circular(10)),
                   ),
                   child: MaterialButton(
-                    onPressed: () {
-                      Provider.of<Cart>(context, listen: false)
-                          .addItemToCart(product, quantityCount, selectedSize);
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Sản phẩm đã được thêm vào giỏ hàng'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    },
+                    onPressed:
+                        addToCart, // Gọi addToCart khi người dùng nhấn nút
                     child: const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -223,8 +211,8 @@ class ProductDetails extends StatelessWidget {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        Text(
-                          '₫$formattedTotalPrice',
+                        PriceWidget(
+                          price: totalPrice,
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

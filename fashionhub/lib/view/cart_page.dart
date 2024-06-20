@@ -1,6 +1,6 @@
 import 'package:fashionhub/components/cart_item.dart';
 import 'package:fashionhub/model/cart.dart';
-import 'package:fashionhub/model/clother.dart';
+import 'package:fashionhub/model/userCart.dart';
 import 'package:fashionhub/view/payment_page.dart';
 import 'package:fashionhub/view/search_page.dart';
 import 'package:flutter/material.dart';
@@ -14,95 +14,110 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  List<Clother> selectedItems = [];
+  List<UserCart> selectedItems = [];
 
-  void onItemCheckedChange(bool? isChecked, Clother clother) {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<Cart>(context, listen: false).fetchClotherList();
+      Provider.of<Cart>(context, listen: false).fetchUserCart();
+    });
+  }
+
+  void onItemCheckedChange(bool? isChecked, UserCart cartItem) {
     setState(() {
       if (isChecked == true) {
-        selectedItems.add(clother);
+        selectedItems.add(cartItem);
       } else {
-        selectedItems.remove(clother);
+        selectedItems.remove(cartItem);
       }
     });
   }
 
-  void onSelectAllCheckedChange(bool? isChecked, List<Clother> cartItems) {
+  void onSelectAllCheckedChange(bool? isChecked, List<UserCart> cartItems) {
     setState(() {
       if (isChecked == true) {
         selectedItems = List.from(cartItems);
       } else {
-        selectedItems.clear();
+        for (var item in cartItems) {
+          selectedItems.remove(item);
+        }
       }
     });
   }
 
-  void removeSelectedItems() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              Icon(
-                Icons.warning,
-                color: Colors.yellow[700],
+  Future<void> removeSelectedItems() async {
+    bool confirmed = await showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Row(
+                children: [
+                  Icon(
+                    Icons.warning,
+                    color: Colors.yellow[700],
+                  ),
+                  const SizedBox(width: 5),
+                  const Text(
+                    'Xác nhận',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  )
+                ],
               ),
-              const SizedBox(width: 5),
-              Text(
-                'Xác nhận',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
-          content: Text(
-            'Bạn có chắc chắn muốn xóa?',
-            style: TextStyle(fontSize: 15),
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: 113,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 222, 217, 217),
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: MaterialButton(
-                    child: Text('Hủy'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
-                Container(
-                  width: 113,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 211, 117, 116),
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: MaterialButton(
-                    child: Text('Xóa'),
-                    onPressed: () {
-                      Provider.of<Cart>(context, listen: false)
-                          .removeItems(selectedItems);
-                      setState(() {
-                        selectedItems.clear();
-                      });
-                      Navigator.of(context).pop();
-                    },
-                  ),
+              content: const Text(
+                'Bạn có chắc chắn muốn xóa?',
+                style: TextStyle(fontSize: 15),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: 113,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 222, 217, 217),
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: MaterialButton(
+                        child: const Text('Hủy'),
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                      ),
+                    ),
+                    Container(
+                      width: 113,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 211, 117, 116),
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: MaterialButton(
+                        child: const Text('Xóa'),
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
-            ),
-          ],
-        );
-      },
-    );
+            );
+          },
+        ) ??
+        false;
+
+    if (confirmed) {
+      await Provider.of<Cart>(context, listen: false)
+          .removeItems(selectedItems);
+      setState(() {
+        selectedItems.clear();
+      });
+    }
   }
 
   void navToPaymentPage() {
@@ -125,13 +140,13 @@ class _CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-    var cartItems = Provider.of<Cart>(context, listen: true).getUserCart();
+    var cartItems = Provider.of<Cart>(context).getUserCart();
 
     bool allItemsSelected =
         cartItems.isNotEmpty && selectedItems.length == cartItems.length;
 
     // Group cart items by brand
-    Map<String, List<Clother>> groupedItems = {};
+    Map<String, List<UserCart>> groupedItems = {};
     for (var item in cartItems) {
       if (groupedItems.containsKey(item.brand)) {
         groupedItems[item.brand]!.add(item);
@@ -176,7 +191,7 @@ class _CartPageState extends State<CartPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset('lib/images/cart.png'),
-                  Text(
+                  const Text(
                     'Giỏ hàng hiện đang trống',
                     style: TextStyle(
                       fontSize: 17,
@@ -195,10 +210,12 @@ class _CartPageState extends State<CartPage> {
                     itemCount: groupedItems.length,
                     itemBuilder: (context, index) {
                       String brand = groupedItems.keys.elementAt(index);
-                      List<Clother> items = groupedItems[brand]!;
+                      List<UserCart> items = groupedItems[brand]!;
+                      bool allItemsInGroupSelected =
+                          items.every((item) => selectedItems.contains(item));
                       return Container(
-                        margin:
-                            EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 5),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(color: Colors.grey),
@@ -212,7 +229,7 @@ class _CartPageState extends State<CartPage> {
                                 border: Border.all(
                                     color: const Color.fromARGB(
                                         255, 230, 222, 222)),
-                                borderRadius: BorderRadius.only(
+                                borderRadius: const BorderRadius.only(
                                   topLeft: Radius.circular(10),
                                   topRight: Radius.circular(10),
                                 ),
@@ -220,24 +237,22 @@ class _CartPageState extends State<CartPage> {
                               child: Row(
                                 children: [
                                   Checkbox(
-                                    value: selectedItems
-                                        .toSet()
-                                        .containsAll(items),
+                                    value: allItemsInGroupSelected,
                                     onChanged: (isChecked) {
                                       onSelectAllCheckedChange(
                                           isChecked, items);
                                     },
                                   ),
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                   Text(
                                     brand,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   IconButton(
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.arrow_forward_ios_rounded,
                                       size: 14.5,
                                     ),
@@ -262,7 +277,7 @@ class _CartPageState extends State<CartPage> {
                     },
                   ),
                 ),
-                Divider(),
+                const Divider(),
                 PaymentSection(
                   selectedItems: selectedItems,
                   allItemsSelected: allItemsSelected,
