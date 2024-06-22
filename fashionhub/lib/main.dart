@@ -2,7 +2,8 @@ import 'package:fashionhub/firebase_options.dart';
 import 'package:fashionhub/model/cart.dart';
 
 import 'package:fashionhub/service/authentication_service.dart';
-
+import 'package:fashionhub/view/changepassword_screen.dart';
+import 'package:fashionhub/view/forgotpass_screen.dart';
 
 import 'package:fashionhub/view/login_screen.dart';
 import 'package:fashionhub/viewmodel/products_viewmodel.dart';

@@ -419,6 +419,8 @@ class _EditProductPageState extends State<EditProductPage> {
     super.initState();
     _descriptionController =
         TextEditingController(text: widget.product.description);
+        _descriptionController =
+       
     // _priceController =
     //     TextEditingController(text: widget.product.price.toString());
     _priceController = TextEditingController(
