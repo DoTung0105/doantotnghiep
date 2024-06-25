@@ -1,25 +1,26 @@
 class UserModel {
-  final String uid;
-  final String email;
-  final String displayName;
-  final String address;
-  final String password; // Thêm trường password
-  final String phone;
-  final String role;
+  String uid;
+  String email;
+  String displayName;
+  String address;
+  String password; // Thêm trường password
+  String phone;
+  String role;
   bool? locked;
+  String imagePath;
 
-  UserModel(
-      {required this.uid,
-      required this.email,
-      required this.displayName,
-      required this.address,
-      required this.password,
-      required this.phone,
-      required this.role,
-      this.locked = false
-
-      // Thêm vào constructor
-      });
+  UserModel({
+    required this.uid,
+    required this.email,
+    required this.displayName,
+    required this.address,
+    required this.password,
+    required this.phone,
+    required this.role,
+    this.locked = false,
+    required this.imagePath,
+    // Thêm vào constructor
+  });
 
   Map<String, dynamic> toMap() {
     return {
@@ -30,7 +31,8 @@ class UserModel {
       'password': password,
       'phone': phone,
       'role': role,
-      'locked': locked
+      'locked': locked,
+      'image': imagePath
       // Thêm vào map
     };
   }
@@ -44,7 +46,8 @@ class UserModel {
         password: map['password'],
         phone: map['phone'],
         role: map['role'],
-        locked: map['locked'] ?? false
+        locked: map['locked'] ?? false,
+        imagePath: map['image']
         // Thêm vào fromMap
         );
   }
