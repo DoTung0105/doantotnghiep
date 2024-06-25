@@ -1,19 +1,21 @@
-import 'package:fashionhub/model/user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
 
-// class UserService {
-//   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+class ImageService {
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  final uuid = Uuid();
 
-//   Future<List<UserModel>> getUsers() async {
-//     QuerySnapshot snapshot = await _firestore.collection('users').get();
-//     return snapshot.docs.map((doc) => UserModel.fromMap(doc.data() as Map<String, dynamic>)).toList();
-//   }
-
-//   Future<void> lockUser(String uid) async {
-//     await _firestore.collection('users').doc(uid).update({'locked': true});
-//   }
-
-//   Future<void> unlockUser(String uid) async {
-//     await _firestore.collection('users').doc(uid).update({'locked': false});
-//   }
-// }
+  Future<String> uploadImage(File image, String userId) async {
+    try {
+      String fileName = '${uuid.v4()}.jpg'; // Tạo tên tệp duy nhất
+      TaskSnapshot snapshot =
+          await _storage.ref().child('users/$userId/$fileName').putFile(image);
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      throw e;
+    }
+  }
+}

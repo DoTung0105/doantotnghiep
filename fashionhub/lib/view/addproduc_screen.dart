@@ -167,6 +167,9 @@ class AddProductPage extends StatelessWidget {
                 FadeAnimation(
                   0.4,
                   TextFormField(
+                    // keyboardType: TextInputType.multiline,
+                    
+                    maxLines: null,
                     decoration: InputDecoration(
                       hintText: 'Mô tả',
                       filled: true,

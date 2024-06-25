@@ -223,12 +223,12 @@ class _UserListScreenState extends State<users_Screen> {
                       SizedBox(height: 8.0),
                       Text(user.email ?? ''),
                       SizedBox(height: 4.0),
-                      Text('Role: ${user.role}' ?? ''),
+                      Text('Chức vụ: ${user.role}' ?? ''),
                       SizedBox(height: 4.0),
                       Text(
                         user.locked == true
-                            ? 'Trạng thái: khoá'
-                            : 'Trạng thái: mở',
+                            ? 'Trạng thái: Ngừng hoạt động'
+                            : 'Trạng thái: Hoạt động',
                         style: TextStyle(
                           color:
                               user.locked == true ? Colors.red : Colors.green,

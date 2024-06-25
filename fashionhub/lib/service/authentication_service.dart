@@ -49,7 +49,9 @@ class AuthenticationService {
       String address,
       String phone,
       String role,
-      bool locked) async {
+      bool locked,
+      String image
+      ) async {
     try {
       UserCredential userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
@@ -64,7 +66,8 @@ class AuthenticationService {
             password: password,
             phone: phone,
             role: role,
-            locked: false);
+            locked: false,
+            imagePath:image);
         await _firestore.collection('users').doc(user.uid).set(newUser.toMap());
 
         await user.sendEmailVerification();

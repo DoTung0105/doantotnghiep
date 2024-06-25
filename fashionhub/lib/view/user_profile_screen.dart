@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fashionhub/service/authentication_service.dart';
 import 'package:fashionhub/model/user_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
   final AuthenticationService authService;
@@ -40,7 +44,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-//tung 22/6
   void _navigateToEditProfile() {
     Navigator.push(
       context,
@@ -57,55 +60,91 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Hồ sơ của bạn'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              _navigateToEditProfile();
-            },
-          ),
-        ],
       ),
       body: _currentUser == null
           ? Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Container(
-                height: MediaQuery.of(context).size.height / 5,
-                padding: EdgeInsets.all(1),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color.fromARGB(163, 151, 147, 147),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                  border: Border.all(color: Colors.black),
-                ),
-                child: Row(
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: _currentUser!.imagePath != null &&
+                                _currentUser!.imagePath!.isNotEmpty
+                            ? Image.network(
+                                _currentUser!.imagePath!,
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              )
+                            : Icon(
+                                Icons.person,
+                                size: 100,
+                              ),
+                      ),
+                    ),
+                    Divider(
+                      thickness: 1,
+                      color: Colors.black,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Thông tin cá nhân',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Email: ${_currentUser!.email}',
+                        Text('Email:        ${_currentUser!.email}',
                             style: TextStyle(fontSize: 18)),
-                        SizedBox(height: 8),
-                        Text('Tên: ${_currentUser!.displayName}',
+                        Divider(
+                          thickness: 1,
+                        ),
+                        Text('Tên:           ${_currentUser!.displayName}',
                             style: TextStyle(fontSize: 18)),
-                        SizedBox(height: 8),
-                        Text('Địa chỉ: ${_currentUser!.address}',
+                        Divider(
+                          thickness: 1,
+                        ),
+                        Text('Địa chỉ:      ${_currentUser!.address}',
                             style: TextStyle(fontSize: 18)),
-                        SizedBox(height: 8),
-                        Text('phone: ${_currentUser!.phone}',
-                            style: TextStyle(fontSize: 18)),
+                        Divider(
+                          thickness: 1,
+                        ),
+                        Text('Điện thoại: ${_currentUser!.phone}',
+                            style: TextStyle(
+                              fontSize: 18,
+                            )),
                       ],
                     ),
-                    Column(
-                      children: [],
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shadowColor: Colors.black,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 150),
+                              ),
+                              onPressed: _navigateToEditProfile,
+                              child: Text(
+                                'Chỉnh sửa',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                              )),
+                        ),
+                      ],
                     )
                   ],
                 ),
@@ -131,6 +170,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _displayNameController;
   late TextEditingController _addressController;
   late TextEditingController _phoneController;
+  late TextEditingController _imagePathController;
 
   @override
   void initState() {
@@ -140,6 +180,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _addressController =
         TextEditingController(text: widget.currentUser?.address);
     _phoneController = TextEditingController(text: widget.currentUser?.phone);
+    _imagePathController =
+        TextEditingController(text: widget.currentUser?.imagePath ?? '');
   }
 
   @override
@@ -147,22 +189,86 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _displayNameController.dispose();
     _addressController.dispose();
     _phoneController.dispose();
+    _imagePathController.dispose();
     super.dispose();
   }
 
   Future<void> _updateProfile() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Update the user's profile information in Firestore
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.currentUser?.uid)
-          .update({
-        'displayName': _displayNameController.text,
-        'address': _addressController.text,
-        'phone': _phoneController.text,
-      });
+      try {
+        String imagePath = _imagePathController.text;
+        String? downloadURL;
+        // Check if user selected a new image
+        if (imagePath.isNotEmpty &&
+            !(imagePath.startsWith('http') || imagePath.startsWith('https'))) {
+          // Upload image to Firebase Storage
+          downloadURL = await uploadImage(File(imagePath));
+          // Update user profile with new image URL
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.currentUser?.uid)
+              .update({
+            'displayName': _displayNameController.text,
+            'address': _addressController.text,
+            'phone': _phoneController.text,
+            'image': downloadURL,
+          });
+        } else {
+          // Update user profile without changing image URL
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.currentUser?.uid)
+              .update({
+            'displayName': _displayNameController.text,
+            'address': _addressController.text,
+            'phone': _phoneController.text,
+          });
+        }
 
-      Navigator.pop(context);
+        // Cập nhật thông tin người dùng hiện tại
+        setState(() {
+          widget.currentUser!.displayName = _displayNameController.text;
+          widget.currentUser!.address = _addressController.text;
+          widget.currentUser!.phone = _phoneController.text;
+          if (downloadURL != null) {
+            widget.currentUser!.imagePath = downloadURL;
+          }
+        });
+
+        Navigator.pop(context);
+      } catch (e) {
+        print('Error updating profile: $e');
+        // Handle error as needed
+      }
+    }
+  }
+
+  Future<String> uploadImage(File image) async {
+    try {
+      // Create a reference to the storage
+      Reference storageRef = FirebaseStorage.instance
+          .ref()
+          .child('avatars/${widget.currentUser?.uid}.jpg');
+      // Upload the file
+      await storageRef.putFile(image);
+      // Return the URL of the uploaded file
+      return await storageRef.getDownloadURL();
+    } catch (e) {
+      print('Error uploading image: $e');
+      throw e;
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imagePathController.text = pickedFile.path;
+      });
+    } else {
+      print('No image selected.');
     }
   }
 
@@ -178,6 +284,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
           key: _formKey,
           child: ListView(
             children: <Widget>[
+              GestureDetector(
+                onTap: _pickImage,
+                child: Center(
+                  child: _imagePathController.text.isNotEmpty
+                      ? CircleAvatar(
+                          radius: 50,
+                          backgroundImage:
+                              _imagePathController.text.startsWith('http')
+                                  ? NetworkImage(_imagePathController.text)
+                                  : FileImage(File(_imagePathController.text))
+                                      as ImageProvider,
+                        )
+                      : CircleAvatar(
+                          radius: 50,
+                          child: Icon(Icons.person),
+                        ),
+                ),
+              ),
+              SizedBox(height: 16),
               TextFormField(
                 controller: _displayNameController,
                 decoration: InputDecoration(
@@ -185,15 +310,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black, // Default border color
-                    ),
+                    borderSide: BorderSide(color: Colors.black),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black, // Default border color
-                    ),
+                    borderSide: BorderSide(color: Colors.black),
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -214,15 +335,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black, // Default border color
-                    ),
+                    borderSide: BorderSide(color: Colors.black),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black, // Default border color
-                    ),
+                    borderSide: BorderSide(color: Colors.black),
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -241,15 +358,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black, // Default border color
-                    ),
+                    borderSide: BorderSide(color: Colors.black),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black, // Default border color
-                    ),
+                    borderSide: BorderSide(color: Colors.black),
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),

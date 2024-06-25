@@ -31,6 +31,7 @@ class _ForgotpassScreenState extends State<ForgotpassScreen> {
       appBar: AppBar(
         title: Text('Quên Mật Khẩu'),
         centerTitle: true,
+        backgroundColor: Colors.transparent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -87,8 +88,56 @@ class _ForgotpassScreenState extends State<ForgotpassScreen> {
                           _passwordResetSuccessful = true;
                         });
 
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => success()));
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            content: Text(
+                              'Vui lòng kiểm tra email để đổi mật khẩu!',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            title: Row(
+                              children: [
+                                Icon(
+                                  Icons.info_rounded,
+                                  color: Colors.yellow[700],
+                                ),
+                                const SizedBox(width: 5),
+                                const Text(
+                                  'Thông báo',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                            actions: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    width: 113,
+                                    height: 36,
+                                    decoration: BoxDecoration(
+                                      color: Color.fromARGB(255, 222, 217, 217),
+                                      border: Border.all(color: Colors.black),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: MaterialButton(
+                                      child: const Text('Done'),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    LoginScreen()));
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -112,60 +161,16 @@ class _ForgotpassScreenState extends State<ForgotpassScreen> {
               ],
             ),
             const SizedBox(height: 10),
-            if (_passwordResetSuccessful)
-              const Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: 24,
-              ),
+            // if (_passwordResetSuccessful)
+            //   const Icon(
+            //     Icons.check_circle,
+            //     color: Colors.green,
+            //     size: 24,
+            //   ),
           ],
         ),
       ),
-      backgroundColor: Color.fromRGBO(89, 180, 195, 1.0),
-    );
-  }
-}
-
-class success extends StatelessWidget {
-  const success({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Đặt lại mk'),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Text(
-              'Link đổi mật khẩu đã được gửi vào mail cuar bạn vui lòng check và đổi mật khẩu!\nNhấn done để hoàn thành',
-              style: TextStyle(fontSize: 20),
-            ),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shadowColor: Color.fromARGB(255, 150, 170, 180),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50)),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10, horizontal: 100)),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()));
-                },
-                child: Text(
-                  'Done',
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
-                ))
-          ],
-        ),
-      ),
+      backgroundColor: Colors.grey[300],
     );
   }
 }
