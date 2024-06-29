@@ -17,6 +17,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController displayNameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+
   final role = "user";
   final locked = false;
 
@@ -234,6 +235,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     String displayName = displayNameController.text.trim();
                     String address = addressController.text.trim();
                     String phone = phoneController.text.trim();
+
                     print("Attempting to sign up with email: $email");
 
                     if (email.isEmpty ||
@@ -261,7 +263,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           content: Text('Mật khẩu phải có ít nhất 6 ký tự')));
                       return;
                     }
-                   
+
                     // Kiểm tra định dạng email
                     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
                     if (!emailRegex.hasMatch(email)) {
@@ -269,8 +271,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           content: Text('Địa chỉ email không hợp lệ')));
                       return;
                     }
-                    User? user = await _signUpViewModel.signUp(email, password,
-                        displayName, address, phone, role, locked == false);
+                    User? user = await _signUpViewModel.signUp(
+                        email,
+                        password,
+                        displayName,
+                        address,
+                        phone,
+                        role,
+                        locked == false,
+                        '');
                     if (user != null) {
                       print("Sign up successful, user: ${user.email}");
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
