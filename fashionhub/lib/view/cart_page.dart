@@ -1,8 +1,8 @@
 import 'package:fashionhub/components/cart_item.dart';
-import 'package:fashionhub/model/cart.dart';
-import 'package:fashionhub/model/userCart.dart';
-import 'package:fashionhub/view/payment_page.dart';
+import 'package:fashionhub/model/userCart_model.dart';
+import 'package:fashionhub/view/checkout_page.dart';
 import 'package:fashionhub/view/search_page.dart';
+import 'package:fashionhub/viewmodel/cart_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -124,7 +124,7 @@ class _CartPageState extends State<CartPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PaymentPage(),
+        builder: (context) => CheckOutPage(selectedItems: selectedItems),
       ),
     );
   }

@@ -1,5 +1,5 @@
 class UserCart {
-  final String name;
+  final String productName;
   double price;
   final String imagePath;
   final String description;
@@ -13,7 +13,7 @@ class UserCart {
   int wareHouse;
 
   UserCart({
-    required this.name,
+    required this.productName,
     required this.price,
     required this.imagePath,
     required this.description,
@@ -29,7 +29,7 @@ class UserCart {
 
   factory UserCart.fromMap(Map<String, dynamic> map) {
     return UserCart(
-      name: map['name'] ?? '',
+      productName: map['name'] ?? '',
       price: map['price']?.toDouble() ?? 0.0,
       imagePath: map['imagePath'] ?? '',
       description: map['description'] ?? '',

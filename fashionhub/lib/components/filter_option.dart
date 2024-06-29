@@ -1,5 +1,5 @@
 import 'package:fashionhub/components/layout_widget.dart';
-import 'package:fashionhub/model/cart.dart';
+import 'package:fashionhub/viewmodel/cart_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import this for TextInputFormatter
 import 'package:provider/provider.dart';

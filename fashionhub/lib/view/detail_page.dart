@@ -1,6 +1,8 @@
 import 'package:fashionhub/components/product_detail.dart';
-import 'package:fashionhub/model/cart.dart';
 import 'package:fashionhub/model/clother.dart';
+import 'package:fashionhub/model/userCart_model.dart';
+import 'package:fashionhub/view/checkout_page.dart';
+import 'package:fashionhub/viewmodel/cart_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -50,6 +52,32 @@ class _DetailPageState extends State<DetailPage> {
       const SnackBar(
         content: Text('Sản phẩm đã được thêm vào giỏ hàng'),
         duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void buyNow() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CheckOutPage(
+          selectedItems: [
+            UserCart(
+              productName: widget.detailCol.name,
+              price: widget.detailCol.price,
+              imagePath: widget.detailCol.imagePath,
+              description: widget.detailCol.description,
+              brand: widget.detailCol.brand,
+              color: widget.detailCol.color,
+              size: selectedSize,
+              uid: '', // Cung cấp giá trị mặc định cho uid
+              evaluate: widget.detailCol.evaluate,
+              sold: widget.detailCol.sold,
+              wareHouse: widget.detailCol.wareHouse,
+              quantity: quantityCount,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -159,7 +187,8 @@ class _DetailPageState extends State<DetailPage> {
             decrementQuantity: decrementQuantity,
             selectedSize: selectedSize,
             selectSize: selectSize,
-            addToCart: addToCart, // Thêm addToCart vào đây
+            addToCart: addToCart,
+            buyNow: buyNow, // Thêm buyNow vào đây
           ),
         ],
       ),

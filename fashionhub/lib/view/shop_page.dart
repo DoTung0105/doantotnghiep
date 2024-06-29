@@ -4,9 +4,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fashionhub/components/clother_selling.dart';
 import 'package:fashionhub/components/clother_tile.dart';
 import 'package:fashionhub/components/filter_option.dart';
-import 'package:fashionhub/model/cart.dart';
 import 'package:fashionhub/model/clother.dart';
 import 'package:fashionhub/view/detail_page.dart';
+import 'package:fashionhub/viewmodel/cart_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -220,10 +220,9 @@ class _ShopPageState extends State<ShopPage> {
                     _carouselController.animateToPage(index);
                   },
                 ),
-                const SizedBox(height: 15),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 25.0, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 25.0, vertical: 3),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -239,7 +238,6 @@ class _ShopPageState extends State<ShopPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 15),
                 allClotherList.isEmpty
                     ? const Center(
                         child: Text(

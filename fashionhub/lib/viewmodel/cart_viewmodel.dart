@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fashionhub/model/address_model.dart';
 import 'package:fashionhub/model/clother.dart';
-import 'package:fashionhub/model/userCart.dart';
+import 'package:fashionhub/model/userCart_model.dart';
 import 'package:fashionhub/service/authentication_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -63,20 +64,26 @@ class Cart extends ChangeNotifier {
     }
   }
 
-  List<Clother> getClotherList() {
-    return cloShop;
-  }
-
-  List<UserCart> getUserCart() {
-    return userCart;
-  }
-
-  List<String> getBranchesList() {
-    Set<String> brandesSet = {};
-    for (var item in cloShop) {
-      brandesSet.add(item.brand);
+  Future<AddressModel?> fetchUserAddress() async {
+    User? currentUser = _authenticationService.getCurrentUser();
+    if (currentUser == null) {
+      print('User is not logged in');
+      return null;
     }
-    return brandesSet.toList();
+    String uid = currentUser.uid;
+
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('deliveryAddress')
+        .where('uid', isEqualTo: uid)
+        .get();
+
+    if (querySnapshot.docs.isEmpty) {
+      return null;
+    }
+
+    DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+    return AddressModel.fromMap(
+        documentSnapshot.data() as Map<String, dynamic>);
   }
 
   Future<void> addItemToCart(Clother clother, int quantity, String size) async {
@@ -90,17 +97,36 @@ class Cart extends ChangeNotifier {
 
       bool productExists = false;
       for (var item in userCart) {
-        if (item.name == clother.name &&
+        if (item.productName == clother.name &&
             item.size == size &&
             item.color == clother.color) {
           item.quantity += quantity;
           productExists = true;
+
+          // Update quantity of existing item in Firestore
+          QuerySnapshot snapshot = await FirebaseFirestore.instance
+              .collection('userCart')
+              .where('name', isEqualTo: clother.name)
+              .where('size', isEqualTo: size)
+              .where('color', isEqualTo: clother.color)
+              .where('uid', isEqualTo: uid)
+              .get();
+
+          if (snapshot.docs.isNotEmpty) {
+            for (var doc in snapshot.docs) {
+              await FirebaseFirestore.instance
+                  .collection('userCart')
+                  .doc(doc.id)
+                  .update({'quantity': FieldValue.increment(quantity)});
+            }
+          }
           break;
         }
       }
+
       if (!productExists) {
         UserCart cartItem = UserCart(
-          name: clother.name,
+          productName: clother.name,
           price: clother.price.toDouble(),
           imagePath: clother.imagePath,
           description: clother.description,
@@ -117,7 +143,7 @@ class Cart extends ChangeNotifier {
 
         // Add new item to Firestore
         await FirebaseFirestore.instance.collection('userCart').add({
-          'name': cartItem.name,
+          'name': cartItem.productName,
           'price': cartItem.price,
           'imagePath': cartItem.imagePath,
           'description': cartItem.description,
@@ -127,24 +153,6 @@ class Cart extends ChangeNotifier {
           'quantity': cartItem.quantity,
           'uid': uid,
         });
-      } else {
-        // Update quantity of existing item in Firestore
-        QuerySnapshot snapshot = await FirebaseFirestore.instance
-            .collection('userCart')
-            .where('name', isEqualTo: clother.name)
-            .where('size', isEqualTo: size)
-            .where('color', isEqualTo: clother.color)
-            .where('uid', isEqualTo: uid)
-            .get();
-
-        if (snapshot.docs.isNotEmpty) {
-          for (var doc in snapshot.docs) {
-            await FirebaseFirestore.instance
-                .collection('userCart')
-                .doc(doc.id)
-                .update({'quantity': FieldValue.increment(quantity)});
-          }
-        }
       }
 
       notifyListeners();
@@ -153,25 +161,61 @@ class Cart extends ChangeNotifier {
     }
   }
 
-  List<Clother> sortClotherList(String sortOption) {
-    List<Clother> sortedList = List.from(cloShop);
-    switch (sortOption) {
-      case 'Giá từ thấp đến cao':
-        sortedList.sort((a, b) => a.price.compareTo(b.price));
-        break;
-      case 'Giá từ cao đến thấp':
-        sortedList.sort((a, b) => b.price.compareTo(a.price));
-        break;
-      case 'Lượt bán':
-        sortedList.sort((a, b) => b.sold.compareTo(a.sold));
-        break;
-      case 'Đánh giá':
-        sortedList.sort((a, b) => b.evaluate.compareTo(a.evaluate));
-        break;
-      default:
-        break;
+  Future<void> saveDeliveryAddress(
+      String address, String name, String phone) async {
+    try {
+      User? currentUser = _authenticationService.getCurrentUser();
+      if (currentUser == null) {
+        print('User is not logged in');
+        return;
+      }
+      String uid = currentUser.uid;
+
+      await FirebaseFirestore.instance.collection('deliveryAddress').add({
+        'address': address,
+        'name': name,
+        'phone': phone,
+        'uid': uid,
+      });
+
+      print('Delivery address saved successfully');
+    } catch (e) {
+      print('Error saving delivery address: $e');
     }
-    return sortedList;
+  }
+
+  Future<void> updateDeliveryAddress(
+      String address, String name, String phone) async {
+    try {
+      User? currentUser = _authenticationService.getCurrentUser();
+      if (currentUser == null) {
+        print('User is not logged in');
+        return;
+      }
+      String uid = currentUser.uid;
+
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('deliveryAddress')
+          .where('uid', isEqualTo: uid)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final docId = querySnapshot.docs.first.id;
+        await FirebaseFirestore.instance
+            .collection('deliveryAddress')
+            .doc(docId)
+            .update({
+          'address': address,
+          'name': name,
+          'phone': phone,
+        });
+        print('Delivery address updated successfully');
+      } else {
+        await saveDeliveryAddress(address, name, phone);
+      }
+    } catch (e) {
+      print('Error updating delivery address: $e');
+    }
   }
 
   Future<void> removeItemFromCart(UserCart clother) async {
@@ -184,7 +228,7 @@ class Cart extends ChangeNotifier {
       String uid = currentUser.uid;
 
       for (var item in userCart) {
-        if (item.name == clother.name &&
+        if (item.productName == clother.productName &&
             item.size == clother.size &&
             item.color == clother.color) {
           if (item.quantity > 1) {
@@ -193,7 +237,7 @@ class Cart extends ChangeNotifier {
             // Update Firestore quantity
             QuerySnapshot snapshot = await FirebaseFirestore.instance
                 .collection('userCart')
-                .where('name', isEqualTo: clother.name)
+                .where('name', isEqualTo: clother.productName)
                 .where('size', isEqualTo: clother.size)
                 .where('color', isEqualTo: clother.color)
                 .where('uid', isEqualTo: uid)
@@ -212,7 +256,7 @@ class Cart extends ChangeNotifier {
             // Remove from Firestore
             QuerySnapshot snapshot = await FirebaseFirestore.instance
                 .collection('userCart')
-                .where('name', isEqualTo: clother.name)
+                .where('name', isEqualTo: clother.productName)
                 .where('size', isEqualTo: clother.size)
                 .where('color', isEqualTo: clother.color)
                 .where('uid', isEqualTo: uid)
@@ -243,7 +287,7 @@ class Cart extends ChangeNotifier {
       String uid = currentUser.uid;
 
       for (var item in userCart) {
-        if (item.name == clother.name &&
+        if (item.productName == clother.productName &&
             item.size == clother.size &&
             item.color == clother.color) {
           item.quantity = quantity;
@@ -251,7 +295,7 @@ class Cart extends ChangeNotifier {
           // Update Firestore quantity
           QuerySnapshot snapshot = await FirebaseFirestore.instance
               .collection('userCart')
-              .where('name', isEqualTo: clother.name)
+              .where('name', isEqualTo: clother.productName)
               .where('size', isEqualTo: clother.size)
               .where('color', isEqualTo: clother.color)
               .where('uid', isEqualTo: uid)
@@ -286,7 +330,7 @@ class Cart extends ChangeNotifier {
         userCart.remove(item);
         QuerySnapshot snapshot = await FirebaseFirestore.instance
             .collection('userCart')
-            .where('name', isEqualTo: item.name)
+            .where('name', isEqualTo: item.productName)
             .where('size', isEqualTo: item.size)
             .where('color', isEqualTo: item.color)
             .where('uid', isEqualTo: uid)
@@ -330,6 +374,43 @@ class Cart extends ChangeNotifier {
     } catch (e) {
       print('Error clearing cart: $e');
     }
+  }
+
+  List<Clother> getClotherList() {
+    return cloShop;
+  }
+
+  List<UserCart> getUserCart() {
+    return userCart;
+  }
+
+  List<String> getBranchesList() {
+    Set<String> brandesSet = {};
+    for (var item in cloShop) {
+      brandesSet.add(item.brand);
+    }
+    return brandesSet.toList();
+  }
+
+  List<Clother> sortClotherList(String sortOption) {
+    List<Clother> sortedList = List.from(cloShop);
+    switch (sortOption) {
+      case 'Giá từ thấp đến cao':
+        sortedList.sort((a, b) => a.price.compareTo(b.price));
+        break;
+      case 'Giá từ cao đến thấp':
+        sortedList.sort((a, b) => b.price.compareTo(a.price));
+        break;
+      case 'Lượt bán':
+        sortedList.sort((a, b) => b.sold.compareTo(a.sold));
+        break;
+      case 'Đánh giá':
+        sortedList.sort((a, b) => b.evaluate.compareTo(a.evaluate));
+        break;
+      default:
+        break;
+    }
+    return sortedList;
   }
 
   double getTotalPrice() {

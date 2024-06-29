@@ -54,16 +54,17 @@ class _HomePageState extends State<HomePage> {
       appBar: _selectedIndex == 1
           ? null
           : AppBar(
+              toolbarHeight: MediaQuery.of(context).size.height * 0.05,
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: Builder(
                 builder: (context) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: GestureDetector(
                     child: const Icon(
                       Icons.menu,
                       color: Colors.black,
-                      size: 31,
+                      size: 30,
                     ),
                     onTap: () {
                       Scaffold.of(context).openDrawer();

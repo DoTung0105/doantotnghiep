@@ -97,11 +97,10 @@ class SearchHistoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2.0), // Reduced padding
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
       child: ListTile(
         dense: true,
-        contentPadding: EdgeInsets.symmetric(
-            horizontal: 0.0, vertical: 0.0), // Reduced padding
+        contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
         leading: Icon(Icons.history, color: Colors.grey),
         title: Text(
           query,
