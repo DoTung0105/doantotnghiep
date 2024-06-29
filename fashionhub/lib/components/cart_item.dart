@@ -1,6 +1,6 @@
 import 'package:fashionhub/components/layout_widget.dart';
-import 'package:fashionhub/model/cart.dart';
-import 'package:fashionhub/model/userCart.dart';
+import 'package:fashionhub/model/userCart_model.dart';
+import 'package:fashionhub/viewmodel/cart_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -113,7 +113,7 @@ class _CartItemState extends State<CartItem>
                     },
                   ),
                   title: Text(
-                    widget.cartItem.name,
+                    widget.cartItem.productName,
                     style: TextStyle(fontSize: 17),
                   ),
                   subtitle: Column(

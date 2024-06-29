@@ -1,6 +1,5 @@
 import 'package:fashionhub/components/layout_widget.dart';
 import 'package:fashionhub/model/clother.dart';
-import 'package:fashionhub/view/payment_page.dart';
 import 'package:flutter/material.dart';
 
 class ProductDetails extends StatelessWidget {
@@ -10,7 +9,8 @@ class ProductDetails extends StatelessWidget {
   final VoidCallback decrementQuantity;
   final String selectedSize;
   final Function(String) selectSize;
-  final VoidCallback addToCart; // Thêm thuộc tính này
+  final VoidCallback addToCart;
+  final VoidCallback buyNow; // Thêm thuộc tính này
 
   const ProductDetails({
     Key? key,
@@ -20,7 +20,8 @@ class ProductDetails extends StatelessWidget {
     required this.decrementQuantity,
     required this.selectedSize,
     required this.selectSize,
-    required this.addToCart, // Khởi tạo thuộc tính này
+    required this.addToCart,
+    required this.buyNow, // Khởi tạo thuộc tính này
   }) : super(key: key);
 
   @override
@@ -195,11 +196,8 @@ class ProductDetails extends StatelessWidget {
                         bottomRight: Radius.circular(10)),
                   ),
                   child: GestureDetector(
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => PaymentPage(),
-                      ),
-                    ),
+                    onTap: buyNow, // Gọi buyNow khi người dùng nhấn nút
+
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

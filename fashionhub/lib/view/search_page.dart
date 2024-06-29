@@ -1,8 +1,8 @@
 import 'package:fashionhub/components/search_item.dart';
-import 'package:fashionhub/model/cart.dart';
 import 'package:fashionhub/model/clother.dart';
 import 'package:fashionhub/view/cart_page.dart';
 import 'package:fashionhub/view/detail_page.dart';
+import 'package:fashionhub/viewmodel/cart_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -202,12 +202,16 @@ class _SearchPageState extends State<SearchPage> {
                     Navigator.of(context).pop();
                   },
                 ),
+                const SizedBox(width: 10),
                 Expanded(
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Tìm kiếm...',
-                      prefixIcon: const Icon(Icons.search),
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        size: 18,
+                      ),
                       suffixIcon: searchQuery.isNotEmpty
                           ? IconButton(
                               icon: Icon(Icons.dangerous_outlined),
@@ -217,11 +221,12 @@ class _SearchPageState extends State<SearchPage> {
                       contentPadding:
                           const EdgeInsets.symmetric(vertical: 10.0),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.black),
+                        borderRadius: BorderRadius.circular(25),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
+                        borderSide: BorderSide(
+                            color: const Color.fromARGB(255, 221, 217, 217)),
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
@@ -234,6 +239,7 @@ class _SearchPageState extends State<SearchPage> {
                     },
                   ),
                 ),
+                const SizedBox(width: 10),
                 IconButton(
                   icon: const Icon(Icons.shopping_cart),
                   onPressed: () {
@@ -310,30 +316,39 @@ class _SearchPageState extends State<SearchPage> {
             Expanded(
               child: Consumer<Cart>(
                 builder: (context, cart, child) {
-                  return GridView.builder(
-                    itemCount: recommendedItems.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 0.8,
-                    ),
-                    itemBuilder: (context, index) {
-                      return SuggestedProducts(
-                        sugPro: recommendedItems[index]['product'],
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => DetailPage(
-                                detailCol: recommendedItems[index]['product'],
+                  if (recommendedItems.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'Không tìm thấy sản phẩm',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    );
+                  } else {
+                    return GridView.builder(
+                      itemCount: recommendedItems.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 0.8,
+                      ),
+                      itemBuilder: (context, index) {
+                        return SuggestedProducts(
+                          sugPro: recommendedItems[index]['product'],
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => DetailPage(
+                                  detailCol: recommendedItems[index]['product'],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  );
+                            );
+                          },
+                        );
+                      },
+                    );
+                  }
                 },
               ),
             ),

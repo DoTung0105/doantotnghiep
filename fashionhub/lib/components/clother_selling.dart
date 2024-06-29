@@ -38,7 +38,7 @@ class CloSelling extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 23.0, right: 3.0),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 3),
               child: Row(
                 children: [
                   Column(
@@ -83,20 +83,12 @@ class CloSelling extends StatelessWidget {
                           )
                         ],
                       ),
-                      const SizedBox(height: 5),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          PriceWidget(
-                              price: cloSel.price,
-                              style:
-                                  TextStyle(color: Colors.red, fontSize: 20)),
-                          const SizedBox(width: 10),
-                        ],
-                      ),
+                      //const SizedBox(height: 5),
+                      PriceWidget(
+                          price: cloSel.price,
+                          style: TextStyle(color: Colors.red, fontSize: 20)),
                     ],
                   ),
-                  // Nút yêu thích đã bị xóa
                 ],
               ),
             ),

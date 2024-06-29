@@ -78,6 +78,34 @@ class PriceWidget extends StatelessWidget {
   }
 }
 
+class PriceWidgetII extends StatelessWidget {
+  final double price;
+  final TextStyle? style;
+
+  const PriceWidgetII({
+    Key? key,
+    required this.price,
+    this.style,
+  }) : super(key: key);
+
+  String formatPriceII(double price) {
+    NumberFormat formatter = NumberFormat.currency(
+      locale: 'vi_VN',
+      symbol: '',
+      decimalDigits: 0,
+    );
+    return formatter.format(price).trim();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      '${formatPriceII(price)}₫',
+      style: style ?? TextStyle(color: Colors.black, fontSize: 14),
+    );
+  }
+}
+
 class NonNegativeIntFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
