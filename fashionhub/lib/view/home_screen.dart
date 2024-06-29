@@ -7,6 +7,7 @@ import 'package:fashionhub/view/login_screen.dart';
 
 import 'package:fashionhub/view/user_profile_screen.dart';
 import 'package:fashionhub/view/users_screen.dart';
+import 'package:fashionhub/view/voucher_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -154,6 +155,30 @@ class HomeScreen extends StatelessWidget {
                   child: const Center(
                     child: Text(
                       'Changepassword',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => Voucher_Screen()),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.all(25.0),
+                  child: const Center(
+                    child: Text(
+                      'Voucher',
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,

@@ -21,12 +21,29 @@ class VoucherViewModel extends ChangeNotifier {
       QuerySnapshot querySnapshot = await _db.collection(_collectionName).get();
       vouchers =
           querySnapshot.docs.map((doc) => Voucher.fromSnapshot(doc)).toList();
+      await checkAndUpdateVoucherStatus();
     } catch (e) {
       print('Error fetching vouchers: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+// kiểm tra ngày hết hạn
+  Future<void> checkAndUpdateVoucherStatus() async {
+    DateTime now = DateTime.now();
+    for (var voucher in vouchers) {
+      if (voucher.expiry.toDate().isBefore(now)) {
+        // If expired, set status to Inactive
+        voucher.status = false;
+        // Update status on Firestore
+        _db.collection(_collectionName).doc(voucher.uid).update({
+          'status': false,
+        }).catchError((e) => print('Error updating voucher status: $e'));
+      }
+    }
+    notifyListeners(); // Thông báo cho widget biết dữ liệu đã thay đổi
   }
 
   String generateRandomString() {

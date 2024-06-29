@@ -33,62 +33,59 @@ class _VoucherScreenState extends State<Voucher_Screen> {
               itemCount: viewModel.vouchers.length,
               itemBuilder: (context, index) {
                 var voucher = viewModel.vouchers[index];
-                return InkWell(
-                  onTap: () => _editVoucher(context, voucher),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          spreadRadius: 1,
-                          blurRadius: 1,
-                          offset: Offset(0, 1),
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        spreadRadius: 1,
+                        blurRadius: 1,
+                        offset: Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 8),
+                      Text('Mã khuyến mãi: ${voucher.promotionalId}'),
+                      SizedBox(height: 8),
+                      Text('Giảm giá: ${voucher.discount}%'),
+                      SizedBox(height: 8),
+                      Text('Số lượng: ${voucher.quanlity}'),
+                      SizedBox(height: 8),
+                      Text(
+                        'Hết hạn: ${DateFormat('dd/MM/yyyy').format(voucher.expiry.toDate())}',
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Trạng thái: ${voucher.status ? "Hoạt động" : "Hết hiệu lực"}',
+                        style: TextStyle(
+                          color: voucher.status ? Colors.green : Colors.red,
                         ),
-                      ],
-                    ),
-                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 8),
-                        Text('Promotional ID: ${voucher.promotionalId}'),
-                        SizedBox(height: 8),
-                        Text('Giảm giá: ${voucher.discount}%'),
-                        SizedBox(height: 8),
-                        Text('Số lượng: ${voucher.quanlity}'),
-                        SizedBox(height: 8),
-                        Text(
-                          'Hết hạn: ${DateFormat('dd/MM/yyyy').format(voucher.expiry.toDate())}',
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Trạng thái: ${voucher.status ? "Active" : "Inactive"}',
-                          style: TextStyle(
-                            color: voucher.status ? Colors.green : Colors.red,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            if (voucher.status)
-                              TextButton(
-                                onPressed: () => _editVoucher(context, voucher),
-                                child: Text('Sửa'),
-                              ),
-                            SizedBox(width: 8),
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (voucher.status)
                             TextButton(
-                              onPressed: () =>
-                                  _showDeleteConfirmation(context, voucher),
-                              child: Text('Xóa'),
+                              onPressed: () => _editVoucher(context, voucher),
+                              child: Text('Sửa'),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          SizedBox(width: 8),
+                          TextButton(
+                            onPressed: () =>
+                                _showDeleteConfirmation(context, voucher),
+                            child: Text('Xóa'),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 );
               },
