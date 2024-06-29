@@ -29,12 +29,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProductViewModel()),
         ChangeNotifierProvider(
           create: (_) => Cart(AuthenticationService()),
-          
-        ), ChangeNotifierProvider(create: (_) => VoucherViewModel()),
+        ),
+        ChangeNotifierProvider(create: (_) => VoucherViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Voucher_Screen(),
+        home: LoginScreen(),
       ),
     );
   }
