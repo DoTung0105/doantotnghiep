@@ -1,6 +1,7 @@
 import 'package:fashionhub/service/authentication_service.dart';
 import 'package:fashionhub/service/drawer.dart';
 import 'package:fashionhub/view/addproduc_screen.dart';
+import 'package:fashionhub/view/admin_user_order.dart';
 import 'package:fashionhub/view/changepassword_screen.dart';
 import 'package:fashionhub/view/list_product.dart';
 import 'package:fashionhub/view/login_screen.dart';
@@ -166,8 +167,7 @@ class HomeScreen extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => Voucher_Screen()),
+                  MaterialPageRoute(builder: (context) => Voucher_Screen()),
                 ),
                 child: Container(
                   decoration: BoxDecoration(
@@ -179,6 +179,29 @@ class HomeScreen extends StatelessWidget {
                   child: const Center(
                     child: Text(
                       'Voucher',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => Orders_Screen()),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.all(25.0),
+                  child: const Center(
+                    child: Text(
+                      'order',
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
