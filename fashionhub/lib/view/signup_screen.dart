@@ -199,6 +199,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   keyboardType: TextInputType.phone,
                   inputFormatters: [
                     FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                    FilteringTextInputFormatter.digitsOnly
                   ],
                   controller: phoneController,
                   decoration: InputDecoration(
@@ -223,6 +224,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng nhập số điện thoại';
+                    } else if (!RegExp(r'^0\d{9}$').hasMatch(value)) {
+                      return 'Số điện thoại phải bắt đầu bằng 0 và có đủ 10 chữ số';
+                    }
+                    return null;
+                  },
                 ),
               ),
               SizedBox(height: 20),
@@ -271,15 +280,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           content: Text('Địa chỉ email không hợp lệ')));
                       return;
                     }
-                    User? user = await _signUpViewModel.signUp(
-                        email,
-                        password,
-                        displayName,
-                        address,
-                        phone,
-                        role,
-                        locked == false,
-                        '');
+                    User? user = await _signUpViewModel.signUp(email, password,
+                        displayName, address, phone, role, locked == false, '');
                     if (user != null) {
                       print("Sign up successful, user: ${user.email}");
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
