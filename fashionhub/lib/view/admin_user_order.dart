@@ -12,7 +12,7 @@ class Orders_Screen extends StatefulWidget {
 
 class _Orders_ScreenState extends State<Orders_Screen> {
   late User_Order_ViewModel orderViewModel;
-
+  DateTime _selectedExpiryDate = DateTime.now();
   @override
   void initState() {
     super.initState();
@@ -112,7 +112,14 @@ class _Orders_ScreenState extends State<Orders_Screen> {
                         ),
                         ListTile(
                           title: Text(
-                              'Tổng tiền: ${NumberFormat('#,###').format(order.price + order.fee).toString()}'),
+                              'Tổng tiền: ${NumberFormat('#,###').format(order.price * order.quantity + order.fee).toString()}'),
+                        ),
+                        Divider(
+                          thickness: 1,
+                        ),
+                        ListTile(
+                          title: Text(
+                              'Thời gian: ${DateFormat('dd/MM/yyyy').format(order.orderday.toDate())}'),
                         ),
                         Divider(
                           thickness: 1,
@@ -130,7 +137,7 @@ class _Orders_ScreenState extends State<Orders_Screen> {
                               ),
                               onPressed: () async {
                                 await orderViewModel.updateOrderStatus(
-                                    order.orderId, 'Xác nhận giao hàng');
+                                    order.orderId, 'Duyệt');
                                 setState(() {}); // Cập nhật giao diện
                               },
                               child: Text('Duyệt',
@@ -140,7 +147,7 @@ class _Orders_ScreenState extends State<Orders_Screen> {
                             ElevatedButton(
                               onPressed: () async {
                                 await orderViewModel.updateOrderStatus(
-                                    order.orderId, 'Hủy đơn hàng');
+                                    order.orderId, 'Hủy đơn');
                                 setState(() {}); // Cập nhật giao diện
                               },
                               child: Text(

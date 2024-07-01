@@ -16,6 +16,7 @@ class User_Order {
   String status;
   String uid;
   UserModel user;
+  Timestamp orderday;
 
   User_Order({
     required this.orderId,
@@ -32,6 +33,7 @@ class User_Order {
     required this.status,
     required this.uid,
     required this.user,
+    required this.orderday,
   });
 
   static User_Order fromFirestore(DocumentSnapshot doc, UserModel user) {
@@ -51,6 +53,7 @@ class User_Order {
       status: data['status'] ?? 'Chờ xác nhận',
       uid: data['uid'] ?? '',
       user: user,
+      orderday: data['orderday']
     );
   }
 }
