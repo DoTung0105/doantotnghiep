@@ -45,6 +45,7 @@ class User_Order_ViewModel extends ChangeNotifier {
             fee: (doc['fee'] ?? 0).toDouble(),
             status: doc['status'] ?? 'Chờ xác nhận',
             uid: uid,
+            orderday: doc['orderday'],
             user: UserModel(
               uid: uid,
               email: '',
