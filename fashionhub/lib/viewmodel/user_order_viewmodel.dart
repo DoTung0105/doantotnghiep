@@ -76,6 +76,4 @@ class User_Order_ViewModel extends ChangeNotifier {
       print(e);
     }
   }
-
-  void notifyListeners() {}
 }

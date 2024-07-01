@@ -6,6 +6,7 @@ import 'package:fashionhub/view/changepassword_screen.dart';
 import 'package:fashionhub/view/forgotpass_screen.dart';
 
 import 'package:fashionhub/view/login_screen.dart';
+import 'package:fashionhub/view/statistics_screen.dart';
 import 'package:fashionhub/view/users_screen.dart';
 import 'package:fashionhub/view/voucher_screen.dart';
 import 'package:fashionhub/viewmodel/cart_viewmodel.dart';

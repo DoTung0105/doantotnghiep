@@ -5,6 +5,7 @@ import 'package:fashionhub/view/admin_user_order.dart';
 import 'package:fashionhub/view/changepassword_screen.dart';
 import 'package:fashionhub/view/list_product.dart';
 import 'package:fashionhub/view/login_screen.dart';
+import 'package:fashionhub/view/statistics_screen.dart';
 
 import 'package:fashionhub/view/user_profile_screen.dart';
 import 'package:fashionhub/view/users_screen.dart';
@@ -202,6 +203,29 @@ class HomeScreen extends StatelessWidget {
                   child: const Center(
                     child: Text(
                       'order',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => Statistics_Screen()),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.all(25.0),
+                  child: const Center(
+                    child: Text(
+                      'Thống kê',
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
