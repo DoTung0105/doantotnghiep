@@ -8,6 +8,7 @@ import 'package:fashionhub/viewmodel/login_viewmodel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -20,6 +21,36 @@ class _LoginScreenState extends State<LoginScreen> {
   final LoginViewModel _loginViewModel =
       LoginViewModel(authenticationService: AuthenticationService());
   bool obscurePassword = true;
+
+ @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (isLoggedIn) {
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        String? role = await _loginViewModel.getUserRole(currentUser.uid);
+        if (role == 'Admin') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => IntroPage()),
+          );
+        }
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {

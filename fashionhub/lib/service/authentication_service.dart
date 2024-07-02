@@ -50,8 +50,7 @@ class AuthenticationService {
       String phone,
       String role,
       bool locked,
-      String image
-      ) async {
+      String image) async {
     try {
       UserCredential userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
@@ -67,7 +66,7 @@ class AuthenticationService {
             phone: phone,
             role: role,
             locked: false,
-            imagePath:image);
+            imagePath: image);
         await _firestore.collection('users').doc(user.uid).set(newUser.toMap());
 
         await user.sendEmailVerification();
@@ -121,7 +120,7 @@ class AuthenticationService {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
-    // await _saveLoggedInState(false);
+    await _saveLoggedInState(false);
   }
 
   User? getCurrentUser() {
