@@ -116,7 +116,8 @@ class _StatisticsScreenState extends State<Statistics_Screen> {
       initialDate: initialDate,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      selectableDayPredicate: (DateTime val) => val.day == 1,
+
+      //selectableDayPredicate: (DateTime val) => val.day == 1,
     );
 
     if (pickedDate != null) {
