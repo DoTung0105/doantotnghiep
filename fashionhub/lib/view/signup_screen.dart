@@ -673,9 +673,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         AuthenticationService view = AuthenticationService();
                         bool isEmailInUse =
                             await view.isEmailAlreadyInUse(email);
+
                         if (isEmailInUse) {
                           setState(() {
                             _formKey.currentState!.validate();
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Email đã được sử dụng.'),
+                            ));
                           });
                           return;
                         }
