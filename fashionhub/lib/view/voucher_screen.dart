@@ -54,9 +54,9 @@ class _VoucherScreenState extends State<Voucher_Screen> {
                       SizedBox(height: 8),
                       Text('Mã khuyến mãi: ${voucher.promotionalId}'),
                       SizedBox(height: 8),
-                      Text('Giảm giá: ${voucher.discount}%'),
-                      SizedBox(height: 8),
                       Text('Số lượng: ${voucher.quanlity}'),
+                      SizedBox(height: 8),
+                      Text('Giảm giá: ${voucher.discount}%'),
                       SizedBox(height: 8),
                       Text(
                         'Hết hạn: ${DateFormat('dd/MM/yyyy').format(voucher.expiry.toDate())}',
@@ -143,6 +143,130 @@ class _VoucherScreenState extends State<Voucher_Screen> {
   }
 }
 
+// class EditVoucherDialog extends StatefulWidget {
+//   final Voucher voucher;
+
+//   const EditVoucherDialog({required this.voucher});
+
+//   @override
+//   _EditVoucherDialogState createState() => _EditVoucherDialogState();
+// }
+
+// class _EditVoucherDialogState extends State<EditVoucherDialog> {
+//   final TextEditingController _discountController =
+//       TextEditingController(text: '');
+//   final TextEditingController _quantityController =
+//       TextEditingController(text: '');
+
+//   DateTime _selectedExpiryDate = DateTime.now();
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _discountController.text = widget.voucher.discount.toString();
+//     _quantityController.text = widget.voucher.quanlity.toString();
+//     _selectedExpiryDate = widget.voucher.expiry.toDate();
+//   }
+
+//   Future<void> _selectExpiryDate(BuildContext context) async {
+//     final DateTime? picked = await showDatePicker(
+//       context: context,
+//       initialDate: _selectedExpiryDate,
+//       firstDate: DateTime.now(),
+//       lastDate: DateTime(2101),
+//     );
+//     if (picked != null && picked != _selectedExpiryDate)
+//       setState(() {
+//         _selectedExpiryDate = picked;
+//       });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Dialog(
+//       child: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Text(
+//               'Chỉnh sửa Voucher',
+//               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//             ),
+//             SizedBox(height: 10),
+//             TextFormField(
+//               controller: _quantityController,
+//               decoration: InputDecoration(
+//                 labelText: 'Số lượng',
+//                 border: OutlineInputBorder(),
+//               ),
+//               keyboardType: TextInputType.numberWithOptions(decimal: true),
+//               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+//               validator: (value) {
+//                 if (value == null || value.isEmpty) {
+//                   return 'Hãy điền thông tin đầy đủ';
+//                 }
+//                 return null;
+//               },
+//             ),
+//             SizedBox(height: 20),
+//             TextFormField(
+//               controller: _discountController,
+//               decoration: InputDecoration(
+//                 labelText: 'Giảm giá (%)',
+//                 border: OutlineInputBorder(),
+//               ),
+//               keyboardType: TextInputType.numberWithOptions(decimal: true),
+//               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+//               validator: (value) {
+//                 if (value == null || value.isEmpty) {
+//                   return 'Hãy điền thông tin đầy đủ';
+//                 }
+//                 return null;
+//               },
+//             ),
+//             SizedBox(height: 10),
+//             ElevatedButton(
+//               onPressed: () => _selectExpiryDate(context),
+//               child: Text("Chọn ngày hết hạn"),
+//             ),
+//             SizedBox(height: 10),
+//             Text(
+//               "Ngày hết hạn: ${DateFormat('dd/MM/yyyy').format(_selectedExpiryDate)}",
+//             ),
+//             SizedBox(height: 20),
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.end,
+//               children: [
+//                 ElevatedButton(
+//                   onPressed: () {
+//                     Navigator.of(context).pop();
+//                   },
+//                   child: Text('Hủy'),
+//                 ),
+//                 SizedBox(width: 10),
+//                 ElevatedButton(
+//                   onPressed: () {
+//                     String discount = _discountController.text;
+//                     String quantity = _quantityController.text;
+//                     Timestamp expiry = Timestamp.fromDate(_selectedExpiryDate);
+
+//                     Provider.of<VoucherViewModel>(context, listen: false)
+//                         .updateVoucher(
+//                             widget.voucher.uid, discount, expiry, quantity);
+//                     Navigator.of(context).pop();
+//                   },
+//                   child: Text('Lưu'),
+//                 ),
+//               ],
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 class EditVoucherDialog extends StatefulWidget {
   final Voucher voucher;
 
@@ -159,6 +283,7 @@ class _EditVoucherDialogState extends State<EditVoucherDialog> {
       TextEditingController(text: '');
 
   DateTime _selectedExpiryDate = DateTime.now();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -186,82 +311,95 @@ class _EditVoucherDialogState extends State<EditVoucherDialog> {
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Chỉnh sửa Voucher',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            TextFormField(
-              controller: _discountController,
-              decoration: InputDecoration(
-                labelText: 'Giảm giá (%)',
-                border: OutlineInputBorder(),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Chỉnh sửa Voucher',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Hãy điền thông tin đầy đủ';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: 10),
-            TextFormField(
-              controller: _quantityController,
-              decoration: InputDecoration(
-                labelText: 'Số lượng',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Hãy điền thông tin đầy đủ';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => _selectExpiryDate(context),
-              child: Text("Chọn ngày hết hạn"),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Ngày hết hạn: ${DateFormat('dd/MM/yyyy').format(_selectedExpiryDate)}",
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Hủy'),
+              SizedBox(height: 10),
+              TextFormField(
+                controller: _quantityController,
+                decoration: InputDecoration(
+                  labelText: 'Số lượng',
+                  border: OutlineInputBorder(),
                 ),
-                SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    String discount = _discountController.text;
-                    String quantity = _quantityController.text;
-                    Timestamp expiry = Timestamp.fromDate(_selectedExpiryDate);
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Hãy điền thông tin đầy đủ';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _discountController,
+                decoration: InputDecoration(
+                  labelText: 'Giảm giá (%)',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Vui lòng nhập giảm giá';
+                  }
+                  int? discount = int.tryParse(value);
+                  if (discount == null || discount < 1 || discount > 100) {
+                    return 'Giảm giá phải từ 1 đến 100';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () => _selectExpiryDate(context),
+                child: Text("Chọn ngày hết hạn"),
+              ),
+              SizedBox(height: 10),
+              Text(
+                "Ngày hết hạn: ${DateFormat('dd/MM/yyyy').format(_selectedExpiryDate)}",
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Hủy'),
+                  ),
+                  SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState != null &&
+                          _formKey.currentState!.validate()) {
+                        String discount = _discountController.text;
+                        String quantity = _quantityController.text;
+                        Timestamp expiry =
+                            Timestamp.fromDate(_selectedExpiryDate);
 
-                    Provider.of<VoucherViewModel>(context, listen: false)
-                        .updateVoucher(
-                            widget.voucher.uid, discount, expiry, quantity);
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Lưu'),
-                ),
-              ],
-            ),
-          ],
+                        Provider.of<VoucherViewModel>(context, listen: false)
+                            .updateVoucher(
+                                widget.voucher.uid, discount, expiry, quantity);
+                        Navigator.of(context).pop();
+                      } else {
+                        print('Form is not valid');
+                      }
+                    },
+                    child: Text('Lưu'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -334,6 +472,16 @@ class _AddVoucherDialogState extends State<AddVoucherDialog> {
                 validator: _validateQuantity,
               ),
               SizedBox(height: 10),
+              // TextFormField(
+              //   controller: _discountController,
+              //   decoration: InputDecoration(
+              //     labelText: 'Giảm giá (%)',
+              //     border: OutlineInputBorder(),
+              //   ),
+              //   keyboardType: TextInputType.numberWithOptions(decimal: true),
+              //   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              //   validator: _validateDiscount,
+              // ),
               TextFormField(
                 controller: _discountController,
                 decoration: InputDecoration(
@@ -342,8 +490,18 @@ class _AddVoucherDialogState extends State<AddVoucherDialog> {
                 ),
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                validator: _validateDiscount,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Vui lòng nhập giảm giá';
+                  }
+                  int? discount = int.tryParse(value);
+                  if (discount == null || discount < 1 || discount > 100) {
+                    return 'Giảm giá phải từ 1 đến 100';
+                  }
+                  return null;
+                },
               ),
+
               SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () => _selectExpiryDate(context),
