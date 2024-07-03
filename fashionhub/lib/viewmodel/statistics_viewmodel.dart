@@ -169,4 +169,17 @@ class StatisticsViewModel extends ChangeNotifier {
         .length;
     notifyListeners();
   }
+
+  List<MonthlyRevenue> getMonthlyRevenueData() {
+    return monthlyRevenue.entries
+        .map((entry) => MonthlyRevenue(entry.key, entry.value))
+        .toList();
+  }
+}
+
+class MonthlyRevenue {
+  final String month;
+  final double revenue;
+
+  MonthlyRevenue(this.month, this.revenue);
 }
