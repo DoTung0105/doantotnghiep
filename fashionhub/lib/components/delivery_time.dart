@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -7,7 +8,7 @@ class DeliveryTimeComponent extends StatefulWidget {
   final double storeLatitude;
   final double storeLongitude;
   final String customerAddress;
-  final Function(String) onFeeUpdated;
+  final Function(String, String) onFeeUpdated;
 
   const DeliveryTimeComponent({
     Key? key,
@@ -30,6 +31,8 @@ class _DeliveryTimeComponentState extends State<DeliveryTimeComponent> {
   double _standardFee = 0.0; // Giá trị phí vận chuyển tiêu chuẩn
   final NumberFormat _currencyFormat =
       NumberFormat('#,##0', 'vi_VN'); // Sử dụng NumberFormat
+  String? _errorMessage; // Biến để lưu thông báo lỗi mã giảm giá
+  bool _isDiscountApplied = false; // Biến để theo dõi việc áp dụng mã giảm giá
 
   @override
   void initState() {
@@ -69,7 +72,7 @@ class _DeliveryTimeComponentState extends State<DeliveryTimeComponent> {
 
         _standardFee =
             _calculateStandardFee(distanceInKm); // Lưu giá trị phí tiêu chuẩn
-        widget.onFeeUpdated('${_currencyFormat.format(_standardFee)}đ');
+        widget.onFeeUpdated('${_currencyFormat.format(_standardFee)}đ', '0đ');
       } else {
         setState(() {
           _deliveryTime = 'Không thể tính toán thời gian';
@@ -128,16 +131,42 @@ class _DeliveryTimeComponentState extends State<DeliveryTimeComponent> {
   }
 
   // Phương thức áp dụng mã giảm giá
-  void _applyDiscount(String discountCode, double discountPercentage) {
-    if (_standardFee > 0) {
-      double discountedValue = _standardFee * (1 - discountPercentage);
-      String discountedFee = '${_currencyFormat.format(discountedValue)}đ';
+  Future<void> _applyDiscount(String discountCode) async {
+    try {
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('voucher')
+          .where('promotional_id', isEqualTo: discountCode)
+          .where('status', isEqualTo: true)
+          .get();
 
+      if (querySnapshot.docs.isNotEmpty) {
+        final voucher = querySnapshot.docs.first;
+        double discountPercentage = double.parse(voucher['discount']) / 100.0;
+
+        if (_standardFee > 0) {
+          double discountedValue = _standardFee * (1 - discountPercentage);
+          String discountedFee = '${_currencyFormat.format(discountedValue)}đ';
+          String discountAmount =
+              '${_currencyFormat.format(_standardFee - discountedValue)}đ'; // Tính toán số tiền được giảm
+
+          setState(() {
+            _discountedFee = discountedFee;
+            _errorMessage = null; // Xóa thông báo lỗi nếu có
+            _isDiscountApplied = true; // Đánh dấu mã giảm giá đã được áp dụng
+          });
+
+          widget.onFeeUpdated(discountedFee, discountAmount);
+        }
+      } else {
+        setState(() {
+          _errorMessage = 'Mã không hợp lệ hoặc đã được sử dụng';
+        });
+      }
+    } catch (e) {
+      print('Error applying discount: $e');
       setState(() {
-        _discountedFee = discountedFee;
+        _errorMessage = 'Mã không hợp lệ hoặc đã được sử dụng';
       });
-
-      widget.onFeeUpdated(discountedFee);
     }
   }
 
@@ -148,10 +177,11 @@ class _DeliveryTimeComponentState extends State<DeliveryTimeComponent> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Đã áp dụng voucher giảm phí vận chuyển',
-          style: TextStyle(color: Colors.blue),
-        ),
+        if (_isDiscountApplied)
+          Text(
+            'Đã áp dụng voucher giảm phí vận chuyển',
+            style: TextStyle(color: Colors.blue),
+          ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -197,9 +227,7 @@ class _DeliveryTimeComponentState extends State<DeliveryTimeComponent> {
                   onPressed: () {
                     // Xử lý việc áp dụng mã giảm giá
                     String discountCode = _discountController.text;
-                    double discountPercentage =
-                        0.2; // Thay đổi phần trăm giảm giá tại đây
-                    _applyDiscount(discountCode, discountPercentage);
+                    _applyDiscount(discountCode);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black, // Màu nền
@@ -214,6 +242,14 @@ class _DeliveryTimeComponentState extends State<DeliveryTimeComponent> {
             ],
           ),
         ),
+        if (_errorMessage != null) // Hiển thị thông báo lỗi nếu có
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              _errorMessage!,
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
       ],
     );
   }

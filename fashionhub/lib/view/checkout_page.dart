@@ -1,11 +1,13 @@
 import 'package:fashionhub/components/delivery_time.dart';
 import 'package:fashionhub/components/layout_widget.dart';
+import 'package:fashionhub/components/momo_payment.dart';
 import 'package:fashionhub/model/address_model.dart';
 import 'package:fashionhub/model/userCart_model.dart';
 import 'package:fashionhub/view/map_sample.dart';
 import 'package:fashionhub/viewmodel/cart_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class CheckOutPage extends StatefulWidget {
@@ -23,7 +25,10 @@ class _CheckOutPageState extends State<CheckOutPage> {
   String? phone;
   String? address;
   LatLng? pickedLocation;
-  String fee = 'Đang tính toán...';
+  String fee = '0đ';
+  String discountAmount = '0đ';
+  double _deliveryFee = 0.0;
+  final NumberFormat _currencyFormat = NumberFormat('#,##0', 'vi_VN');
 
   @override
   void initState() {
@@ -60,6 +65,12 @@ class _CheckOutPageState extends State<CheckOutPage> {
     return total;
   }
 
+  // Hàm tính tổng tiền thanh toán bao gồm phí vận chuyển
+  double calculateTotalPayment() {
+    double totalOrderAmount = calculateTotalOrderAmount();
+    return totalOrderAmount + _deliveryFee;
+  }
+
   @override
   Widget build(BuildContext context) {
     // Gom các sản phẩm theo thương hiệu
@@ -73,6 +84,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
     }
 
     double totalOrderAmount = calculateTotalOrderAmount();
+    double totalPayment = calculateTotalPayment();
 
     return Scaffold(
       appBar: AppBar(
@@ -273,9 +285,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     storeLatitude: 10.771936,
                     storeLongitude: 106.701369,
                     customerAddress: address ?? 'Thêm địa chỉ nhận hàng',
-                    onFeeUpdated: (updatedFee) {
+                    onFeeUpdated: (updatedFee, discountAmountValue) {
                       setState(() {
                         fee = updatedFee;
+                        _deliveryFee = double.parse(updatedFee
+                            .replaceAll('đ', '')
+                            .replaceAll(
+                                '.', '')); // Cập nhật giá trị chiết khấu
+                        discountAmount = discountAmountValue;
                       });
                     },
                   ),
@@ -291,7 +308,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Tổng đơn hàng'),
+                          Text('Tổng sản phẩm'),
                           PriceWidgetII(price: totalOrderAmount),
                         ],
                       ),
@@ -337,7 +354,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Chiết khấu phí vận chuyển'),
-                      Text('-25.000đ', style: TextStyle(color: Colors.red)),
+                      Text(discountAmount, style: TextStyle(color: Colors.red)),
                     ],
                   ),
                   Divider(),
@@ -406,23 +423,17 @@ class _CheckOutPageState extends State<CheckOutPage> {
                             ),
                           ),
                           Spacer(),
-                          Text(
-                            'Liên kết',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.credit_card,
-                            size: 30,
-                          ),
-                          SizedBox(width: 18),
-                          Text(
-                            'Thẻ tín dụng/Thẻ ghi nợ',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
+                          GestureDetector(
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MomoPaymentPage(),
+                                )),
+                            child: Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 20,
+                            ),
+                          )
                         ],
                       ),
                     ],
@@ -431,6 +442,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
               ),
             ),
           ),
+
           // Phần này tính tổng của các sản phẩm đã chọn
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 3),
@@ -443,30 +455,33 @@ class _CheckOutPageState extends State<CheckOutPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Tổng',
+                      'Tổng:',
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
                     ),
-                    PriceWidget(price: totalOrderAmount),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Bạn đã tiết kiệm được 41.000đ',
-                      style: TextStyle(color: Colors.black),
-                    ),
+                    PriceWidget(price: totalPayment),
                   ],
                 ),
                 SizedBox(height: 10),
                 Container(
+                  padding: const EdgeInsets.only(bottom: 5),
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
+                      if (!isChecked) {
+                        // Hiển thị thông báo lỗi nếu phương thức thanh toán chưa được chọn
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text('Vui lòng chọn phương thức thanh toán'),
+                            backgroundColor: Colors.grey[800],
+                          ),
+                        );
+                        return;
+                      }
                       // Xử lý đặt hàng
                     },
-                    child: Text('Đặt hàng'),
+                    child: Text('Đặt hàng ngay'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
