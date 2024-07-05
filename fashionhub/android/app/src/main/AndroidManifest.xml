@@ -9,6 +9,7 @@
 
     <!-- Thêm quyền truy cập internet -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    
 
     <application
         android:label="FashionHub"
