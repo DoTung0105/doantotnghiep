@@ -1,10 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fashionhub/components/delivery_time.dart';
 import 'package:fashionhub/components/layout_widget.dart';
 import 'package:fashionhub/components/momo_payment.dart';
 import 'package:fashionhub/model/address_model.dart';
+import 'package:fashionhub/model/order_model.dart';
 import 'package:fashionhub/model/userCart_model.dart';
+import 'package:fashionhub/service/authentication_service.dart';
+import 'package:fashionhub/view/home_page.dart';
 import 'package:fashionhub/view/map_sample.dart';
 import 'package:fashionhub/viewmodel/cart_viewmodel.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
@@ -29,11 +34,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
   String discountAmount = '0đ';
   double _deliveryFee = 0.0;
   final NumberFormat _currencyFormat = NumberFormat('#,##0', 'vi_VN');
-
+  final AuthenticationService _authenticationService =
+      AuthenticationService(); // Khởi tạo đối tượng AuthenticationServi
+  String? currentUserId;
   @override
   void initState() {
     super.initState();
     fetchUserAddress(); // Gọi hàm lấy địa chỉ người dùng khi khởi tạo
+    getCurrentUserId();
   }
 
   // Hàm lấy địa chỉ người dùng từ Provider
@@ -45,6 +53,15 @@ class _CheckOutPageState extends State<CheckOutPage> {
         name = userAddress.userName;
         phone = userAddress.phone;
         address = userAddress.deliveryAddress;
+      });
+    }
+  }
+
+  void getCurrentUserId() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        currentUserId = user.uid;
       });
     }
   }
@@ -69,6 +86,148 @@ class _CheckOutPageState extends State<CheckOutPage> {
   double calculateTotalPayment() {
     double totalOrderAmount = calculateTotalOrderAmount();
     return totalOrderAmount + _deliveryFee;
+  }
+
+  Future<void> placeOrder() async {
+    // Chuẩn bị dữ liệu đơn hàng từ widget và các biến khác
+    String orderId = UniqueKey().toString();
+    String status = 'Chờ xác nhận';
+    String paymentMethod =
+        isChecked ? 'Thanh toán khi nhận hàng' : 'Đã thanh toán';
+
+    // Lấy uid của người dùng hiện tại
+    User? currentUser = _authenticationService.getCurrentUser();
+    if (currentUser == null) {
+      print('User is not logged in');
+      return;
+    }
+    String uid = currentUser.uid;
+
+    DocumentReference newOrderRef =
+        FirebaseFirestore.instance.collection('userOrders').doc();
+
+    // Tạo đối tượng Order_class từ các thông tin hiện tại
+    Order_class order = Order_class(
+      orderId: newOrderRef.id,
+      userName: name ?? '',
+      phone: phone ?? '',
+      deliveryAddress: address ?? '',
+      imagePath: widget.selectedItems.first.imagePath,
+      productName: widget.selectedItems.first.productName,
+      color: widget.selectedItems.first.color,
+      size: widget.selectedItems.first.size,
+      totalPrice: _currencyFormat.format(calculateTotalPayment()) + 'đ',
+      quantity: widget.selectedItems.length,
+      price: widget.selectedItems.first.price,
+      fee: _deliveryFee,
+      status: status,
+      uid: uid,
+      paymentMethods: paymentMethod,
+      orderday: Timestamp.now(),
+    );
+
+    try {
+      // Lưu đơn hàng vào Firestore
+      await FirebaseFirestore.instance
+          .collection('userOrders')
+          .doc(orderId)
+          .set(order.toMap());
+
+      // Xóa sản phẩm đã thanh toán khỏi giỏ hàng
+      Provider.of<Cart>(context, listen: false)
+          .removeItems(widget.selectedItems);
+
+      // Hiển thị thông báo hoặc chuyển hướng sau khi lưu thành công
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Center(
+            child: IntrinsicHeight(
+              child: AlertDialog(
+                titlePadding: EdgeInsets.all(10),
+                contentPadding: EdgeInsets.all(10),
+                actionsPadding:
+                    EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                ),
+                title: Column(
+                  children: [
+                    Image.asset(
+                      'lib/images/checkOrder.png',
+                      width: 60,
+                      height: 60,
+                    ),
+                  ],
+                ),
+                content: Text(
+                  'Đặt hàng thành công!',
+                  style: TextStyle(color: Colors.green, fontSize: 20),
+                  textAlign: TextAlign.center,
+                ),
+                actions: <Widget>[
+                  Center(
+                    child: TextButton(
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        width: 70,
+                        height: 35,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Đóng',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 16),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                      onPressed: () {
+                        // Điều hướng trở lại HomePage và xóa ngăn xếp điều hướng
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                          (Route<dynamic> route) => false,
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
+      // Sau khi đặt hàng thành công, có thể làm sạch giỏ hàng hoặc thực hiện các hành động khác
+    } catch (e) {
+      // Xử lý lỗi nếu có
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Lỗi'),
+            content: Text('Đặt hàng thất bại. Vui lòng thử lại sau.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      print('Error placing order: $e');
+    }
   }
 
   @override
@@ -480,6 +639,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                         return;
                       }
                       // Xử lý đặt hàng
+                      placeOrder();
                     },
                     child: Text('Đặt hàng ngay'),
                     style: ElevatedButton.styleFrom(
