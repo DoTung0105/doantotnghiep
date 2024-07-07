@@ -6,7 +6,7 @@ class Voucher {
   String discount;
   Timestamp expiry;
   bool status;
-  String quanlity;
+  int quantity;
 
   Voucher(
       {required this.uid,
@@ -14,7 +14,7 @@ class Voucher {
       required this.discount,
       required this.expiry,
       required this.status,
-      required this.quanlity});
+      required this.quantity});
 
   factory Voucher.fromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
@@ -24,7 +24,7 @@ class Voucher {
         discount: data['discount'],
         expiry: data['expiry'],
         status: data['status'],
-        quanlity: data['quanlity']);
+        quantity: data['quantity']);
   }
 
   Map<String, dynamic> toJson() {
@@ -34,7 +34,7 @@ class Voucher {
       'discount': discount,
       'expiry': expiry,
       'status': status,
-      'quanlity': quanlity
+      'quantity': quantity
     };
   }
 }
