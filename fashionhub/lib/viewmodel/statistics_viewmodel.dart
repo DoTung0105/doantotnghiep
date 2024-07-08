@@ -9,6 +9,7 @@ class StatisticsViewModel extends ChangeNotifier {
   int totalOrders = 0;
   int approvedOrders = 0;
   int cancelledOrders = 0;
+  int pendingOrders = 0;
   double totalRevenue = 0.0;
   Map<String, UserModel> _users = {};
   List<User_Order> orders = [];
@@ -33,14 +34,19 @@ class StatisticsViewModel extends ChangeNotifier {
       approvedOrders = orders.where((order) => order.status == 'Duyệt').length;
       cancelledOrders =
           orders.where((order) => order.status == 'Hủy đơn').length;
-
+      pendingOrders = orders
+          .where((order) => order.status == 'Chờ xác nhận')
+          .length; // Tính số lượng đơn hàng chờ xác nhận
       totalRevenue =
           orders.where((order) => order.status == 'Duyệt').map((order) {
         String cleanedPrice = order.totalPrice.replaceAll(RegExp(r'[^\d]'), '');
         double price = double.tryParse(cleanedPrice) ?? 0.0;
+        double fee = order.fee; // Lấy phí vận chuyển từ đơn hàng
+        double netPrice = price - fee; // Trừ phí vận chuyển khỏi tổng giá
+
         print(
             "Order ID: ${order.orderId}, Total Price (String): ${order.totalPrice}, Cleaned Price: $cleanedPrice, Parsed Price (Double): $price");
-        return price;
+        return netPrice;
       }).fold(0.0, (prev, amount) => prev + amount);
 
       _calculateMonthlyRevenue();
@@ -70,9 +76,9 @@ class StatisticsViewModel extends ChangeNotifier {
         print(
             "Order ID: ${order.orderId}, Month: $month, Total Price (String): ${order.totalPrice}, Cleaned Price: $cleanedPrice, Parsed Price (Double): $totalPrice");
         if (revenue.containsKey(month)) {
-          revenue[month] = revenue[month]! + totalPrice;
+          revenue[month] = revenue[month]! + (totalPrice - order.fee);
         } else {
-          revenue[month] = totalPrice;
+          revenue[month] = totalPrice - order.fee;
         }
       }
     }
