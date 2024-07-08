@@ -302,7 +302,9 @@ class _EditVoucherDialogState extends State<EditVoucherDialog> {
     );
     if (picked != null && picked != _selectedExpiryDate)
       setState(() {
-        _selectedExpiryDate = picked;
+        // _selectedExpiryDate = picked;
+        _selectedExpiryDate =
+            DateTime(picked.year, picked.month, picked.day, 23, 59, 59);
       });
   }
 
@@ -441,7 +443,9 @@ class _AddVoucherDialogState extends State<AddVoucherDialog> {
     );
     if (picked != null && picked != _selectedExpiryDate)
       setState(() {
-        _selectedExpiryDate = picked;
+        // _selectedExpiryDate = picked;
+        _selectedExpiryDate =
+            DateTime(picked.year, picked.month, picked.day, 23, 59, 59);
       });
   }
 
