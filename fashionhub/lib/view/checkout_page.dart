@@ -111,8 +111,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
               productName: item.productName,
               color: item.color,
               size: item.size,
-              quantity:
-                  1, // Mỗi sản phẩm đơn hàng có số lượng là 1 (có thể thay đổi nếu cần)
+              quantity: item.quantity,
               price: item.price,
             ))
         .toList();

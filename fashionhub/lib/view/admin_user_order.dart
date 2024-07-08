@@ -12,7 +12,7 @@ class Orders_Screen extends StatefulWidget {
 
 class _Orders_ScreenState extends State<Orders_Screen> {
   late User_Order_ViewModel orderViewModel;
-  DateTime _selectedExpiryDate = DateTime.now();
+
   @override
   void initState() {
     super.initState();
@@ -61,102 +61,96 @@ class _Orders_ScreenState extends State<Orders_Screen> {
                       ),
                       children: [
                         ListTile(
-                          title: Text('Tên sản phẩm: ${order.productName}'),
-                        ),
-                        Divider(
-                          thickness: 1,
+                          title: Text(
+                              'Địa chỉ nhận hàng: ${order.deliveryAddress}'),
                         ),
                         ListTile(
-                          title: Text('Màu: ${order.color}'),
+                          title: Text('Người nhận: ${order.userName}'),
                         ),
-                        Divider(
-                          thickness: 1,
-                        ),
-                        ListTile(
-                          title: Text('Size: ${order.size}'),
-                        ),
-                        Divider(
-                          thickness: 1,
-                        ),
-                        ListTile(
-                          title: Text('Số lượng: ${order.quantity.toString()}'),
-                        ),
-                        Divider(
-                          thickness: 1,
-                        ),
-                        ListTile(
-                          title: Text('Địa chỉ: ${order.deliveryAddress}'),
-                        ),
-                        Divider(
-                          thickness: 1,
-                        ),
+                        Divider(thickness: 1),
                         ListTile(
                           title: Text('Điện thoại: ${order.phone}'),
                         ),
-                        Divider(
-                          thickness: 1,
-                        ),
+                        Divider(thickness: 1),
+                        ...order.products
+                            .map((product) => Column(
+                                  children: [
+                                    ListTile(
+                                      title: Text(
+                                          'Tên sản phẩm: ${product.productName}'),
+                                    ),
+                                    Divider(thickness: 1),
+                                    ListTile(
+                                      title: Text('Màu: ${product.color}'),
+                                    ),
+                                    Divider(thickness: 1),
+                                    ListTile(
+                                      title: Text('Size: ${product.size}'),
+                                    ),
+                                    Divider(thickness: 1),
+                                    ListTile(
+                                      title: Text(
+                                          'Số lượng: x${product.quantity}'),
+                                    ),
+                                    Divider(thickness: 1),
+                                    ListTile(
+                                      title: Text(
+                                          'Giá: ${NumberFormat('#,###').format(product.price)}đ'),
+                                    ),
+                                    Divider(thickness: 1),
+                                  ],
+                                ))
+                            .toList(),
                         ListTile(
                           title: Text(
-                              'Giá: ${NumberFormat('#,###').format(order.price)}'),
+                              'Phí vận chuyển: ${NumberFormat('#,###').format(order.fee)}'),
                         ),
-                        Divider(
-                          thickness: 1,
-                        ),
+                        Divider(thickness: 1),
+                        ListTile(
+                            title: Text(
+                          'Tổng đơn hàng: ${order.totalPrice}',
+                        )),
+                        Divider(thickness: 1),
                         ListTile(
                           title: Text(
-                              'Ship: ${NumberFormat('#,###').format(order.fee)}'),
+                              'Thời gian đặt hàng: ${DateFormat('dd/MM/yyyy').format(order.orderday.toDate())}'),
                         ),
-                        Divider(
-                          thickness: 1,
-                        ),
-                        ListTile(
-                          title: Text(
-                              'Tổng tiền: ${NumberFormat('#,###').format(order.price * order.quantity + order.fee).toString()}'),
-                        ),
-                        Divider(
-                          thickness: 1,
-                        ),
-                        ListTile(
-                          title: Text(
-                              'Thời gian: ${DateFormat('dd/MM/yyyy').format(order.orderday.toDate())}'),
-                        ),
-                        Divider(
-                          thickness: 1,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 20),
                                 ),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 20),
+                                onPressed: () async {
+                                  await orderViewModel.updateOrderStatus(
+                                      order.orderId, 'Duyệt');
+                                  setState(() {}); // Cập nhật giao diện
+                                },
+                                child: Text('Duyệt',
+                                    style: TextStyle(
+                                        fontSize: 20, color: Colors.black)),
                               ),
-                              onPressed: () async {
-                                await orderViewModel.updateOrderStatus(
-                                    order.orderId, 'Duyệt');
-                                setState(() {}); // Cập nhật giao diện
-                              },
-                              child: Text('Duyệt',
+                              ElevatedButton(
+                                onPressed: () async {
+                                  await orderViewModel.updateOrderStatus(
+                                      order.orderId, 'Hủy đơn');
+                                  setState(() {}); // Cập nhật giao diện
+                                },
+                                child: Text(
+                                  'Từ chối',
                                   style: TextStyle(
-                                      fontSize: 20, color: Colors.black)),
-                            ),
-                            ElevatedButton(
-                              onPressed: () async {
-                                await orderViewModel.updateOrderStatus(
-                                    order.orderId, 'Hủy đơn');
-                                setState(() {}); // Cập nhật giao diện
-                              },
-                              child: Text(
-                                'Từ chối',
-                                style: TextStyle(
-                                    fontSize: 20, color: Colors.black),
+                                      fontSize: 20, color: Colors.black),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),

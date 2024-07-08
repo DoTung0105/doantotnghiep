@@ -15,7 +15,7 @@ class User_Order_ViewModel extends ChangeNotifier {
   Future<void> fetchOrders() async {
     try {
       final QuerySnapshot orderResult =
-          await _firestore.collection('userOders').get();
+          await _firestore.collection('userOrders').get();
       final QuerySnapshot userResult =
           await _firestore.collection('users').get();
 
@@ -36,12 +36,10 @@ class User_Order_ViewModel extends ChangeNotifier {
             userName: doc['userName'] ?? '',
             phone: doc['phone'] ?? '',
             deliveryAddress: doc['deliveryAddress'] ?? '',
-            imagePath: doc['imagePath'] ?? '',
-            productName: doc['productName'] ?? '',
-            color: doc['color'] ?? '',
-            size: doc['size'] ?? '',
-            quantity: doc['quantity'] ?? 0,
-            price: (doc['price'] ?? 0).toDouble(),
+            products: (doc['products'] as List<dynamic>)
+                .map((product) => OrderProduct.fromMap(product))
+                .toList(),
+            totalPrice: doc['totalPrice'] ?? '',
             fee: (doc['fee'] ?? 0).toDouble(),
             status: doc['status'] ?? 'Chờ xác nhận',
             uid: uid,
@@ -69,7 +67,7 @@ class User_Order_ViewModel extends ChangeNotifier {
   Future<void> updateOrderStatus(String orderId, String status) async {
     try {
       await _firestore
-          .collection('userOders')
+          .collection('userOrders')
           .doc(orderId)
           .update({'status': status});
       await fetchOrders(); // Cập nhật lại danh sách đơn hàng sau khi thay đổi trạng thái
