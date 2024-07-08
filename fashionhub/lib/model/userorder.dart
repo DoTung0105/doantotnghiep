@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fashionhub/model/user_model.dart';
 
 class OrderProduct {
+  String imagePath;
   String productName;
   String color;
   String size;
@@ -10,6 +11,7 @@ class OrderProduct {
 
   OrderProduct({
     required this.productName,
+    required this.imagePath,
     required this.color,
     required this.size,
     required this.quantity,
@@ -19,6 +21,7 @@ class OrderProduct {
   factory OrderProduct.fromMap(Map<String, dynamic> map) {
     return OrderProduct(
       productName: map['productName'] ?? '',
+      imagePath: map['imagePath'] ?? '',
       color: map['color'] ?? '',
       size: map['size'] ?? '',
       quantity: map['quantity'] ?? 0,

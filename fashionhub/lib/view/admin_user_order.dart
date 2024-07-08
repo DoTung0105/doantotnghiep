@@ -130,7 +130,7 @@ class _Orders_ScreenState extends State<Orders_Screen> {
                                 ),
                                 onPressed: () async {
                                   await orderViewModel.updateOrderStatus(
-                                      order.orderId, 'Duyệt');
+                                      order.orderId, 'Đang giao');
                                   setState(() {}); // Cập nhật giao diện
                                 },
                                 child: Text('Duyệt',
