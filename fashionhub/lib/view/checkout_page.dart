@@ -17,8 +17,10 @@ import 'package:provider/provider.dart';
 
 class CheckOutPage extends StatefulWidget {
   final List<UserCart> selectedItems;
+  final double totalPayment;
 
-  const CheckOutPage({super.key, required this.selectedItems});
+  const CheckOutPage(
+      {super.key, required this.selectedItems, required this.totalPayment});
 
   @override
   State<CheckOutPage> createState() => _CheckOutPageState();
@@ -90,7 +92,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
 
   Future<void> placeOrder() async {
     // Chuẩn bị dữ liệu đơn hàng từ widget và các biến khác
-    String orderId = UniqueKey().toString();
     String status = 'Chờ xác nhận';
     String paymentMethod =
         isChecked ? 'Thanh toán khi nhận hàng' : 'Đã thanh toán';
@@ -103,6 +104,24 @@ class _CheckOutPageState extends State<CheckOutPage> {
     }
     String uid = currentUser.uid;
 
+    // Tạo danh sách các sản phẩm trong đơn hàng
+    List<OrderProduct> products = widget.selectedItems
+        .map((item) => OrderProduct(
+              imagePath: item.imagePath,
+              productName: item.productName,
+              color: item.color,
+              size: item.size,
+              quantity:
+                  1, // Mỗi sản phẩm đơn hàng có số lượng là 1 (có thể thay đổi nếu cần)
+              price: item.price,
+            ))
+        .toList();
+
+    // Tính tổng tiền của đơn hàng
+    double totalPayment = calculateTotalPayment();
+    String formattedTotalPrice = _currencyFormat.format(totalPayment) + 'đ';
+
+    // Tạo một DocumentReference mới cho đơn hàng
     DocumentReference newOrderRef =
         FirebaseFirestore.instance.collection('userOrders').doc();
 
@@ -112,13 +131,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
       userName: name ?? '',
       phone: phone ?? '',
       deliveryAddress: address ?? '',
-      imagePath: widget.selectedItems.first.imagePath,
-      productName: widget.selectedItems.first.productName,
-      color: widget.selectedItems.first.color,
-      size: widget.selectedItems.first.size,
-      totalPrice: _currencyFormat.format(calculateTotalPayment()) + 'đ',
-      quantity: widget.selectedItems.length,
-      price: widget.selectedItems.first.price,
+      products: products,
+      totalPrice: formattedTotalPrice,
       fee: _deliveryFee,
       status: status,
       uid: uid,
@@ -128,10 +142,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
 
     try {
       // Lưu đơn hàng vào Firestore
-      await FirebaseFirestore.instance
-          .collection('userOrders')
-          .doc(orderId)
-          .set(order.toMap());
+      await newOrderRef.set(order.toMap());
 
       // Xóa sản phẩm đã thanh toán khỏi giỏ hàng
       Provider.of<Cart>(context, listen: false)
@@ -454,6 +465,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
                         discountAmount = discountAmountValue;
                       });
                     },
+                    totalPayment:
+                        totalPayment, // Truyền totalPayment vào DeliveryTimeComponent
                   ),
                   Divider(),
                   Text(

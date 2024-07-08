@@ -1,17 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+class OrderProduct {
+  final String imagePath;
+  final String productName;
+  final String color;
+  final String size;
+  final int quantity;
+  final double price;
+
+  OrderProduct({
+    required this.imagePath,
+    required this.productName,
+    required this.color,
+    required this.size,
+    required this.quantity,
+    required this.price,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'imagePath': imagePath,
+      'productName': productName,
+      'color': color,
+      'size': size,
+      'quantity': quantity,
+      'price': price,
+    };
+  }
+}
+
 class Order_class {
   final String orderId;
   String userName;
   String phone;
   String deliveryAddress;
-  final String imagePath;
-  final String productName;
-  final String color;
-  final String size;
+  List<OrderProduct> products; // Danh sách các sản phẩm trong đơn hàng
   String totalPrice;
-  final int quantity;
-  final double price;
   double fee;
   String status;
   final String uid;
@@ -23,13 +47,8 @@ class Order_class {
     required this.userName,
     required this.phone,
     required this.deliveryAddress,
-    required this.imagePath,
-    required this.productName,
-    required this.color,
-    required this.size,
+    required this.products,
     required this.totalPrice,
-    required this.quantity,
-    required this.price,
     required this.fee,
     required this.status,
     required this.uid,
@@ -39,18 +58,25 @@ class Order_class {
 
   // Factory constructor to create Order from a map (Firestore document)
   factory Order_class.fromMap(Map<String, dynamic> map) {
+    List<dynamic> productsMap = map['products'] ?? [];
+    List<OrderProduct> products = productsMap
+        .map((product) => OrderProduct(
+              imagePath: product['imagePath'] ?? '',
+              productName: product['productName'] ?? '',
+              color: product['color'] ?? '',
+              size: product['size'] ?? '',
+              quantity: product['quantity'] ?? 0,
+              price: product['price']?.toDouble() ?? 0.0,
+            ))
+        .toList();
+
     return Order_class(
       orderId: map['orderId'] ?? '',
       userName: map['userName'] ?? '',
       phone: map['phone'] ?? '',
       deliveryAddress: map['deliveryAddress'] ?? '',
-      imagePath: map['imagePath'] ?? '',
-      productName: map['productName'] ?? '',
-      color: map['color'] ?? '',
-      size: map['size'] ?? '',
+      products: products,
       totalPrice: map['totalPrice'] ?? '',
-      quantity: map['quantity'] ?? 0,
-      price: map['price']?.toDouble() ?? 0.0,
       fee: map['fee']?.toDouble() ?? 0.0,
       status: map['status'] ?? 'Chờ xác nhận',
       uid: map['uid'] ?? '',
@@ -58,19 +84,18 @@ class Order_class {
       orderday: map['orderday'] ?? Timestamp.now(),
     );
   }
+
   Map<String, dynamic> toMap() {
+    List<Map<String, dynamic>> productsMap =
+        products.map((product) => product.toMap()).toList();
+
     return {
       'orderId': orderId,
       'userName': userName,
       'phone': phone,
       'deliveryAddress': deliveryAddress,
-      'imagePath': imagePath,
-      'productName': productName,
-      'color': color,
-      'size': size,
+      'products': productsMap,
       'totalPrice': totalPrice,
-      'quantity': quantity,
-      'price': price,
       'fee': fee,
       'status': status,
       'uid': uid,

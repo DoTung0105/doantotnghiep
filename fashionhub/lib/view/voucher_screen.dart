@@ -54,7 +54,7 @@ class _VoucherScreenState extends State<Voucher_Screen> {
                       SizedBox(height: 8),
                       Text('Mã khuyến mãi: ${voucher.promotionalId}'),
                       SizedBox(height: 8),
-                      Text('Số lượng: ${voucher.quanlity}'),
+                      Text('Số lượng: ${voucher.quantity}'),
                       SizedBox(height: 8),
                       Text('Giảm giá: ${voucher.discount}%'),
                       SizedBox(height: 8),
@@ -289,7 +289,7 @@ class _EditVoucherDialogState extends State<EditVoucherDialog> {
   void initState() {
     super.initState();
     _discountController.text = widget.voucher.discount.toString();
-    _quantityController.text = widget.voucher.quanlity.toString();
+    _quantityController.text = widget.voucher.quantity.toString();
     _selectedExpiryDate = widget.voucher.expiry.toDate();
   }
 
@@ -387,8 +387,8 @@ class _EditVoucherDialogState extends State<EditVoucherDialog> {
                             Timestamp.fromDate(_selectedExpiryDate);
 
                         Provider.of<VoucherViewModel>(context, listen: false)
-                            .updateVoucher(
-                                widget.voucher.uid, discount, expiry, quantity);
+                            .updateVoucher(widget.voucher.uid, discount, expiry,
+                                quantity); // Truyền quantity là String
                         Navigator.of(context).pop();
                       } else {
                         print('Form is not valid');

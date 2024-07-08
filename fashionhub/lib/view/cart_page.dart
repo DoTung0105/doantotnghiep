@@ -120,11 +120,14 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-  void navToPaymentPage() {
+  void navToPaymentPage(List<UserCart> selectedItems, double totalPayment) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CheckOutPage(selectedItems: selectedItems),
+        builder: (context) => CheckOutPage(
+          selectedItems: selectedItems,
+          totalPayment: totalPayment,
+        ),
       ),
     );
   }
@@ -283,7 +286,11 @@ class _CartPageState extends State<CartPage> {
                   allItemsSelected: allItemsSelected,
                   onSelectAllCheckedChange: (isChecked) =>
                       onSelectAllCheckedChange(isChecked, cartItems),
-                  onPayment: navToPaymentPage,
+                  onPayment: () {
+                    double totalPayment = selectedItems.fold(0.0,
+                        (total, item) => total + (item.price * item.quantity));
+                    navToPaymentPage(selectedItems, totalPayment);
+                  },
                 ),
               ],
             );

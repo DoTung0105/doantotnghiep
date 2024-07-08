@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fashionhub/view/list_voucher.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -9,6 +10,7 @@ class DeliveryTimeComponent extends StatefulWidget {
   final double storeLongitude;
   final String customerAddress;
   final Function(String, String) onFeeUpdated;
+  final double totalPayment;
 
   const DeliveryTimeComponent({
     Key? key,
@@ -16,6 +18,7 @@ class DeliveryTimeComponent extends StatefulWidget {
     required this.storeLongitude,
     required this.customerAddress,
     required this.onFeeUpdated,
+    required this.totalPayment,
   }) : super(key: key);
 
   @override
@@ -149,6 +152,20 @@ class _DeliveryTimeComponentState extends State<DeliveryTimeComponent> {
           String discountAmount =
               '${_currencyFormat.format(_standardFee - discountedValue)}đ'; // Tính toán số tiền được giảm
 
+          // Giảm số lượng mã giảm giá trên Firestore
+          int currentQuantity = voucher['quantity'];
+          if (currentQuantity > 0) {
+            await FirebaseFirestore.instance
+                .collection('voucher')
+                .doc(voucher.id)
+                .update({'quantity': currentQuantity - 1});
+          } else {
+            setState(() {
+              _errorMessage = 'Mã đã hết lượt sử dụng';
+            });
+            return;
+          }
+
           setState(() {
             _discountedFee = discountedFee;
             _errorMessage = null; // Xóa thông báo lỗi nếu có
@@ -206,6 +223,8 @@ class _DeliveryTimeComponentState extends State<DeliveryTimeComponent> {
                   height: 38.0,
                   child: TextField(
                     controller: _discountController,
+                    enabled:
+                        !_isDiscountApplied, // Disable TextField if discount is applied
                     decoration: const InputDecoration(
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
@@ -250,6 +269,37 @@ class _DeliveryTimeComponentState extends State<DeliveryTimeComponent> {
               style: TextStyle(color: Colors.red),
             ),
           ),
+        Padding(
+          padding: const EdgeInsets.only(left: 2.0),
+          child: GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ListVoucher(
+                    totalPayment: widget
+                        .totalPayment), // Truyền totalPayment vào ListVoucher
+              ),
+            ),
+            child: Row(
+              children: [
+                Image.asset('lib/images/voucher_code.png'),
+                const SizedBox(width: 10),
+                Text(
+                  'Thu thập mã giảm giá',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                const SizedBox(width: 5),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2.0),
+                  child: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 10,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

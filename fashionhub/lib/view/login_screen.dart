@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
       LoginViewModel(authenticationService: AuthenticationService());
   bool obscurePassword = true;
 
- @override
+  @override
   void initState() {
     super.initState();
     _checkLoginStatus();
@@ -50,7 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

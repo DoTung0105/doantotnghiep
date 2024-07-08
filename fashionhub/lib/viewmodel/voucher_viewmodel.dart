@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fashionhub/model/voucher.dart';
 import 'package:flutter/material.dart';
@@ -53,17 +54,20 @@ class VoucherViewModel extends ChangeNotifier {
         8, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
   }
 
-  // Thêm voucher mới vào Firestore
-  Future<void> addVoucher(
-      String discount, Timestamp expiry, String quanlity) async {
+  Future<void> addVoucher(String discount, Timestamp expiry,
+      String quantityString // Nhận vào dưới dạng String
+      ) async {
     try {
+      // Chuyển đổi chuỗi thành số nguyên
+      int quantity = int.parse(quantityString);
+
       String promotionalId = generateRandomString(); // Generate promotional_id
       DocumentReference docRef = await _db.collection(_collectionName).add({
         'promotional_id': promotionalId,
         'discount': discount,
         'expiry': expiry,
         'status': true,
-        'quanlity': quanlity
+        'quantity': quantity // Sử dụng biến đã chuyển đổi
       });
 
       // Tạo đối tượng voucher mới và thêm vào danh sách
@@ -73,7 +77,8 @@ class VoucherViewModel extends ChangeNotifier {
           discount: discount,
           expiry: expiry,
           status: true,
-          quanlity: quanlity);
+          quantity: quantity // Sử dụng biến đã chuyển đổi
+          );
 
       vouchers.add(newVoucher);
       notifyListeners();
@@ -113,16 +118,20 @@ class VoucherViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateVoucher(
-      String uid, String discount, Timestamp expiry, String quantity) async {
+  Future<void> updateVoucher(String uid, String discount, Timestamp expiry,
+      String quantityString // Nhận vào dưới dạng String
+      ) async {
     try {
+      // Chuyển đổi chuỗi thành số nguyên
+      int quantity = int.parse(quantityString);
+
       DocumentReference docRef = _db.collection(_collectionName).doc(uid);
       DocumentSnapshot doc = await docRef.get();
       if (doc.exists) {
         await docRef.update({
           'discount': discount,
           'expiry': expiry,
-          'quanlity': quantity,
+          'quantity': quantity,
         });
 
         // Cập nhật lại danh sách vouchers
@@ -130,7 +139,7 @@ class VoucherViewModel extends ChangeNotifier {
         if (index != -1) {
           vouchers[index].discount = discount;
           vouchers[index].expiry = expiry;
-          vouchers[index].quanlity = quantity;
+          vouchers[index].quantity = quantity;
           notifyListeners();
         }
       } else {

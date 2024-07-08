@@ -57,26 +57,32 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   void buyNow() {
+    List<UserCart> selectedItems = [
+      UserCart(
+        productName: widget.detailCol.name,
+        price: widget.detailCol.price,
+        imagePath: widget.detailCol.imagePath,
+        description: widget.detailCol.description,
+        brand: widget.detailCol.brand,
+        color: widget.detailCol.color,
+        size: selectedSize,
+        uid: '', // Cung cấp giá trị mặc định cho uid
+        evaluate: widget.detailCol.evaluate,
+        sold: widget.detailCol.sold,
+        wareHouse: widget.detailCol.wareHouse,
+        quantity: quantityCount,
+      ),
+    ];
+
+    double totalPayment = selectedItems.fold(
+        0.0, (total, item) => total + (item.price * item.quantity));
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => CheckOutPage(
-          selectedItems: [
-            UserCart(
-              productName: widget.detailCol.name,
-              price: widget.detailCol.price,
-              imagePath: widget.detailCol.imagePath,
-              description: widget.detailCol.description,
-              brand: widget.detailCol.brand,
-              color: widget.detailCol.color,
-              size: selectedSize,
-              uid: '', // Cung cấp giá trị mặc định cho uid
-              evaluate: widget.detailCol.evaluate,
-              sold: widget.detailCol.sold,
-              wareHouse: widget.detailCol.wareHouse,
-              quantity: quantityCount,
-            ),
-          ],
+          selectedItems: selectedItems,
+          totalPayment: totalPayment,
         ),
       ),
     );
