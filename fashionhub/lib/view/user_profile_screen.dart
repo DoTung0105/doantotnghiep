@@ -61,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
       setState(() {
@@ -125,25 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             : AssetImage('lib/images/placeholder.png'),
                       ),
                     ),
-                    const SizedBox(height: 3),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.44,
-                      height: 30,
-                      child: ElevatedButton(
-                        onPressed: _pickImage,
-                        child: const Row(
-                          children: [
-                            Text('Thay ảnh đại diện'),
-                            const SizedBox(width: 5),
-                            Icon(
-                              Icons.edit,
-                              size: 15,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 15),
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
