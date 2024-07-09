@@ -36,6 +36,7 @@ class Order_class {
   String deliveryAddress;
   List<OrderProduct> products; // Danh sách các sản phẩm trong đơn hàng
   String totalPrice;
+  String deliveryTime;
   double fee;
   String status;
   final String uid;
@@ -47,6 +48,7 @@ class Order_class {
     required this.userName,
     required this.phone,
     required this.deliveryAddress,
+    required this.deliveryTime,
     required this.products,
     required this.totalPrice,
     required this.fee,
@@ -75,6 +77,7 @@ class Order_class {
       userName: map['userName'] ?? '',
       phone: map['phone'] ?? '',
       deliveryAddress: map['deliveryAddress'] ?? '',
+      deliveryTime: map['deliveryTime'] ?? '',
       products: products,
       totalPrice: map['totalPrice'] ?? '',
       fee: map['fee']?.toDouble() ?? 0.0,
@@ -94,6 +97,7 @@ class Order_class {
       'userName': userName,
       'phone': phone,
       'deliveryAddress': deliveryAddress,
+      'deliveryTime': deliveryTime,
       'products': productsMap,
       'totalPrice': totalPrice,
       'fee': fee,

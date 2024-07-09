@@ -198,7 +198,7 @@ class PaymentSection extends StatelessWidget {
     String formattedTotalPrice = formatter.format(totalPrice);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

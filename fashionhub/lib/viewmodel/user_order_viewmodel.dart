@@ -36,6 +36,7 @@ class User_Order_ViewModel extends ChangeNotifier {
             userName: doc['userName'] ?? '',
             phone: doc['phone'] ?? '',
             deliveryAddress: doc['deliveryAddress'] ?? '',
+            deliveryTime: doc['deliveryTime'] ?? '',
             products: (doc['products'] as List<dynamic>)
                 .map((product) => OrderProduct.fromMap(product))
                 .toList(),
