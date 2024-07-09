@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fashionhub/model/user_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProfilePage extends StatefulWidget {
   final UserModel? currentUser;
@@ -84,24 +86,40 @@ class _EditProfilePageState extends State<EditProfilePage> {
           }
         });
 
-        Navigator.pop(context); // Quay lại trang trước đó
+        Navigator.pop(context);
       } catch (e) {
         print('Error updating profile: $e');
+        // Handle error as needed
       }
     }
   }
 
-  Future<String> uploadImage(File file) async {
+  Future<String> uploadImage(File image) async {
     try {
-      Reference storageReference = FirebaseStorage.instance
+      // Create a reference to the storage
+      Reference storageRef = FirebaseStorage.instance
           .ref()
-          .child('profile_images/${file.uri.pathSegments.last}');
-      UploadTask uploadTask = storageReference.putFile(file);
-      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
-      return await taskSnapshot.ref.getDownloadURL();
+          .child('avatars/${widget.currentUser?.uid}.jpg');
+      // Upload the file
+      await storageRef.putFile(image);
+      // Return the URL of the uploaded file
+      return await storageRef.getDownloadURL();
     } catch (e) {
       print('Error uploading image: $e');
-      return '';
+      throw e;
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imagePathController.text = pickedFile.path;
+      });
+    } else {
+      print('No image selected.');
     }
   }
 
@@ -109,58 +127,110 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Profile'),
+        title: Text('Chỉnh sửa hồ sơ'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            children: [
+          child: ListView(
+            children: <Widget>[
+              GestureDetector(
+                onTap: _pickImage,
+                child: Center(
+                  child: _imagePathController.text.isNotEmpty
+                      ? CircleAvatar(
+                          radius: 50,
+                          backgroundImage:
+                              _imagePathController.text.startsWith('http')
+                                  ? NetworkImage(_imagePathController.text)
+                                  : FileImage(File(_imagePathController.text))
+                                      as ImageProvider,
+                        )
+                      : CircleAvatar(
+                          radius: 50,
+                          child: Icon(Icons.person),
+                        ),
+                ),
+              ),
+              SizedBox(height: 16),
               TextFormField(
                 controller: _displayNameController,
-                decoration: InputDecoration(labelText: 'Display Name'),
+                decoration: InputDecoration(
+                  labelText: 'Tên hiển thị',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
                 validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter your display name';
+                  if (value == null || value.isEmpty) {
+                    return 'Vui lòng nhập tên hiển thị';
+                  } else if (value.split(' ').length > 5) {
+                    return 'Tên hiển thị không được vượt quá 5 từ';
                   }
                   return null;
                 },
               ),
+              SizedBox(height: 16),
               TextFormField(
                 controller: _addressController,
-                decoration: InputDecoration(labelText: 'Address'),
+                decoration: InputDecoration(
+                  labelText: 'Địa chỉ',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
                 validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter your address';
+                  if (value == null || value.isEmpty) {
+                    return 'Vui lòng nhập địa chỉ';
                   }
                   return null;
                 },
               ),
+              SizedBox(height: 16),
               TextFormField(
                 controller: _phoneController,
-                decoration: InputDecoration(labelText: 'Phone Number'),
+                decoration: InputDecoration(
+                  labelText: 'Số điện thoại',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter your phone number';
+                  if (value == null || value.isEmpty) {
+                    return 'Vui lòng nhập số điện thoại';
+                  } else if (!RegExp(r'^0\d{9}$').hasMatch(value)) {
+                    return 'Số điện thoại phải bắt đầu bằng 0 và có đủ 10 chữ số';
                   }
                   return null;
                 },
               ),
-              TextFormField(
-                controller: _imagePathController,
-                decoration: InputDecoration(labelText: 'Image Path'),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter image path';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
+              SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _updateProfile,
-                child: Text('Update Profile'),
+                child: Text('Cập nhật'),
               ),
             ],
           ),
