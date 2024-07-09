@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
+// Widget giao diện brand của filter_option
 class BranchRangeContainer extends StatefulWidget {
   final String text;
   final bool isSelected;
@@ -49,7 +50,7 @@ class _BranchRangeContainerState extends State<BranchRangeContainer> {
   }
 }
 
-// Format Price
+// Widget định dạng hiển thị giá tiền V1
 class PriceWidget extends StatelessWidget {
   final double price;
   final TextStyle? style;
@@ -78,6 +79,7 @@ class PriceWidget extends StatelessWidget {
   }
 }
 
+// Widget định dạng hiển thị giá tiền V2
 class PriceWidgetII extends StatelessWidget {
   final double price;
   final TextStyle? style;
@@ -106,6 +108,7 @@ class PriceWidgetII extends StatelessWidget {
   }
 }
 
+// Widget xử lý TextField Tối thiểu - Tối đa không được âm của filter_option
 class NonNegativeIntFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
@@ -121,4 +124,64 @@ class NonNegativeIntFormatter extends TextInputFormatter {
 
     return newValue;
   }
+}
+
+// Widget cho các thông tin của User_profile_screen
+class ProfileItem extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  ProfileItem({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: Colors.deepPurpleAccent,
+            size: 28,
+          ),
+          SizedBox(width: 20),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Widget điều chỉnh viền Container của User_profile_screen
+class MyClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(0, size.height - 100);
+    var controlPoint = Offset(size.width / 2, size.height);
+    var endPoint = Offset(size.width, size.height - 100);
+    path.quadraticBezierTo(
+        controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+// Widget xử lý Tab của Order_List
+class TabItem {
+  TabItem({this.title = "", this.active = false});
+  String title;
+  bool active;
+
+  static List<TabItem> lstTab =
+      List.filled(0, TabItem(title: ""), growable: true);
 }

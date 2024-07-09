@@ -1,10 +1,11 @@
 import 'package:fashionhub/components/bottom_nav_bar.dart';
+import 'package:fashionhub/components/zalo_component.dart';
 import 'package:fashionhub/service/authentication_service.dart';
 import 'package:fashionhub/view/cart_page.dart';
 import 'package:fashionhub/view/login_screen.dart';
-import 'package:fashionhub/view/profile_page.dart';
 import 'package:fashionhub/view/search_page.dart';
 import 'package:fashionhub/view/shop_page.dart';
+import 'package:fashionhub/view/user_profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const ShopPage(),
     const CartPage(),
-    const UserProfilePage(),
+    ProfilePage(authService: AuthenticationService()),
   ];
 
   Future<void> _logout(BuildContext context) async {
@@ -51,7 +52,7 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavBar(
         onTabChange: (index) => navigateBottomBar(index),
       ),
-      appBar: _selectedIndex == 1
+      appBar: _selectedIndex == 1 || _selectedIndex == 2
           ? null
           : AppBar(
               toolbarHeight: MediaQuery.of(context).size.height * 0.05,
@@ -121,22 +122,29 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.white,
                       ),
                       title: Text(
-                        'Home',
+                        'Trang chủ',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
                 ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(left: 25.0),
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.settings,
-                      color: Colors.white,
-                    ),
-                    title: Text(
-                      'Setting',
-                      style: TextStyle(color: Colors.white),
+                  child: GestureDetector(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ZaloComponent(),
+                        )),
+                    child: const ListTile(
+                      leading: Icon(
+                        Icons.help_outline_sharp,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        'Hổ trợ',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
@@ -152,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.white,
                   ),
                   title: Text(
-                    'Logout',
+                    'Đăng xuất',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),

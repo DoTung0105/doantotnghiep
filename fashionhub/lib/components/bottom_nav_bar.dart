@@ -10,6 +10,12 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 7.0),
+      decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(color: Colors.grey),
+          ),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15), topRight: Radius.circular(15))),
       child: GNav(
         color: Colors.grey[400],
         activeColor: Colors.grey.shade700,
