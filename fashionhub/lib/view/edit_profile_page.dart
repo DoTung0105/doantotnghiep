@@ -126,8 +126,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Chỉnh sửa hồ sơ'),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -135,22 +137,30 @@ class _EditProfilePageState extends State<EditProfilePage> {
           key: _formKey,
           child: ListView(
             children: <Widget>[
-              GestureDetector(
-                onTap: _pickImage,
-                child: Center(
-                  child: _imagePathController.text.isNotEmpty
-                      ? CircleAvatar(
-                          radius: 50,
-                          backgroundImage:
-                              _imagePathController.text.startsWith('http')
-                                  ? NetworkImage(_imagePathController.text)
-                                  : FileImage(File(_imagePathController.text))
-                                      as ImageProvider,
-                        )
-                      : CircleAvatar(
-                          radius: 50,
-                          child: Icon(Icons.person),
-                        ),
+              Center(
+                child: _imagePathController.text.isNotEmpty
+                    ? CircleAvatar(
+                        radius: 50,
+                        backgroundImage:
+                            _imagePathController.text.startsWith('http')
+                                ? NetworkImage(_imagePathController.text)
+                                : FileImage(File(_imagePathController.text))
+                                    as ImageProvider,
+                      )
+                    : CircleAvatar(
+                        radius: 50,
+                        child: Icon(Icons.person),
+                      ),
+              ),
+              const SizedBox(height: 5),
+              Center(
+                child: SizedBox(
+                  width: 100,
+                  height: 25,
+                  child: ElevatedButton(
+                    onPressed: _pickImage,
+                    child: Icon(Icons.camera_alt_outlined),
+                  ),
                 ),
               ),
               SizedBox(height: 16),

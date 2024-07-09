@@ -10,6 +10,7 @@ class DeliveryTimeComponent extends StatefulWidget {
   final double storeLongitude;
   final String customerAddress;
   final Function(String, String) onFeeUpdated;
+  final Function(String) onDeliveryTimeUpdated;
   final double totalPayment;
 
   const DeliveryTimeComponent({
@@ -18,6 +19,7 @@ class DeliveryTimeComponent extends StatefulWidget {
     required this.storeLongitude,
     required this.customerAddress,
     required this.onFeeUpdated,
+    required this.onDeliveryTimeUpdated,
     required this.totalPayment,
   }) : super(key: key);
 
@@ -43,7 +45,6 @@ class _DeliveryTimeComponentState extends State<DeliveryTimeComponent> {
     _calculateDistanceAndTime();
   }
 
-  // Phương thức để tính toán khoảng cách và thời gian giao hàng
   Future<void> _calculateDistanceAndTime() async {
     try {
       await convertAddressToCoordinates(widget.customerAddress);
@@ -65,13 +66,16 @@ class _DeliveryTimeComponentState extends State<DeliveryTimeComponent> {
         String estimatedTimeRange =
             _estimateDeliveryTimeRange(distanceInMeters);
         double distanceInKm = distanceInMeters / 1000; // Đổi sang km
-        String distanceInKmString = distanceInKm.toStringAsFixed(
-            1); // Chuyển đổi sang chuỗi và làm tròn đến 1 chữ số thập phân
+        String distanceInKmString =
+            distanceInKm.toStringAsFixed(1); // Làm tròn đến 1 chữ số thập phân
 
         setState(() {
           _deliveryTime = estimatedTimeRange;
           _distance = '$distanceInKmString km';
         });
+
+        // Gọi callback để cập nhật giá trị delivery time về widget cha
+        widget.onDeliveryTimeUpdated(estimatedTimeRange);
 
         _standardFee =
             _calculateStandardFee(distanceInKm); // Lưu giá trị phí tiêu chuẩn

@@ -35,6 +35,7 @@ class User_Order {
   String userName;
   String phone;
   String deliveryAddress;
+  String deliveryTime;
   List<OrderProduct> products;
   String totalPrice;
   double fee;
@@ -48,6 +49,7 @@ class User_Order {
     required this.userName,
     required this.phone,
     required this.deliveryAddress,
+    required this.deliveryTime,
     required this.products,
     required this.totalPrice,
     required this.fee,
@@ -67,6 +69,7 @@ class User_Order {
       userName: data['userName'] ?? '',
       phone: data['phone'] ?? '',
       deliveryAddress: data['deliveryAddress'] ?? '',
+      deliveryTime: data['deliveryTime'] ?? '',
       totalPrice: data['totalPrice'] ?? '',
       products: products,
       fee: (data['fee'] ?? 0).toDouble(),

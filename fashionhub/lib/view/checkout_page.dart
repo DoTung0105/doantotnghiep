@@ -35,6 +35,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
   String fee = '0đ';
   String discountAmount = '0đ';
   double _deliveryFee = 0.0;
+  String? _estimatedDeliveryTime;
   final NumberFormat _currencyFormat = NumberFormat('#,##0', 'vi_VN');
   final AuthenticationService _authenticationService =
       AuthenticationService(); // Khởi tạo đối tượng AuthenticationServi
@@ -66,6 +67,12 @@ class _CheckOutPageState extends State<CheckOutPage> {
         currentUserId = user.uid;
       });
     }
+  }
+
+  void _updateDeliveryTime(String deliveryTime) {
+    setState(() {
+      _estimatedDeliveryTime = deliveryTime;
+    });
   }
 
   // Hàm che số điện thoại
@@ -133,6 +140,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
       products: products,
       totalPrice: formattedTotalPrice,
       fee: _deliveryFee,
+      deliveryTime: _estimatedDeliveryTime ?? '',
       status: status,
       uid: uid,
       paymentMethods: paymentMethod,
@@ -464,6 +472,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                         discountAmount = discountAmountValue;
                       });
                     },
+                    onDeliveryTimeUpdated: _updateDeliveryTime,
                     totalPayment:
                         totalPayment, // Truyền totalPayment vào DeliveryTimeComponent
                   ),
