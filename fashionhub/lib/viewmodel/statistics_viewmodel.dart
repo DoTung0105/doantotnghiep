@@ -31,14 +31,15 @@ class StatisticsViewModel extends ChangeNotifier {
       }).toList();
 
       totalOrders = orders.length;
-      approvedOrders = orders.where((order) => order.status == 'Duyệt').length;
+      approvedOrders =
+          orders.where((order) => order.status == 'Đang giao').length;
       cancelledOrders =
           orders.where((order) => order.status == 'Hủy đơn').length;
       pendingOrders = orders
           .where((order) => order.status == 'Chờ xác nhận')
           .length; // Tính số lượng đơn hàng chờ xác nhận
       totalRevenue =
-          orders.where((order) => order.status == 'Duyệt').map((order) {
+          orders.where((order) => order.status == 'Đang giao').map((order) {
         String cleanedPrice = order.totalPrice.replaceAll(RegExp(r'[^\d]'), '');
         double price = double.tryParse(cleanedPrice) ?? 0.0;
         double fee = order.fee; // Lấy phí vận chuyển từ đơn hàng
@@ -69,7 +70,7 @@ class StatisticsViewModel extends ChangeNotifier {
   void _calculateMonthlyRevenue() {
     Map<String, double> revenue = {};
     for (var order in orders) {
-      if (order.status == 'Duyệt') {
+      if (order.status == 'Đang giao') {
         String month = DateFormat('MM/yyyy').format(order.orderday.toDate());
         String cleanedPrice = order.totalPrice.replaceAll(RegExp(r'[^\d]'), '');
         double totalPrice = double.tryParse(cleanedPrice) ?? 0.0;
@@ -95,7 +96,7 @@ class StatisticsViewModel extends ChangeNotifier {
     selectedMonthRevenue = monthlyRevenue[monthKey] ?? 0.0;
     selectedMonthApprovedOrders = orders
         .where((order) =>
-            order.status == 'Duyệt' &&
+            order.status == 'Đang giao' &&
             DateFormat('MM/yyyy').format(order.orderday.toDate()) == monthKey)
         .length;
     selectedMonthCancelledOrders = orders

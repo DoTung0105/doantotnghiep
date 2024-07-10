@@ -8,8 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-
-
 class ListProductPage extends StatefulWidget {
   @override
   _ListProductPageState createState() => _ListProductPageState();
@@ -91,49 +89,66 @@ class _ProductItemState extends State<ProductItem> {
                   fit: BoxFit.cover,
                 ),
               ),
+              const SizedBox(height: 10),
               Column(
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Delete Product'),
-                          content: Text(
-                              'Are you sure you want to delete this product?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('Cancel'),
+                  Container(
+                    height: 30,
+                    width: 100,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Row(
+                              children: [
+                                Icon(Icons.warning_rounded),
+                                Text(' Cảnh báo')
+                              ],
                             ),
-                            TextButton(
-                              onPressed: () {
-                                // Handle delete action
-                                Provider.of<ProductViewModel>(context,
-                                        listen: false)
-                                    .deleteProduct(widget.product.id);
+                            content: Text(
+                              'Bạn có chắc chắn muốn xóa sản phẩm khỏi cửa hàng?',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Đóng'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  // Handle delete action
+                                  Provider.of<ProductViewModel>(context,
+                                          listen: false)
+                                      .deleteProduct(widget.product.id);
 
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('Delete'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    child: Text("Del"),
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Xóa'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      child: Text("Xóa"),
+                    ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  EditProductPage(product: widget.product)));
-                    },
-                    child: Text('Edit'),
+                  const SizedBox(height: 5),
+                  Container(
+                    height: 30,
+                    width: 100,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EditProductPage(product: widget.product)));
+                      },
+                      child: Text('Sửa'),
+                    ),
                   ),
                 ],
               ),
@@ -146,18 +161,18 @@ class _ProductItemState extends State<ProductItem> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Name : ${widget.product.name}'),
+                Text('Tên: ${widget.product.name}'),
                 Text(
-                    'Price : ${NumberFormat('#,###').format(widget.product.price)}'),
+                    'Giá : ${NumberFormat('#,###').format(widget.product.price)}'),
                 AnimatedCrossFade(
                   duration: Duration(milliseconds: 100),
                   firstChild: Text(
-                    'Description : ${_truncateDescription(widget.product.description, 40)}',
+                    'Mô tả : ${_truncateDescription(widget.product.description, 40)}',
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                   secondChild: Text(
-                    'Description : ${widget.product.description}',
+                    'Mô tả : ${widget.product.description}',
                   ),
                   crossFadeState: isExpanded
                       ? CrossFadeState.showSecond
@@ -179,23 +194,23 @@ class _ProductItemState extends State<ProductItem> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(child: Text('Size : ${widget.product.size}')),
-                    Expanded(child: Text('Color : ${widget.product.color}')),
+                    Expanded(child: Text('Màu : ${widget.product.color}')),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(child: Text('Branch : ${widget.product.brand}')),
+                    Expanded(child: Text('Brand: ${widget.product.brand}')),
                     Expanded(
-                        child: Text('Evaluate : ${widget.product.evaluate}')),
+                        child: Text('Đánh giá : ${widget.product.evaluate}')),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(child: Text('Sold : ${widget.product.sold}')),
                     Expanded(
-                        child: Text('Warehouse : ${widget.product.wareHouse}')),
+                        child: Text('Số lượt bán : ${widget.product.sold}')),
+                    Expanded(child: Text('Kho : ${widget.product.wareHouse}')),
                   ],
                 ),
               ],
@@ -262,10 +277,7 @@ class _EditProductPageState extends State<EditProductPage> {
     super.initState();
     _descriptionController =
         TextEditingController(text: widget.product.description);
-        _descriptionController =
-       
-    // _priceController =
-    //     TextEditingController(text: widget.product.price.toString());
+
     _priceController = TextEditingController(
         text: NumberFormat('#,###').format(widget.product.price));
     //  _sizeController = TextEditingController(text: widget.product.size);
@@ -315,7 +327,8 @@ class _EditProductPageState extends State<EditProductPage> {
       builder: (context, viewModel, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('Edit Product'),
+            title: Text('Chỉnh sửa sản phẩm'),
+            centerTitle: true,
           ),
           body: SingleChildScrollView(
             padding: EdgeInsets.all(16.0),

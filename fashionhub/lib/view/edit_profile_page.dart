@@ -149,7 +149,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       )
                     : CircleAvatar(
                         radius: 50,
-                        child: Icon(Icons.person),
+                        child: Image.asset(
+                          'lib/images/user.png',
+                          height: 100,
+                          width: 100,
+                          fit: BoxFit.cover,
+                        ),
                       ),
               ),
               const SizedBox(height: 5),
