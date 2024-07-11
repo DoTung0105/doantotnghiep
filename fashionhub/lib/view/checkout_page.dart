@@ -98,12 +98,10 @@ class _CheckOutPageState extends State<CheckOutPage> {
   }
 
   Future<void> placeOrder() async {
-    // Chuẩn bị dữ liệu đơn hàng từ widget và các biến khác
     String status = 'Chờ xác nhận';
     String paymentMethod =
         isChecked ? 'Thanh toán khi nhận hàng' : 'Đã thanh toán';
 
-    // Lấy uid của người dùng hiện tại
     User? currentUser = _authenticationService.getCurrentUser();
     if (currentUser == null) {
       print('User is not logged in');
@@ -111,7 +109,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
     }
     String uid = currentUser.uid;
 
-    // Tạo danh sách các sản phẩm trong đơn hàng
     List<OrderProduct> products = widget.selectedItems
         .map((item) => OrderProduct(
               imagePath: item.imagePath,
@@ -123,15 +120,12 @@ class _CheckOutPageState extends State<CheckOutPage> {
             ))
         .toList();
 
-    // Tính tổng tiền của đơn hàng
     double totalPayment = calculateTotalPayment();
     String formattedTotalPrice = _currencyFormat.format(totalPayment) + 'đ';
 
-    // Tạo một DocumentReference mới cho đơn hàng
     DocumentReference newOrderRef =
         FirebaseFirestore.instance.collection('userOrders').doc();
 
-    // Tạo đối tượng Order_class từ các thông tin hiện tại
     Order_class order = Order_class(
       orderId: newOrderRef.id,
       userName: name ?? '',
@@ -148,14 +142,35 @@ class _CheckOutPageState extends State<CheckOutPage> {
     );
 
     try {
-      // Lưu đơn hàng vào Firestore
       await newOrderRef.set(order.toMap());
 
-      // Xóa sản phẩm đã thanh toán khỏi giỏ hàng
-      Provider.of<Cart>(context, listen: false)
-          .removeItems(widget.selectedItems);
+      for (var item in widget.selectedItems) {
+        QuerySnapshot productSnapshot = await FirebaseFirestore.instance
+            .collection('products')
+            .where('name', isEqualTo: item.productName)
+            .where('color', isEqualTo: item.color)
+            .get();
 
-      // Hiển thị thông báo hoặc chuyển hướng sau khi lưu thành công
+        for (var doc in productSnapshot.docs) {
+          var productData = doc.data() as Map<String, dynamic>;
+          int currentSold = productData['sold'] ?? 1;
+          int currentWareHouse = productData['wareHouse'] ?? 1;
+
+          int newSold = currentSold + item.quantity;
+          int newWareHouse = currentWareHouse - item.quantity;
+
+          await FirebaseFirestore.instance
+              .collection('products')
+              .doc(doc.id)
+              .update({
+            'sold': newSold,
+            'wareHouse': newWareHouse,
+          });
+        }
+      }
+
+      Provider.of<Cart>(context, listen: false).clearCart(widget.selectedItems);
+
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -209,7 +224,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                         ),
                       ),
                       onPressed: () {
-                        // Điều hướng trở lại HomePage và xóa ngăn xếp điều hướng
                         Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(builder: (context) => HomePage()),
                           (Route<dynamic> route) => false,
@@ -223,10 +237,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
           );
         },
       );
-
-      // Sau khi đặt hàng thành công, có thể làm sạch giỏ hàng hoặc thực hiện các hành động khác
     } catch (e) {
-      // Xử lý lỗi nếu có
       showDialog(
         context: context,
         builder: (BuildContext context) {

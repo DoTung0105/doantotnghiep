@@ -22,6 +22,7 @@ class Cart extends ChangeNotifier {
           await FirebaseFirestore.instance.collection('products').get();
       final List<Clother> fetchedClothes = querySnapshot.docs.map((doc) {
         return Clother(
+          id: doc['id'],
           name: doc['name'],
           price: doc['price'],
           imagePath: doc['imagePath'],
@@ -61,6 +62,39 @@ class Cart extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error fetching user cart: $e');
+    }
+  }
+
+  Future<void> clearCart(List<UserCart> items) async {
+    try {
+      User? currentUser = _authenticationService.getCurrentUser();
+      if (currentUser == null) {
+        print('User is not logged in');
+        return;
+      }
+      String uid = currentUser.uid;
+
+      for (var item in items) {
+        userCart.remove(item);
+
+        QuerySnapshot cartSnapshot = await FirebaseFirestore.instance
+            .collection('userCart')
+            .where('name', isEqualTo: item.productName)
+            .where('size', isEqualTo: item.size)
+            .where('color', isEqualTo: item.color)
+            .where('uid', isEqualTo: uid)
+            .get();
+
+        for (var doc in cartSnapshot.docs) {
+          await FirebaseFirestore.instance
+              .collection('userCart')
+              .doc(doc.id)
+              .delete();
+        }
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error removing items from cart: $e');
     }
   }
 
@@ -346,33 +380,6 @@ class Cart extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error removing items from cart: $e');
-    }
-  }
-
-  Future<void> clearCart() async {
-    try {
-      User? currentUser = _authenticationService.getCurrentUser();
-      if (currentUser == null) {
-        print('User is not logged in');
-        return;
-      }
-      String uid = currentUser.uid;
-
-      userCart.clear();
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('userCart')
-          .where('uid', isEqualTo: uid)
-          .get();
-
-      for (var doc in snapshot.docs) {
-        await FirebaseFirestore.instance
-            .collection('userCart')
-            .doc(doc.id)
-            .delete();
-      }
-      notifyListeners();
-    } catch (e) {
-      print('Error clearing cart: $e');
     }
   }
 
