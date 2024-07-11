@@ -5,6 +5,7 @@ import 'package:fashionhub/components/layout_widget.dart';
 import 'package:fashionhub/components/order_list.dart';
 import 'package:fashionhub/model/user_model.dart';
 import 'package:fashionhub/service/authentication_service.dart';
+import 'package:fashionhub/view/changepassword_screen.dart';
 import 'package:fashionhub/view/edit_profile_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -155,6 +156,36 @@ class _ProfilePageState extends State<ProfilePage> {
                               ProfileItem(
                                   icon: Icons.home_outlined,
                                   text: _currentUser!.address ?? ''),
+                              Divider(),
+                              GestureDetector(
+                                onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => ChangePasswordPage(
+                                          authService:
+                                              AuthenticationService())),
+                                ),
+                                child: const Row(
+                                  children: [
+                                    Icon(
+                                      Icons.lock_open_outlined,
+                                      size: 28,
+                                      color: Colors.deepPurpleAccent,
+                                    ),
+                                    SizedBox(width: 20),
+                                    Text(
+                                      'Đổi mật khẩu',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontStyle: FontStyle.italic),
+                                    ),
+                                    Spacer(),
+                                    Icon(
+                                      Icons.arrow_forward_ios_outlined,
+                                      size: 20,
+                                    )
+                                  ],
+                                ),
+                              ),
                               Divider(),
                               Padding(
                                 padding:

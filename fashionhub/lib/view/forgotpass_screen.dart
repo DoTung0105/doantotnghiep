@@ -1,6 +1,6 @@
 import 'package:fashionhub/view/login_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:fashionhub/viewmodel/ForgotPassword_viewModel.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class ForgotpassScreen extends StatefulWidget {

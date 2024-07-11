@@ -1,7 +1,7 @@
 import 'package:fashionhub/animation/animation.dart';
+import 'package:fashionhub/service/authentication_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fashionhub/service/authentication_service.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   final AuthenticationService authService;
@@ -60,7 +60,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Đổi mật khẩu'),
+        title: Text(
+          'Đổi mật khẩu',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
