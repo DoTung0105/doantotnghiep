@@ -1,8 +1,5 @@
 import 'package:fashionhub/service/authentication_service.dart';
-import 'package:fashionhub/view/addproduc_screen.dart';
-import 'package:fashionhub/view/list_product.dart';
 import 'package:fashionhub/view/login_screen.dart';
-import 'package:fashionhub/view/user_profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class DrawerMenu extends StatelessWidget {
@@ -11,52 +8,51 @@ class DrawerMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      // Add a ListView to the drawer. This ensures the user can scroll
-      // through the options in the drawer if there isn't enough vertical
-      // space to fit everything.
-      child: ListView(
-        // Important: Remove any padding from the ListView.
-        padding: EdgeInsets.zero,
+      backgroundColor: Colors.grey[900],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Colors.blue,
+          Column(
+            children: [
+              DrawerHeader(
+                child: Image.asset(
+                  'lib/images/logo.png',
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 25.0, bottom: 25.0),
+            child: GestureDetector(
+              onTap: () => _logout(context), // Call the _logout method here
+              child: const ListTile(
+                leading: Icon(
+                  Icons.logout,
+                  color: Colors.white,
+                ),
+                title: Text(
+                  'Đăng xuất',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
             ),
-            child: Text('Drawer Header'),
-          ),
-          ListTile(
-            title: const Text('Add product'),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddProductPage(),
-                  ));
-            },
-          ),
-          ListTile(
-            title: const Text('List product'),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => screenproducts(),
-                  ));
-            },
-          ),
-          ListTile(
-            title: const Text('User profile'),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ProfilePage(authService: AuthenticationService()),
-                  ));
-            },
           ),
         ],
       ),
     );
+  }
+}
+
+Future<void> _logout(BuildContext context) async {
+  try {
+    AuthenticationService authenticationService = AuthenticationService();
+    await authenticationService.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  } catch (e) {
+    print('Error logging out: $e');
   }
 }

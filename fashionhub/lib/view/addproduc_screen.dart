@@ -19,7 +19,7 @@ class AddProductPage extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.transparent,
       ),
-      backgroundColor: Color.fromARGB(255, 39, 176, 112),
+      backgroundColor: Colors.grey[300],
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -107,7 +107,7 @@ class AddProductPage extends StatelessWidget {
                             width: 210,
                             child: TextFormField(
                               decoration: InputDecoration(
-                                hintText: 'Giá',
+                                hintText: 'Giá sản phẩm',
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: OutlineInputBorder(
@@ -168,7 +168,7 @@ class AddProductPage extends StatelessWidget {
                   0.4,
                   TextFormField(
                     // keyboardType: TextInputType.multiline,
-                    
+
                     maxLines: null,
                     decoration: InputDecoration(
                       hintText: 'Mô tả',
@@ -246,7 +246,7 @@ class AddProductPage extends StatelessWidget {
                         width: 230,
                         child: TextFormField(
                           decoration: InputDecoration(
-                            hintText: 'Màu',
+                            hintText: 'Màu sắc',
                             filled: true,
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
@@ -307,36 +307,9 @@ class AddProductPage extends StatelessWidget {
                 SizedBox(height: 10),
                 FadeAnimation(
                   0.8,
-                  // TextFormField(
-                  //   decoration: InputDecoration(
-                  //     hintText: 'Warehous',
-                  //     filled: true,
-                  //     fillColor: Colors.white,
-                  //     border: OutlineInputBorder(
-                  //       borderSide: BorderSide(
-                  //         color: Colors.white, // Default border color
-                  //       ),
-                  //       borderRadius: BorderRadius.circular(10),
-                  //     ),
-                  //     enabledBorder: OutlineInputBorder(
-                  //       borderSide: BorderSide(
-                  //         color: Colors.white, // Default border color
-                  //       ),
-                  //       borderRadius: BorderRadius.circular(10),
-                  //     ),
-                  //   ),
-                  //   keyboardType: TextInputType.number,
-                  //   validator: (value) {
-                  //     if (value == null || value.isEmpty) {
-                  //       return 'Hãy điền thông tin đầy đủ';
-                  //     }
-                  //     return null;
-                  //   },
-                  //   onChanged: viewModel.setWarehouse,
-                  // ),
                   TextFormField(
                     decoration: InputDecoration(
-                      hintText: 'Warehous',
+                      hintText: 'Tồn kho',
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -374,41 +347,9 @@ class AddProductPage extends StatelessWidget {
                 SizedBox(height: 10),
                 FadeAnimation(
                   0.9,
-                  // TextFormField(
-                  //   decoration: InputDecoration(
-                  //     hintText: 'sold',
-                  //     filled: true,
-                  //     fillColor: Colors.white,
-                  //     border: OutlineInputBorder(
-                  //       borderSide: BorderSide(
-                  //         color: Colors.white, // Default border color
-                  //       ),
-                  //       borderRadius: BorderRadius.circular(10),
-                  //     ),
-                  //     enabledBorder: OutlineInputBorder(
-                  //       borderSide: BorderSide(
-                  //         color: Colors.white, // Default border color
-                  //       ),
-                  //       borderRadius: BorderRadius.circular(10),
-                  //     ),
-                  //   ),
-                  //   keyboardType: TextInputType.number,
-                  //   validator: (value) {
-                  //     if (value == null || value.isEmpty) {
-                  //       return 'Hãy điền thông tin đầy đủ';
-                  //     }
-                  //     return null;
-                  //   },
-                  //   onChanged: (value) {
-                  //     int? soldValue = int.tryParse(value);
-                  //     if (soldValue != null) {
-                  //       viewModel.setSold(soldValue);
-                  //     }
-                  //   },
-                  // ),
                   TextFormField(
                     decoration: InputDecoration(
-                      hintText: 'sold',
+                      hintText: 'Số lượt bán',
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -447,7 +388,7 @@ class AddProductPage extends StatelessWidget {
                   1,
                   TextFormField(
                     decoration: InputDecoration(
-                      hintText: 'Evaluate',
+                      hintText: 'Đánh giá',
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -485,7 +426,7 @@ class AddProductPage extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50)),
                             padding: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 100)),
+                                vertical: 10, horizontal: 65)),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             try {
@@ -513,7 +454,7 @@ class AddProductPage extends StatelessWidget {
                           }
                         },
                         child: Text(
-                          'Add Product',
+                          'Thêm vào cửa hàng',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.black),
                         ),
@@ -522,20 +463,23 @@ class AddProductPage extends StatelessWidget {
                     SizedBox(
                       width: 10,
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState != null) {
-                          _formKey.currentState!.reset();
-                          // Reset values in ViewModel
-                          viewModel.resetFields();
-                        }
-                      },
-                      child: Text(
-                        'Clear',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black),
+                    FadeAnimation(
+                      1.1,
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState != null) {
+                            _formKey.currentState!.reset();
+                            // Reset values in ViewModel
+                            viewModel.resetFields();
+                          }
+                        },
+                        child: Text(
+                          'Hoàn tác',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.black),
+                        ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ],

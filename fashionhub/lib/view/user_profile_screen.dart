@@ -122,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ? NetworkImage(_currentUser!.imagePath!)
                                     : FileImage(File(_currentUser!.imagePath!)))
                                 as ImageProvider
-                            : AssetImage('lib/images/placeholder.png'),
+                            : AssetImage('lib/images/user.png'),
                       ),
                     ),
                     const SizedBox(height: 15),
