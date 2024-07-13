@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fashionhub/components/delivery_time.dart';
+import 'package:fashionhub/components/generate_qrCode.dart';
 import 'package:fashionhub/components/layout_widget.dart';
-import 'package:fashionhub/components/momo_payment.dart';
 import 'package:fashionhub/model/address_model.dart';
 import 'package:fashionhub/model/order_model.dart';
 import 'package:fashionhub/model/userCart_model.dart';
@@ -548,17 +548,20 @@ class _CheckOutPageState extends State<CheckOutPage> {
                       Text(discountAmount, style: TextStyle(color: Colors.red)),
                     ],
                   ),
-                  Divider(),
-                  Text(
+                  const Divider(),
+                  const Text(
                     'Phương thức thanh toán',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   SizedBox(height: 8),
                   Row(
                     children: [
-                      Image.asset('lib/images/cod.png', width: 30),
-                      SizedBox(width: 18),
-                      Text(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Image.asset('lib/images/cod.png', width: 30),
+                      ),
+                      const SizedBox(width: 3),
+                      const Text(
                         'Thanh toán khi nhận hàng',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
@@ -594,21 +597,23 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     children: [
                       Row(
                         children: [
-                          Image.asset('lib/images/momo.png', width: 30),
-                          SizedBox(width: 8),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
+                          Image.asset(
+                            'lib/images/vietQr.png',
+                            width: 50,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 5),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Ví điện tử MoMo',
+                                  'Thanh toán trực tuyến',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                const SizedBox(height: 3),
+                                SizedBox(height: 3),
                                 Text(
-                                  'Liên kết tài khoản Ví điện tử MoMo\ncủa bạn để thanh toán trực tiếp.',
+                                  'Thanh toán qua ứng dụng ngân hàng sẽ được \ngiảm ngay 100% phí vận chuyển.',
+                                  style: TextStyle(fontSize: 13),
                                 ),
                               ],
                             ),
@@ -618,7 +623,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
                             onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => MomoPaymentPage(),
+                                  builder: (context) => GenerateQRCode(
+                                      totalPayment: widget.totalPayment),
                                 )),
                             child: Icon(
                               Icons.arrow_forward_ios_rounded,
