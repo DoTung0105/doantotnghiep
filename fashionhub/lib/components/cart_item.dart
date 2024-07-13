@@ -113,7 +113,9 @@ class _CartItemState extends State<CartItem>
                     },
                   ),
                   title: Text(
-                    widget.cartItem.productName,
+                    widget.cartItem.productName.length <= 50
+                        ? widget.cartItem.productName
+                        : widget.cartItem.productName.substring(0, 50) + '...',
                     style: TextStyle(fontSize: 17),
                   ),
                   subtitle: Column(

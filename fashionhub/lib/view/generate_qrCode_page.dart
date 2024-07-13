@@ -4,8 +4,13 @@ import 'package:intl/intl.dart';
 
 class GenerateQRCode extends StatefulWidget {
   final double totalPayment;
-  const GenerateQRCode({Key? key, required this.totalPayment})
-      : super(key: key);
+  final String orderId; // Thêm orderId
+
+  const GenerateQRCode({
+    Key? key,
+    required this.totalPayment,
+    required this.orderId, // Thêm orderId
+  }) : super(key: key);
 
   @override
   GenerateQRCodeState createState() => GenerateQRCodeState();
@@ -15,17 +20,21 @@ class GenerateQRCodeState extends State<GenerateQRCode> {
   String qrImageUrl = '';
   String accountNo = "0200500311111";
   String accountName = "PHAM DUC THINH";
-  String description = "THANH TOAN HOA DON";
+  String description = ""; // Khởi tạo description rỗng
   String? formattedTotalPayment;
 
   @override
   void initState() {
     super.initState();
-    // Format totalPayment with dots and currency
+    // Format totalPayment với dấu chấm và tiền tệ
     formattedTotalPayment =
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ')
             .format(widget.totalPayment);
-    // Initialize qrImageUrl with initial totalPayment value passed from CheckOutPage
+
+    // Cập nhật description với orderId
+    description = "HOA DON ${widget.orderId}";
+
+    // Khởi tạo qrImageUrl với giá trị totalPayment ban đầu từ CheckOutPage
     _updateQrImageUrl(widget.totalPayment.toString());
   }
 
@@ -75,7 +84,7 @@ class GenerateQRCodeState extends State<GenerateQRCode> {
                       return CircularProgressIndicator();
                     },
                     errorBuilder: (context, error, stackTrace) =>
-                        Text('Failed to load image'),
+                        Text('Không tải được ảnh'),
                   ),
                   const SizedBox(height: 10),
                   Row(
@@ -103,7 +112,7 @@ class GenerateQRCodeState extends State<GenerateQRCode> {
                       ),
                       Expanded(
                         child: Divider(
-                          endIndent: 20, // Lề cuối của Divider
+                          endIndent: 20,
                           thickness: 0.7,
                           color: Colors.black.withOpacity(0.5),
                         ),
@@ -119,7 +128,6 @@ class GenerateQRCodeState extends State<GenerateQRCode> {
                   Text(
                     'Lưu ý: Vui lòng nhập đúng nội dung chuyển khoản và số tiền ${formattedTotalPayment ?? ''}',
                     style: TextStyle(
-                      // fontWeight: FontWeight.bold,
                       color: Colors.red,
                       fontSize: 17,
                     ),
@@ -216,7 +224,7 @@ class GenerateQRCodeState extends State<GenerateQRCode> {
                               description,
                               style: TextStyle(
                                 color: Colors.green,
-                                fontSize: 20,
+                                fontSize: 18,
                               ),
                             ),
                           ],

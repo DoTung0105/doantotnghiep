@@ -36,13 +36,16 @@ class SuggestedProducts extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Text(
-                    sugPro.name,
+                    sugPro.name.length <= 30
+                        ? sugPro.name
+                        : sugPro.name.substring(0, 30) + '...',
                     style: const TextStyle(
                       fontSize: 16.0,
                     ),
                     textAlign: TextAlign.center,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3, // Giới hạn số dòng
+                    overflow: TextOverflow
+                        .ellipsis, // Hiển thị dấu ba chấm khi vượt quá
                   ),
                 ),
               ],
