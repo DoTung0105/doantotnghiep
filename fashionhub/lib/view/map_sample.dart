@@ -204,9 +204,9 @@ class MapSampleState extends State<MapSample> {
                           onMapCreated: _onMapCreated,
                           initialCameraPosition: CameraPosition(
                             target: _initialPosition,
-                            zoom: 17.0,
+                            zoom: 15.0,
                           ),
-                          mapType: MapType.normal,
+                          mapType: MapType.terrain,
                           onTap: _onTap,
                           markers: _pickedLocation != null
                               ? {
@@ -217,8 +217,7 @@ class MapSampleState extends State<MapSample> {
                                       title: 'Đã chọn vị trí',
                                       snippet: 'Vị trí đã chọn để giao hàng',
                                     ),
-                                    icon: BitmapDescriptor.defaultMarkerWithHue(
-                                        BitmapDescriptor.hueAzure),
+                                    icon: BitmapDescriptor.defaultMarker,
                                   ),
                                 }
                               : {},

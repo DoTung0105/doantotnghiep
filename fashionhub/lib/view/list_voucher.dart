@@ -135,17 +135,15 @@ class _ListVoucherState extends State<ListVoucher> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
                                 ),
-                                const SizedBox(width: 5),
+                                const SizedBox(width: 8),
                                 GestureDetector(
-                                  onTap: () {
-                                    _copyToClipboard(voucher.promotionalId);
-                                  },
-                                  child: Image.asset(
-                                    'lib/images/copy.png',
-                                    width: 18,
-                                    height: 18,
-                                  ),
-                                ),
+                                    onTap: () {
+                                      _copyToClipboard(voucher.promotionalId);
+                                    },
+                                    child: Icon(
+                                      Icons.copy_outlined,
+                                      size: 20,
+                                    )),
                               ],
                             ),
                             Text(
