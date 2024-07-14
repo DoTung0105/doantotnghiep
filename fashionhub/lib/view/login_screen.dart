@@ -250,7 +250,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Đăng nhập thất bại')),
+                                SnackBar(
+                                    content: Text(
+                                        'Vui lòng kiểm tra lại email và mật khẩu, hoặc tài khoản chưa xác thực')),
                               );
                             }
                           },
