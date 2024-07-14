@@ -8,7 +8,6 @@ class VoucherViewModel extends ChangeNotifier {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final String _collectionName = 'voucher';
   List<Voucher> vouchers = [];
-  List<Voucher> get voucher => voucher;
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;
@@ -31,7 +30,7 @@ class VoucherViewModel extends ChangeNotifier {
     }
   }
 
-// kiểm tra ngày hết hạn
+  // Kiểm tra và cập nhật trạng thái của voucher
   Future<void> checkAndUpdateVoucherStatus() async {
     DateTime now = DateTime.now();
     for (var voucher in vouchers) {
@@ -39,12 +38,34 @@ class VoucherViewModel extends ChangeNotifier {
         // If expired, set status to Inactive
         voucher.status = false;
         // Update status on Firestore
-        _db.collection(_collectionName).doc(voucher.uid).update({
+        await _db.collection(_collectionName).doc(voucher.uid).update({
           'status': false,
         }).catchError((e) => print('Error updating voucher status: $e'));
       }
     }
-    notifyListeners(); // Thông báo cho widget biết dữ liệu đã thay đổi
+    // Sau khi kiểm tra và cập nhật trạng thái, xóa các voucher đã hết hiệu lực
+    await deleteExpiredVouchers();
+  }
+
+  // Xóa các voucher đã hết hiệu lực
+  Future<void> deleteExpiredVouchers() async {
+    try {
+      // Lọc và lấy danh sách các voucher đã hết hiệu lực
+      List<Voucher> expiredVouchers =
+          vouchers.where((voucher) => !voucher.status).toList();
+
+      // Xóa từ Firestore
+      for (var voucher in expiredVouchers) {
+        await _db.collection(_collectionName).doc(voucher.uid).delete();
+      }
+
+      // Xóa khỏi danh sách local
+      vouchers.removeWhere((voucher) => !voucher.status);
+
+      notifyListeners();
+    } catch (e) {
+      print('Error deleting expired vouchers: $e');
+    }
   }
 
   String generateRandomString() {
@@ -85,22 +106,6 @@ class VoucherViewModel extends ChangeNotifier {
     } catch (e) {
       print('Error adding voucher: $e');
     }
-  }
-
-  // Cập nhật trạng thái của voucher
-  void updateVoucherStatus() {
-    DateTime now = DateTime.now();
-    for (var voucher in vouchers) {
-      if (voucher.expiry.toDate().isBefore(now)) {
-        // If expired, set status to Inactive
-        voucher.status = false;
-        // Update status on Firestore
-        _db.collection(_collectionName).doc(voucher.uid).update({
-          'status': false,
-        }).catchError((e) => print('Error updating voucher status: $e'));
-      }
-    }
-    notifyListeners();
   }
 
   Future<void> deleteVoucher(String uid) async {

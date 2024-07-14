@@ -71,7 +71,7 @@ class AddProductPage extends StatelessWidget {
                         FadeAnimation(
                           0.2,
                           SizedBox(
-                            width: 210,
+                            width: MediaQuery.of(context).size.width * 0.47,
                             child: TextFormField(
                               decoration: InputDecoration(
                                 hintText: 'Tên sản phẩm',
@@ -104,7 +104,7 @@ class AddProductPage extends StatelessWidget {
                         FadeAnimation(
                           0.3,
                           SizedBox(
-                            width: 210,
+                            width: MediaQuery.of(context).size.width * 0.47,
                             child: TextFormField(
                               decoration: InputDecoration(
                                 hintText: 'Giá sản phẩm',
@@ -243,7 +243,7 @@ class AddProductPage extends StatelessWidget {
                     FadeAnimation(
                       0.6,
                       SizedBox(
-                        width: 230,
+                        width: MediaQuery.of(context).size.width * 0.55,
                         child: TextFormField(
                           decoration: InputDecoration(
                             hintText: 'Màu sắc',
@@ -406,7 +406,10 @@ class AddProductPage extends StatelessWidget {
                     ),
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                      FilteringTextInputFormatter.deny(RegExp(r'^\.')),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Hãy điền thông tin đầy đủ';

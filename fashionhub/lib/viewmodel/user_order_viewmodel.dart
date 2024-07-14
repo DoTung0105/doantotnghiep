@@ -43,6 +43,7 @@ class User_Order_ViewModel extends ChangeNotifier {
             totalPrice: doc['totalPrice'] ?? '',
             fee: (doc['fee'] ?? 0).toDouble(),
             status: doc['status'] ?? 'Chờ xác nhận',
+            paymentMethods: doc['paymentMethods'] ?? 'Thanh toán khi nhận hàng',
             uid: uid,
             orderday: doc['orderday'],
             user: UserModel(

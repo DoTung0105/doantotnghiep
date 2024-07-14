@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fashionhub/components/delivery_time.dart';
-import 'package:fashionhub/components/generate_qrCode.dart';
 import 'package:fashionhub/components/layout_widget.dart';
 import 'package:fashionhub/model/address_model.dart';
 import 'package:fashionhub/model/order_model.dart';
 import 'package:fashionhub/model/userCart_model.dart';
 import 'package:fashionhub/service/authentication_service.dart';
+import 'package:fashionhub/view/generate_qrCode_page.dart';
 import 'package:fashionhub/view/home_page.dart';
 import 'package:fashionhub/view/map_sample.dart';
 import 'package:fashionhub/viewmodel/cart_viewmodel.dart';
@@ -27,7 +27,8 @@ class CheckOutPage extends StatefulWidget {
 }
 
 class _CheckOutPageState extends State<CheckOutPage> {
-  bool isChecked = false;
+  bool isCodChecked = false; // Thêm biến trạng thái cho COD checkbox
+  bool isOnlineChecked = false; // Thêm biến trạng thái cho Online checkbox
   String? name;
   String? phone;
   String? address;
@@ -36,15 +37,26 @@ class _CheckOutPageState extends State<CheckOutPage> {
   String discountAmount = '0đ';
   double _deliveryFee = 0.0;
   String? _estimatedDeliveryTime;
+  String? orderId; // Biến trạng thái để lưu trữ orderId
   final NumberFormat _currencyFormat = NumberFormat('#,##0', 'vi_VN');
-  final AuthenticationService _authenticationService =
-      AuthenticationService(); // Khởi tạo đối tượng AuthenticationServi
+  final AuthenticationService _authenticationService = AuthenticationService();
   String? currentUserId;
+
   @override
   void initState() {
     super.initState();
-    fetchUserAddress(); // Gọi hàm lấy địa chỉ người dùng khi khởi tạo
+    fetchUserAddress();
     getCurrentUserId();
+    createOrderId(); // Tạo orderId khi khởi tạo trang
+  }
+
+  // Hàm tạo orderId
+  void createOrderId() {
+    DocumentReference newOrderRef =
+        FirebaseFirestore.instance.collection('userOrders').doc();
+    setState(() {
+      orderId = newOrderRef.id;
+    });
   }
 
   // Hàm lấy địa chỉ người dùng từ Provider
@@ -99,8 +111,23 @@ class _CheckOutPageState extends State<CheckOutPage> {
 
   Future<void> placeOrder() async {
     String status = 'Chờ xác nhận';
-    String paymentMethod =
-        isChecked ? 'Thanh toán khi nhận hàng' : 'Đã thanh toán';
+    String paymentMethod;
+
+    // Kiểm tra phương thức thanh toán đã chọn
+    if (isCodChecked) {
+      paymentMethod = 'Thanh toán khi nhận hàng';
+    } else if (isOnlineChecked) {
+      paymentMethod = 'Thanh toán trực tuyến';
+    } else {
+      // Nếu không có phương thức thanh toán nào được chọn, hiển thị thông báo lỗi
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Vui lòng chọn phương thức thanh toán'),
+          backgroundColor: Colors.grey[800],
+        ),
+      );
+      return;
+    }
 
     User? currentUser = _authenticationService.getCurrentUser();
     if (currentUser == null) {
@@ -123,8 +150,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
     double totalPayment = calculateTotalPayment();
     String formattedTotalPrice = _currencyFormat.format(totalPayment) + 'đ';
 
+    // Sử dụng orderId đã được tạo
     DocumentReference newOrderRef =
-        FirebaseFirestore.instance.collection('userOrders').doc();
+        FirebaseFirestore.instance.collection('userOrders').doc(orderId);
 
     Order_class order = Order_class(
       orderId: newOrderRef.id,
@@ -149,6 +177,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
             .collection('products')
             .where('name', isEqualTo: item.productName)
             .where('color', isEqualTo: item.color)
+            //.where('size', isEqualTo: item.size)
             .get();
 
         for (var doc in productSnapshot.docs) {
@@ -277,7 +306,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Đặt hàng',
+          'Đặt hàng', // Hiển thị orderId trong AppBar
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -514,7 +543,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          '${item.productName}',
+                                          '${item.productName.length > 30 ? item.productName.substring(0, 30) + '...' : item.productName}',
                                           style: TextStyle(
                                               fontSize: 12, color: Colors.grey),
                                         ),
@@ -568,8 +597,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                       Spacer(),
                       GestureDetector(
                         onTap: () {
+                          // Thay đổi sự kiện onTap của checkbox COD
                           setState(() {
-                            isChecked = !isChecked;
+                            isCodChecked = !isCodChecked;
+                            if (isCodChecked) {
+                              isOnlineChecked =
+                                  false; // Đảm bảo Online checkbox là false
+                            }
                           });
                         },
                         child: Container(
@@ -577,12 +611,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                           height: 20,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: isChecked
+                            border: isCodChecked
                                 ? Border.all(color: Colors.red)
                                 : Border.all(color: Colors.grey),
-                            color: isChecked ? Colors.red : Colors.transparent,
+                            color:
+                                isCodChecked ? Colors.red : Colors.transparent,
                           ),
-                          child: isChecked
+                          child: isCodChecked
                               ? Icon(
                                   Icons.circle,
                                   size: 10,
@@ -620,17 +655,45 @@ class _CheckOutPageState extends State<CheckOutPage> {
                           ),
                           Spacer(),
                           GestureDetector(
-                            onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => GenerateQRCode(
-                                      totalPayment: widget.totalPayment),
-                                )),
-                            child: Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              size: 20,
+                            onTap: () {
+                              setState(() {
+                                isOnlineChecked = !isOnlineChecked;
+                                if (isOnlineChecked) {
+                                  isCodChecked = false;
+                                  // Chuyển trang sang GenerateQRCode nếu chọn thanh toán trực tuyến
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => GenerateQRCode(
+                                        totalPayment: widget.totalPayment,
+                                        orderId: orderId!,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              });
+                            },
+                            child: Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: isOnlineChecked
+                                    ? Border.all(color: Colors.red)
+                                    : Border.all(color: Colors.grey),
+                                color: isOnlineChecked
+                                    ? Colors.red
+                                    : Colors.transparent,
+                              ),
+                              child: isOnlineChecked
+                                  ? Icon(
+                                      Icons.circle,
+                                      size: 10,
+                                      color: Colors.white,
+                                    )
+                                  : null,
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ],
@@ -665,7 +728,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (!isChecked) {
+                      if (!isCodChecked && !isOnlineChecked) {
+                        // Kiểm tra nếu không có checkbox nào được chọn
                         // Hiển thị thông báo lỗi nếu phương thức thanh toán chưa được chọn
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

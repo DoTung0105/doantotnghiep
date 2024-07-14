@@ -77,6 +77,7 @@ class _OrderItemState extends State<OrderItem> {
             totalPrice: doc['totalPrice'] ?? '',
             fee: (doc['fee'] ?? 0).toDouble(),
             status: doc['status'] ?? 'Chờ xác nhận',
+            paymentMethods: doc['paymentMethods'] ?? 'Thanh toán khi nhận hàng',
             uid: uid,
             orderday: doc['orderday'],
             user: UserModel(
@@ -148,7 +149,9 @@ class _OrderItemState extends State<OrderItem> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(product.productName),
+                                  Text(
+                                    '${product.productName.length > 25 ? product.productName.substring(0, 25) + '...' : product.productName}',
+                                  ),
                                   Row(
                                     children: [
                                       Text('${product.color},'),

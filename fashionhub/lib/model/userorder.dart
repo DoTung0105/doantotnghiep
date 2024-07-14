@@ -40,6 +40,7 @@ class User_Order {
   String totalPrice;
   double fee;
   String status;
+  String paymentMethods;
   String uid;
   UserModel user;
   Timestamp orderday;
@@ -54,16 +55,24 @@ class User_Order {
     required this.totalPrice,
     required this.fee,
     required this.status,
+    required this.paymentMethods,
     required this.uid,
     required this.user,
     required this.orderday,
   });
 
   static User_Order fromFirestore(DocumentSnapshot doc, UserModel user) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    List<OrderProduct> products = (data['products'] as List<dynamic>)
-        .map((item) => OrderProduct.fromMap(item))
-        .toList();
+    Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+
+    if (data == null) {
+      throw Exception("Document data was null");
+    }
+
+    List<OrderProduct> products = (data['products'] as List<dynamic>?)
+            ?.map((item) => OrderProduct.fromMap(item))
+            .toList() ??
+        [];
+
     return User_Order(
       orderId: doc.id,
       userName: data['userName'] ?? '',
@@ -74,6 +83,7 @@ class User_Order {
       products: products,
       fee: (data['fee'] ?? 0).toDouble(),
       status: data['status'] ?? 'Chờ xác nhận',
+      paymentMethods: data['paymentMethods'] ?? 'Thanh toán khi nhận hàng',
       uid: data['uid'] ?? '',
       user: user,
       orderday: data['orderday'],

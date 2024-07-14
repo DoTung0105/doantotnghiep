@@ -57,6 +57,7 @@ class _StatisticsScreenState extends State<Statistics_Screen> {
 
             List<MonthlyRevenue> monthlyRevenueData =
                 statisticsViewModel.getMonthlyRevenueData();
+            monthlyRevenueData.sort((a, b) => a.month.compareTo(b.month));
 
             return Padding(
               padding: const EdgeInsets.all(16.0),
@@ -71,8 +72,8 @@ class _StatisticsScreenState extends State<Statistics_Screen> {
                       color: Colors.blue,
                     ),
                     _buildStatisticTile(
-                      title: 'Số đơn hàng đã duyệt',
-                      value: '${statisticsViewModel.approvedOrders}',
+                      title: 'Số đơn hàng đang giao',
+                      value: '${statisticsViewModel.shipping}',
                       icon: Icons.check_circle,
                       color: Colors.green,
                     ),
@@ -87,6 +88,12 @@ class _StatisticsScreenState extends State<Statistics_Screen> {
                       value: '${statisticsViewModel.pendingOrders}',
                       icon: Icons.pending,
                       color: Colors.orange,
+                    ),
+                    _buildStatisticTile(
+                      title: 'Số đơn hàng thành công',
+                      value: '${statisticsViewModel.success}',
+                      icon: Icons.shopping_bag_outlined,
+                      color: Colors.pink,
                     ),
                     _buildStatisticTile(
                       title: 'Tổng doanh thu',
@@ -125,7 +132,7 @@ class _StatisticsScreenState extends State<Statistics_Screen> {
                       ),
                       _buildStatisticTile(
                         title:
-                            'Tổng số đơn hàng đã duyệt của tháng ${DateFormat('MM/yyyy').format(_selectedMonth!)}',
+                            'Tổng số đơn hàng thành công của tháng ${DateFormat('MM/yyyy').format(_selectedMonth!)}',
                         value:
                             '${statisticsViewModel.selectedMonthApprovedOrders}',
                         isBold: true,
