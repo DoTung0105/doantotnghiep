@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fashionhub/model/products.dart';
+import 'package:fashionhub/view/signup_screen.dart';
 import 'package:fashionhub/viewmodel/products_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -271,7 +272,7 @@ class _EditProductPageState extends State<EditProductPage> {
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
   ProductViewModel viewModel = ProductViewModel();
-
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
@@ -321,6 +322,13 @@ class _EditProductPageState extends State<EditProductPage> {
     }
   }
 
+  String? validateField(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Vui lòng nhập đầy đủ thông tin';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ProductViewModel>(
@@ -332,278 +340,309 @@ class _EditProductPageState extends State<EditProductPage> {
           ),
           body: SingleChildScrollView(
             padding: EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                GestureDetector(
-                  onTap: _pickImage,
-                  child: _imageFile != null
-                      ? Image.file(_imageFile!)
-                      : Image.network(widget.product.imagePath),
-                ),
-                SizedBox(height: 16.0),
-                TextField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(
-                    labelText: 'Description',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: _imageFile != null
+                        ? Image.file(_imageFile!)
+                        : Image.network(widget.product.imagePath),
                   ),
-                ),
-                // TextField(
-                //   controller: _priceController,
-                //   decoration: InputDecoration(labelText: 'Price'),
-                //   keyboardType: TextInputType.number,
-                // ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  controller: _priceController,
-                  decoration: InputDecoration(
-                    labelText: 'Price',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    // enabledBorder: OutlineInputBorder(
-                    //   borderSide: BorderSide(
-                    //     color: Colors.black, // Default border color
-                    //   ),
-                    //   borderRadius: BorderRadius.circular(10),
-                    // ),
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    TextInputFormatter.withFunction(
-                      (oldValue, newValue) {
-                        // Định dạng lại giá trị để có dấu phân cách hàng nghìn
-                        final formatter = NumberFormat('#,###', 'en_US');
-                        if (newValue.text.isEmpty) {
-                          return TextEditingValue.empty; // Trường hợp nhập rỗng
-                        }
-                        final newString =
-                            formatter.format(int.parse(newValue.text));
-                        return TextEditingValue(
-                          text: newString,
-                          selection:
-                              TextSelection.collapsed(offset: newString.length),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                DropdownButtonFormField<String>(
-                  value: _setSize,
-                  items: viewModel.sizeoption
-                      .map((color) => DropdownMenuItem<String>(
-                            value: color,
-                            child: Text(color),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _setSize = value!;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Size',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  controller: _branchController,
-                  decoration: InputDecoration(
-                    labelText: 'Branch',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                // DropdownButtonFormField<String>(
-                //   value: _selectedColor,
-                //   items: viewModel.coloroption
-                //       .map((color) => DropdownMenuItem<String>(
-                //             value: color,
-                //             child: Text(color),
-                //           ))
-                //       .toList(),
-                //   onChanged: (value) {
-                //     setState(() {
-                //       _selectedColor = value!;
-                //     });
-                //   },
-                //   decoration: InputDecoration(labelText: 'Color'),
-                // ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  controller: _colorController,
-                  decoration: InputDecoration(
-                    labelText: 'Color',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  controller: _soldController,
-                  decoration: InputDecoration(
-                    labelText: 'Sold',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  controller: _warehouseController,
-                  decoration: InputDecoration(
-                    labelText: 'warehouse',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextField(
-                  controller: _evaluateController,
-                  decoration: InputDecoration(
-                    labelText: 'evaluate',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white, // Default border color
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-
-                SizedBox(height: 16.0),
-                SizedBox(
-                  width: 10,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                  SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _descriptionController,
+                    inputFormatters: [NoLeadingSpacesFormatter()],
+                    decoration: InputDecoration(
+                      labelText: 'Mô tả',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white, // Default border color
                         ),
-                        padding:
-                            EdgeInsets.symmetric(vertical: 20, horizontal: 20)),
-                    onPressed: () async {
-                      String imagePath = widget.product.imagePath;
-                      if (_imageFile != null) {
-                        imagePath = await viewModel.uploadImage(_imageFile!);
-                      }
-                      Product updatedProduct = Product(
-                        id: widget.product.id,
-                        imagePath: imagePath,
-                        description: _descriptionController.text,
-                        // price: double.parse(_priceController.text),
-                        price: double.parse(_priceController.text.replaceAll(
-                            ',',
-                            '')), // Lưu giá trị với dấu phân cách vào Firestore
-                        size: _setSize!,
-                        evaluate: double.parse(_evaluateController.text),
-                        brand: _branchController.text,
-                        color: _colorController.text,
-                        name: _nameController.text,
-                        sold: int.parse(_soldController
-                            .text), // 11.6 - Thịnh sửa lại kiểu dl cho sold
-                        wareHouse: int.parse(_warehouseController
-                            .text), // 11.6 - Thịnh sửa lại kiểu dl cho wareHouse
-                      );
-                      await viewModel.updateProduct(updatedProduct);
-                      Navigator.pop(context);
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.black, // Default border color
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    validator: (value) {
+                      return validateField(value);
                     },
-                    child: Text(
-                      'Save Changes',
-                      style: TextStyle(fontSize: 20, color: Colors.black),
+                  ),
+
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: _priceController,
+                    decoration: InputDecoration(
+                      labelText: 'Giá',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white, // Default border color
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      // enabledBorder: OutlineInputBorder(
+                      //   borderSide: BorderSide(
+                      //     color: Colors.black, // Default border color
+                      //   ),
+                      //   borderRadius: BorderRadius.circular(10),
+                      // ),
+                    ),
+                    validator: (value) {
+                      return validateField(value);
+                    },
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      TextInputFormatter.withFunction(
+                        (oldValue, newValue) {
+                          // Định dạng lại giá trị để có dấu phân cách hàng nghìn
+                          final formatter = NumberFormat('#,###', 'en_US');
+                          if (newValue.text.isEmpty) {
+                            return TextEditingValue
+                                .empty; // Trường hợp nhập rỗng
+                          }
+                          final newString =
+                              formatter.format(int.parse(newValue.text));
+                          return TextEditingValue(
+                            text: newString,
+                            selection: TextSelection.collapsed(
+                                offset: newString.length),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  DropdownButtonFormField<String>(
+                    value: _setSize,
+                    items: viewModel.sizeoption
+                        .map((color) => DropdownMenuItem<String>(
+                              value: color,
+                              child: Text(color),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _setSize = value!;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Size',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white, // Default border color
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: _branchController,
+                    inputFormatters: [NoLeadingSpacesFormatter()],
+                    decoration: InputDecoration(
+                      labelText: 'Thương hiệu',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white, // Default border color
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    validator: (value) {
+                      return validateField(value);
+                    },
+                  ),
+                  // DropdownButtonFormField<String>(
+                  //   value: _selectedColor,
+                  //   items: viewModel.coloroption
+                  //       .map((color) => DropdownMenuItem<String>(
+                  //             value: color,
+                  //             child: Text(color),
+                  //           ))
+                  //       .toList(),
+                  //   onChanged: (value) {
+                  //     setState(() {
+                  //       _selectedColor = value!;
+                  //     });
+                  //   },
+                  //   decoration: InputDecoration(labelText: 'Color'),
+                  // ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: _colorController,
+                    inputFormatters: [NoLeadingSpacesFormatter()],
+                    decoration: InputDecoration(
+                      labelText: 'Màu sắc',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white, // Default border color
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    validator: (value) {
+                      return validateField(value);
+                    },
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: _nameController,
+                    inputFormatters: [NoLeadingSpacesFormatter()],
+                    decoration: InputDecoration(
+                      labelText: 'Tên sản phẩm',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white, // Default border color
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    validator: (value) {
+                      return validateField(value);
+                    },
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: _soldController,
+                    decoration: InputDecoration(
+                      labelText: 'Lượt bán',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white, // Default border color
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    validator: (value) {
+                      return validateField(value);
+                    },
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: _warehouseController,
+                    decoration: InputDecoration(
+                      labelText: 'Tồn kho',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white, // Default border color
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    validator: (value) {
+                      return validateField(value);
+                    },
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: _evaluateController,
+                    decoration: InputDecoration(
+                      labelText: 'Đánh giá',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white, // Default border color
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    validator: (value) {
+                      return validateField(value);
+                    },
+                    keyboardType: TextInputType.number,
+                  ),
+
+                  SizedBox(height: 16.0),
+                  SizedBox(
+                    width: 10,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 20)),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          String imagePath = widget.product.imagePath;
+                          if (_imageFile != null) {
+                            imagePath =
+                                await viewModel.uploadImage(_imageFile!);
+                          }
+                          Product updatedProduct = Product(
+                            id: widget.product.id,
+                            imagePath: imagePath,
+                            description: _descriptionController.text,
+                            // price: double.parse(_priceController.text),
+                            price: double.parse(_priceController.text.replaceAll(
+                                ',',
+                                '')), // Lưu giá trị với dấu phân cách vào Firestore
+                            size: _setSize!,
+                            evaluate: double.parse(_evaluateController.text),
+                            brand: _branchController.text,
+                            color: _colorController.text,
+                            name: _nameController.text,
+                            sold: int.parse(_soldController
+                                .text), // 11.6 - Thịnh sửa lại kiểu dl cho sold
+                            wareHouse: int.parse(_warehouseController
+                                .text), // 11.6 - Thịnh sửa lại kiểu dl cho wareHouse
+                          );
+                          await viewModel.updateProduct(updatedProduct);
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: Text(
+                        'Cập nhật',
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           backgroundColor: Color.fromRGBO(89, 180, 195, 1.0),

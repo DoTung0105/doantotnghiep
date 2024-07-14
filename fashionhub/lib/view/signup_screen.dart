@@ -431,14 +431,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sign Up')),
+      appBar: AppBar(title: Text('Đăng ký')),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 FadeAnimation(
                   0.2,
@@ -452,7 +452,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       fillColor: Colors.white,
                       prefixIcon: Icon(Icons.email),
                       labelText: 'Email',
-                      hintText: 'Enter your email',
+                      hintText: 'Nhập email',
                       hintStyle: TextStyle(
                         color: Colors.black26,
                       ),
@@ -469,13 +469,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'Vui lòng nhập email';
+                    //   }
+                    //   final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
+                    //   if (!emailRegex.hasMatch(value)) {
+                    //     return 'Địa chỉ email không hợp lệ';
+                    //   }
+                    //   return null;
+                    // },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Vui lòng nhập email';
                       }
-                      final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
+                      // Biểu thức chính quy để kiểm tra email hợp lệ với các domain cụ thể
+                      final emailRegex = RegExp(
+                          r'^[^@]+@(gmail\.com|yahoo\.com|[^@\.]+\.vn)$');
                       if (!emailRegex.hasMatch(value)) {
-                        return 'Địa chỉ email không hợp lệ';
+                        return 'Địa chỉ email không hợp lệ.';
                       }
                       return null;
                     },
@@ -508,8 +520,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           color: _obscurePassword ? Colors.grey : Colors.blue,
                         ),
                       ),
-                      labelText: 'Password',
-                      hintText: 'Enter your password',
+                      labelText: 'Mật khẩu',
+                      hintText: 'Nhập mật khẩu',
                       hintStyle: TextStyle(
                         color: Colors.black26,
                       ),
@@ -541,16 +553,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 FadeAnimation(
                   0.4,
                   TextFormField(
-                    inputFormatters: [
-                      FilteringTextInputFormatter.deny(RegExp(r'\s')),
-                    ],
+                    inputFormatters: [NoLeadingSpacesFormatter()],
                     controller: displayNameController,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       prefixIcon: Icon(Icons.people),
-                      labelText: 'Name',
-                      hintText: 'Enter your name',
+                      labelText: 'Họ Tên',
+                      hintText: 'Nhập họ tên',
                       hintStyle: TextStyle(
                         color: Colors.black26,
                       ),
@@ -579,16 +589,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 FadeAnimation(
                   0.5,
                   TextFormField(
-                    inputFormatters: [
-                      FilteringTextInputFormatter.deny(RegExp(r'\s')),
-                    ],
+                    inputFormatters: [NoLeadingSpacesFormatter()],
                     controller: addressController,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       prefixIcon: Icon(Icons.local_convenience_store_outlined),
-                      labelText: 'Address',
-                      hintText: 'Enter your address',
+                      labelText: 'Địa chỉ',
+                      hintText: 'Nhập địa chỉ',
                       hintStyle: TextStyle(
                         color: Colors.black26,
                       ),
@@ -627,8 +635,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       filled: true,
                       fillColor: Colors.white,
                       prefixIcon: Icon(Icons.phone),
-                      labelText: 'Phone',
-                      hintText: 'Enter your Phone',
+                      labelText: 'Điện thoại',
+                      hintText: 'Nhập sđt',
                       hintStyle: TextStyle(
                         color: Colors.black26,
                       ),
@@ -659,6 +667,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 FadeAnimation(
                   0.6,
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      padding: EdgeInsets.symmetric(horizontal: 140),
+                    ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         String email = emailController.text.trim();
@@ -684,7 +697,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           return;
                         }
 
-                        // Kiểm tra mật khẩu
                         final passwordRegex = RegExp(r'^.{6,}$');
                         if (!passwordRegex.hasMatch(password)) {
                           setState(() {
@@ -694,13 +706,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         }
 
                         // Kiểm tra định dạng email
-                        final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
-                        if (!emailRegex.hasMatch(email)) {
-                          setState(() {
-                            _formKey.currentState!.validate();
-                          });
-                          return;
-                        }
+                        // final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
+                        // if (!emailRegex.hasMatch(email)) {
+                        //   setState(() {
+                        //     _formKey.currentState!.validate();
+                        //   });
+                        //   return;
+                        // }
 
                         User? user = await _signUpViewModel.signUp(
                             email,
@@ -727,7 +739,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         }
                       }
                     },
-                    child: Text('Sign Up'),
+                    child: Text(
+                      'Đăng ký',
+                      style: TextStyle(fontSize: 20, color: Colors.black),
+                    ),
                   ),
                 ),
               ],
@@ -737,5 +752,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
       backgroundColor: Color.fromRGBO(89, 180, 195, 1.0), // Màu nền xanh lá
     );
+  }
+}
+
+class NoLeadingSpacesFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.startsWith(' ')) {
+      return oldValue;
+    }
+    return newValue;
   }
 }

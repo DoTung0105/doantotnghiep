@@ -1,5 +1,6 @@
 import 'package:fashionhub/animation/animation.dart';
 import 'package:fashionhub/view/list_product.dart';
+import 'package:fashionhub/view/signup_screen.dart';
 import 'package:fashionhub/viewmodel/products_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -73,6 +74,7 @@ class AddProductPage extends StatelessWidget {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.47,
                             child: TextFormField(
+                              inputFormatters: [NoLeadingSpacesFormatter()],
                               decoration: InputDecoration(
                                 hintText: 'Tên sản phẩm',
                                 filled: true,
@@ -168,7 +170,7 @@ class AddProductPage extends StatelessWidget {
                   0.4,
                   TextFormField(
                     // keyboardType: TextInputType.multiline,
-
+                    inputFormatters: [NoLeadingSpacesFormatter()],
                     maxLines: null,
                     decoration: InputDecoration(
                       hintText: 'Mô tả',
@@ -245,6 +247,7 @@ class AddProductPage extends StatelessWidget {
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.55,
                         child: TextFormField(
+                          inputFormatters: [NoLeadingSpacesFormatter()],
                           decoration: InputDecoration(
                             hintText: 'Màu sắc',
                             filled: true,
@@ -278,6 +281,7 @@ class AddProductPage extends StatelessWidget {
                 FadeAnimation(
                   0.7,
                   TextFormField(
+                    inputFormatters: [NoLeadingSpacesFormatter()],
                     decoration: InputDecoration(
                       hintText: 'Tên thương hiệu',
                       filled: true,
@@ -431,6 +435,15 @@ class AddProductPage extends StatelessWidget {
                             padding: EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 65)),
                         onPressed: () async {
+                          if (viewModel.image == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('Bạn chưa chọn hình ảnh sản phẩm.'),
+                              ),
+                            );
+                            return; // Ngăn không cho tiếp tục thêm sản phẩm nếu chưa chọn hình ảnh
+                          }
                           if (_formKey.currentState!.validate()) {
                             try {
                               await viewModel.addProduct();
