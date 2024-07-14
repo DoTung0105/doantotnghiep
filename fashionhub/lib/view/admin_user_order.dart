@@ -41,7 +41,7 @@ class _Orders_ScreenState extends State<Orders_Screen> {
               child: Row(
                 children: [
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.6,
+                    width: MediaQuery.of(context).size.width * 0.55,
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: 'Nhập mã đơn hàng...',
@@ -280,90 +280,98 @@ class _Orders_ScreenState extends State<Orders_Screen> {
                                               fontWeight: FontWeight.bold),
                                         ),
                                       )
-                                    : Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          order.status == 'Đang giao'
-                                              ? ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
+                                    : Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 5.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            order.status == 'Đang giao'
+                                                ? ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                      ),
+                                                      backgroundColor:
+                                                          Colors.green,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 12,
+                                                              horizontal: 24),
                                                     ),
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 12,
-                                                            horizontal: 24),
-                                                  ),
-                                                  onPressed: () async {
-                                                    await orderViewModel
-                                                        .updateOrderStatus(
-                                                            order.orderId,
-                                                            'Thành công');
-                                                    setState(() {});
-                                                  },
-                                                  child: Text('Thành công',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: Colors.white)),
-                                                )
-                                              : ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
+                                                    onPressed: () async {
+                                                      await orderViewModel
+                                                          .updateOrderStatus(
+                                                              order.orderId,
+                                                              'Thành công');
+                                                      setState(() {});
+                                                    },
+                                                    child: Text('Thành công',
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color:
+                                                                Colors.white)),
+                                                  )
+                                                : ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                      ),
+                                                      backgroundColor:
+                                                          Colors.green,
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 12,
+                                                              horizontal: 24),
                                                     ),
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 12,
-                                                            horizontal: 24),
+                                                    onPressed: () async {
+                                                      await orderViewModel
+                                                          .updateOrderStatus(
+                                                              order.orderId,
+                                                              'Đang giao');
+                                                      setState(() {});
+                                                    },
+                                                    child: Text('Duyệt',
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color:
+                                                                Colors.white)),
                                                   ),
-                                                  onPressed: () async {
-                                                    await orderViewModel
-                                                        .updateOrderStatus(
-                                                            order.orderId,
-                                                            'Đang giao');
-                                                    setState(() {});
-                                                  },
-                                                  child: Text('Duyệt',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: Colors.white)),
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
                                                 ),
-                                          ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
+                                                backgroundColor: Colors.red,
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 12,
+                                                    horizontal: 24),
                                               ),
-                                              backgroundColor: Colors.red,
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 12, horizontal: 24),
+                                              onPressed: () async {
+                                                await orderViewModel
+                                                    .updateOrderStatus(
+                                                        order.orderId,
+                                                        'Đã hủy');
+                                                setState(
+                                                    () {}); // Cập nhật giao diện
+                                              },
+                                              child: Text('Từ chối',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white)),
                                             ),
-                                            onPressed: () async {
-                                              await orderViewModel
-                                                  .updateOrderStatus(
-                                                      order.orderId, 'Đã hủy');
-                                              setState(
-                                                  () {}); // Cập nhật giao diện
-                                            },
-                                            child: Text('Từ chối',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.white)),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                               ],
                             ),

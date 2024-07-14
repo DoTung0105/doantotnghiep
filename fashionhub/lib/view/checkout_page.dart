@@ -177,7 +177,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
             .collection('products')
             .where('name', isEqualTo: item.productName)
             .where('color', isEqualTo: item.color)
-            //.where('size', isEqualTo: item.size)
+            .where('size', isEqualTo: item.size)
             .get();
 
         for (var doc in productSnapshot.docs) {

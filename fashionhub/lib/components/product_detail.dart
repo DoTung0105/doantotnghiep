@@ -8,9 +8,10 @@ class ProductDetails extends StatelessWidget {
   final VoidCallback incrementQuantity;
   final VoidCallback decrementQuantity;
   final String selectedSize;
+  final int wareHouse;
   final Function(String) selectSize;
   final VoidCallback addToCart;
-  final VoidCallback buyNow; // Thêm thuộc tính này
+  final VoidCallback buyNow;
 
   const ProductDetails({
     Key? key,
@@ -19,9 +20,10 @@ class ProductDetails extends StatelessWidget {
     required this.incrementQuantity,
     required this.decrementQuantity,
     required this.selectedSize,
+    required this.wareHouse,
     required this.selectSize,
     required this.addToCart,
-    required this.buyNow, // Khởi tạo thuộc tính này
+    required this.buyNow,
   }) : super(key: key);
 
   @override
@@ -31,7 +33,7 @@ class ProductDetails extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10, top: 8),
-      color: Color.fromARGB(211, 189, 189, 189),
+      color: Color.fromARGB(194, 215, 212, 212),
       child: Column(
         children: [
           // Price - Quantity
@@ -114,7 +116,6 @@ class ProductDetails extends StatelessWidget {
                       width: 28,
                       height: 28,
                       margin: const EdgeInsets.symmetric(horizontal: 5),
-                      //padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: selectedSize == size
@@ -157,14 +158,15 @@ class ProductDetails extends StatelessWidget {
                   width: MediaQuery.of(context).size.width / 2 - 5,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 38, 171, 154),
+                    color: wareHouse > 0
+                        ? Color.fromARGB(255, 38, 171, 154)
+                        : Colors.grey,
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(10),
                         bottomLeft: Radius.circular(10)),
                   ),
                   child: MaterialButton(
-                    onPressed:
-                        addToCart, // Gọi addToCart khi người dùng nhấn nút
+                    onPressed: wareHouse > 0 ? addToCart : null,
                     child: const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -190,14 +192,15 @@ class ProductDetails extends StatelessWidget {
                   width: MediaQuery.of(context).size.width / 2 - 30,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 237, 77, 45),
+                    color: wareHouse > 0
+                        ? Color.fromARGB(255, 237, 77, 45)
+                        : Colors.grey,
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
                         bottomRight: Radius.circular(10)),
                   ),
                   child: GestureDetector(
-                    onTap: buyNow, // Gọi buyNow khi người dùng nhấn nút
-
+                    onTap: wareHouse > 0 ? buyNow : null,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

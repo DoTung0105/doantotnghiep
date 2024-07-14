@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fashionhub/components/product_detail.dart';
 import 'package:fashionhub/model/clother.dart';
 import 'package:fashionhub/model/userCart_model.dart';
@@ -18,6 +19,32 @@ class DetailPage extends StatefulWidget {
 class _DetailPageState extends State<DetailPage> {
   int quantityCount = 1;
   String selectedSize = 'M';
+  int wareHouse = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchWareHouse(selectedSize);
+  }
+
+  Future<void> fetchWareHouse(String size) async {
+    try {
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('products')
+          .where('name', isEqualTo: widget.detailCol.name)
+          .where('brand', isEqualTo: widget.detailCol.brand)
+          .where('color', isEqualTo: widget.detailCol.color)
+          .where('size', isEqualTo: size)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        wareHouse = querySnapshot.docs.first['wareHouse'];
+        setState(() {});
+      }
+    } catch (e) {
+      print('Error fetching wareHouse: $e');
+    }
+  }
 
   void decrementQuantity() {
     if (quantityCount > 1) {
@@ -29,7 +56,7 @@ class _DetailPageState extends State<DetailPage> {
 
   void incrementQuantity() {
     setState(() {
-      if (quantityCount < widget.detailCol.wareHouse) {
+      if (quantityCount < wareHouse) {
         quantityCount++;
       }
     });
@@ -38,6 +65,8 @@ class _DetailPageState extends State<DetailPage> {
   void selectSize(String size) {
     setState(() {
       selectedSize = size;
+      fetchWareHouse(
+          selectedSize); // Cập nhật số lượng wareHouse khi size thay đổi
     });
   }
 
@@ -89,22 +118,22 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: widget.detailCol,
-      child: Consumer<Clother>(
-        builder: (context, clother, child) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Chi tiết sản phẩm'),
-              centerTitle: true,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            body: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Chi tiết sản phẩm'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: ChangeNotifierProvider.value(
+        value: widget.detailCol,
+        child: Consumer<Clother>(
+          builder: (context, clother, child) {
+            return Column(
               children: [
                 Expanded(
                   child: Padding(
@@ -146,9 +175,11 @@ class _DetailPageState extends State<DetailPage> {
                                 ],
                               ),
                             ),
-                            Text(
-                              'Kho: ${clother.wareHouse}', // Display wareHouse
-                            ),
+                            wareHouse != 0
+                                ? Text(
+                                    'Kho: $wareHouse',
+                                  )
+                                : Text('Kho: Hết hàng')
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -197,13 +228,14 @@ class _DetailPageState extends State<DetailPage> {
                   decrementQuantity: decrementQuantity,
                   selectedSize: selectedSize,
                   selectSize: selectSize,
+                  wareHouse: wareHouse,
                   addToCart: addToCart,
                   buyNow: buyNow,
                 ),
               ],
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
