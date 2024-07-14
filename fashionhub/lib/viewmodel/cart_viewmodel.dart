@@ -20,8 +20,12 @@ class Cart extends ChangeNotifier {
     try {
       final QuerySnapshot querySnapshot =
           await FirebaseFirestore.instance.collection('products').get();
-      final List<Clother> fetchedClothes = querySnapshot.docs.map((doc) {
-        return Clother(
+
+      // Sử dụng Map để chỉ lưu trữ các sản phẩm duy nhất dựa trên brand, name và color
+      final Map<String, Clother> uniqueClothesMap = {};
+
+      for (var doc in querySnapshot.docs) {
+        final Clother clother = Clother(
           id: doc['id'],
           name: doc['name'],
           price: doc['price'],
@@ -34,8 +38,19 @@ class Cart extends ChangeNotifier {
           sold: doc['sold'],
           wareHouse: doc['wareHouse'],
         );
-      }).toList();
-      cloShop = fetchedClothes;
+
+        // Tạo một khóa duy nhất cho Map dựa trên brand, name và color
+        final String uniqueKey =
+            '${clother.brand}_${clother.name}_${clother.color}';
+
+        // Nếu khóa này chưa tồn tại trong Map thì thêm sản phẩm vào Map
+        if (!uniqueClothesMap.containsKey(uniqueKey)) {
+          uniqueClothesMap[uniqueKey] = clother;
+        }
+      }
+
+      // Chuyển đổi Map thành List
+      cloShop = uniqueClothesMap.values.toList();
       notifyListeners();
     } catch (e) {
       print('Error fetching clothes: $e');
