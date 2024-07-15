@@ -483,9 +483,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Vui lòng nhập email';
                       }
-                      // Biểu thức chính quy để kiểm tra email hợp lệ với các domain cụ thể
+
+                      // Biểu thức chính quy để kiểm tra email hợp lệ với các domain cụ thể, loại bỏ @gmail.com.vn và .vn.vn
                       final emailRegex = RegExp(
-                          r'^[^@]+@(gmail\.com|yahoo\.com|[^@\.]+\.vn)$');
+                          r'^[^\s@]+(\.[^\s@]+)*@(gmail\.com|yahoo\.com|hotmail\.com|outlook\.com|caothang\.edu\.vn|[^@\.]+\.[^@\.]+\.vn|[^@\.]+\.[^@\.]+\.com\.vn|outlook\.com\.vn)$');
+
+                      // Kiểm tra các trường hợp không hợp lệ như @gmail.com.vn và .vn.vn
+                      final invalidEmailRegex = RegExp(
+                          r'^[^\s@]+(\.[^\s@]+)*@(gmail\.com\.vn|yahoo\.com\.vn|hotmail\.com\.vn|[^\s@]+\.[^\s@]+\.vn\.vn)$');
+
+                      if (invalidEmailRegex.hasMatch(value)) {
+                        return 'Địa chỉ email không hợp lệ.';
+                      }
+
                       if (!emailRegex.hasMatch(value)) {
                         return 'Địa chỉ email không hợp lệ.';
                       }

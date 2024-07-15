@@ -29,23 +29,29 @@ class SuggestedProducts extends StatelessWidget {
                 Image.network(
                   sugPro.imagePath,
                   width: MediaQuery.of(context).size.width * 0.5,
-                  height: MediaQuery.of(context).size.height * 0.2 - 10,
+                  height: MediaQuery.of(context).size.height * 0.2,
                   fit: BoxFit.cover,
                 ),
-                Divider(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Text(
-                    sugPro.name.length <= 30
-                        ? sugPro.name
-                        : sugPro.name.substring(0, 30) + '...',
-                    style: const TextStyle(
-                      fontSize: 16.0,
+                Container(
+                  decoration: BoxDecoration(
+                      border: Border(
+                          top: BorderSide(
+                    color: Colors.grey,
+                  ))),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Text(
+                      sugPro.name.length <= 30
+                          ? sugPro.name
+                          : sugPro.name.substring(0, 30) + '...',
+                      style: const TextStyle(
+                        fontSize: 15.0,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2, // Giới hạn số dòng
+                      overflow: TextOverflow
+                          .ellipsis, // Hiển thị dấu ba chấm khi vượt quá
                     ),
-                    textAlign: TextAlign.center,
-                    maxLines: 3, // Giới hạn số dòng
-                    overflow: TextOverflow
-                        .ellipsis, // Hiển thị dấu ba chấm khi vượt quá
                   ),
                 ),
               ],

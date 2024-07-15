@@ -406,7 +406,7 @@ class Cart extends ChangeNotifier {
     return userCart;
   }
 
-  List<String> getBranchesList() {
+  List<String> getBrandList() {
     Set<String> brandesSet = {};
     for (var item in cloShop) {
       brandesSet.add(item.brand);

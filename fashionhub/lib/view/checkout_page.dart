@@ -728,9 +728,19 @@ class _CheckOutPageState extends State<CheckOutPage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
+                      if (address == 'Thêm địa chỉ nhận hàng') {
+                        // Kiểm tra nếu địa chỉ là 'Thêm địa chỉ nhận hàng'
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Vui lòng nhập địa chỉ giao hàng'),
+                            backgroundColor: Colors.grey[800],
+                          ),
+                        );
+                        return;
+                      }
+
                       if (!isCodChecked && !isOnlineChecked) {
                         // Kiểm tra nếu không có checkbox nào được chọn
-                        // Hiển thị thông báo lỗi nếu phương thức thanh toán chưa được chọn
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content:
@@ -740,6 +750,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                         );
                         return;
                       }
+
                       // Xử lý đặt hàng
                       placeOrder();
                     },
