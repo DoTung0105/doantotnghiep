@@ -54,17 +54,16 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color.fromRGBO(89, 180, 195, 1.0),
-        automaticallyImplyLeading: false,
-      ),
       body: Column(
         children: [
           Expanded(
             child: Container(
-              padding: const EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 20.0),
+              padding: const EdgeInsets.fromLTRB(25.0, 150.0, 25.0, 20.0),
               decoration: const BoxDecoration(
-                color: Color.fromRGBO(89, 180, 195, 1.0),
+                image: DecorationImage(
+                  image: AssetImage("lib/images/background.png"),
+                  fit: BoxFit.cover,
+                ),
               ),
               child: SingleChildScrollView(
                 child: Column(

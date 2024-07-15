@@ -27,7 +27,7 @@ class _ShopPageState extends State<ShopPage> {
   String _selectedSortOption = 'Mặc định';
   int? _minPrice;
   int? _maxPrice;
-  List<String> _selectedBranches = []; // Thêm thuộc tính này
+  List<String> _selectedBrand = []; // Thêm thuộc tính này
 
   @override
   void initState() {
@@ -79,7 +79,7 @@ class _ShopPageState extends State<ShopPage> {
             selectedSortOption: _selectedSortOption,
             minPrice: _minPrice ?? 0,
             maxPrice: _maxPrice ?? 0,
-            selectedBranches: _selectedBranches, // Thêm thuộc tính này
+            selectedBrand: _selectedBrand, // Thêm thuộc tính này
           ),
         );
       },
@@ -90,8 +90,8 @@ class _ShopPageState extends State<ShopPage> {
         _selectedSortOption = filters['sortOption'];
         _minPrice = filters['minPrice'];
         _maxPrice = filters['maxPrice'];
-        _selectedBranches = filters[
-            'selectedBranches']; // Cập nhật danh sách thương hiệu đã chọn
+        _selectedBrand =
+            filters['selectedBrand']; // Cập nhật danh sách thương hiệu đã chọn
       });
     }
   }
@@ -121,12 +121,12 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   List<Clother> _applyBranchFilter(List<Clother> clotherList) {
-    if (_selectedBranches.isEmpty) {
+    if (_selectedBrand.isEmpty) {
       return clotherList;
     }
 
     return clotherList
-        .where((clother) => _selectedBranches.contains(clother.brand))
+        .where((clother) => _selectedBrand.contains(clother.brand))
         .toList();
   }
 

@@ -8,14 +8,14 @@ class FilterOption extends StatefulWidget {
   final String selectedSortOption;
   final int? minPrice;
   final int? maxPrice;
-  final List<String> selectedBranches;
+  final List<String> selectedBrand;
 
   const FilterOption({
     Key? key,
     required this.selectedSortOption,
     this.minPrice,
     this.maxPrice,
-    required this.selectedBranches,
+    required this.selectedBrand,
   }) : super(key: key);
 
   @override
@@ -26,7 +26,7 @@ class _FilterOptionState extends State<FilterOption> {
   late String _selectedSortOption;
   late TextEditingController _minPriceController;
   late TextEditingController _maxPriceController;
-  List<String> selectedBranches = [];
+  List<String> selectedBrand = [];
 
   final List<String> _sortOptions = [
     'Mặc định',
@@ -36,9 +36,9 @@ class _FilterOptionState extends State<FilterOption> {
     'Giá từ cao đến thấp'
   ];
 
-  late List<String> _visibleBranches;
-  late List<String> _allBranches;
-  bool _showMoreBranchesButton = false;
+  late List<String> _visibleBrand;
+  late List<String> _allBrand;
+  bool _showMoreBrandButton = false;
   bool _isKeyboardVisible = false;
 
   final FocusNode _minPriceFocusNode = FocusNode();
@@ -52,12 +52,12 @@ class _FilterOptionState extends State<FilterOption> {
         text: widget.minPrice != null ? widget.minPrice.toString() : '');
     _maxPriceController = TextEditingController(
         text: widget.maxPrice != null ? widget.maxPrice.toString() : '');
-    selectedBranches = List.from(widget.selectedBranches);
+    selectedBrand = List.from(widget.selectedBrand);
 
     final cart = Provider.of<Cart>(context, listen: false);
-    _allBranches = cart.getBranchesList();
-    _visibleBranches = _allBranches.sublist(0, 2);
-    _showMoreBranchesButton = _allBranches.length > 2;
+    _allBrand = cart.getBrandList();
+    _visibleBrand = _allBrand.sublist(0, 2);
+    _showMoreBrandButton = _allBrand.length > 2;
 
     _minPriceFocusNode.addListener(_handleFocusChange);
     _maxPriceFocusNode.addListener(_handleFocusChange);
@@ -90,14 +90,14 @@ class _FilterOptionState extends State<FilterOption> {
     });
   }
 
-  void _showMoreBranches() {
+  void _showMoreBrand() {
     setState(() {
-      if (_visibleBranches.length > 4) {
-        _visibleBranches = _allBranches.sublist(0, 4);
+      if (_visibleBrand.length > 4) {
+        _visibleBrand = _allBrand.sublist(0, 4);
       } else {
-        _visibleBranches = _allBranches;
+        _visibleBrand = _allBrand;
       }
-      _showMoreBranchesButton = !_showMoreBranchesButton;
+      _showMoreBrandButton = !_showMoreBrandButton;
     });
   }
 
@@ -112,7 +112,7 @@ class _FilterOptionState extends State<FilterOption> {
       'sortOption': _selectedSortOption,
       'minPrice': minPrice,
       'maxPrice': maxPrice,
-      'selectedBranches': selectedBranches,
+      'selectedBrand': selectedBrand,
     });
   }
 
@@ -121,16 +121,16 @@ class _FilterOptionState extends State<FilterOption> {
       _selectedSortOption = 'Mặc định';
       _minPriceController.clear();
       _maxPriceController.clear();
-      selectedBranches.clear();
+      selectedBrand.clear();
     });
   }
 
   void _toggleBranchSelection(String branch) {
     setState(() {
-      if (selectedBranches.contains(branch)) {
-        selectedBranches.remove(branch);
+      if (selectedBrand.contains(branch)) {
+        selectedBrand.remove(branch);
       } else {
-        selectedBranches.add(branch);
+        selectedBrand.add(branch);
       }
     });
   }
@@ -250,18 +250,18 @@ class _FilterOptionState extends State<FilterOption> {
                         child: Wrap(
                           spacing: 10,
                           runSpacing: 10,
-                          children: _visibleBranches.map((branch) {
+                          children: _visibleBrand.map((branch) {
                             return BranchRangeContainer(
                               text: branch,
-                              isSelected: selectedBranches.contains(branch),
+                              isSelected: selectedBrand.contains(branch),
                               onTap: () => _toggleBranchSelection(branch),
                             );
                           }).toList(),
                         ),
                       ),
-                      if (_showMoreBranchesButton)
+                      if (_showMoreBrandButton)
                         TextButton(
-                          onPressed: _showMoreBranches,
+                          onPressed: _showMoreBrand,
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -272,7 +272,7 @@ class _FilterOptionState extends State<FilterOption> {
                         )
                       else
                         TextButton(
-                          onPressed: _showMoreBranches,
+                          onPressed: _showMoreBrand,
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
