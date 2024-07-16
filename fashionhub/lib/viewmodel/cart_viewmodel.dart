@@ -39,9 +39,8 @@ class Cart extends ChangeNotifier {
           wareHouse: doc['wareHouse'],
         );
 
-        // Tạo một khóa duy nhất cho Map dựa trên brand, name và color
-        final String uniqueKey =
-            '${clother.brand}_${clother.name}_${clother.color}';
+        // Tạo một khóa duy nhất cho Map dựa trên brand, name
+        final String uniqueKey = '${clother.brand}_${clother.name}';
 
         // Nếu khóa này chưa tồn tại trong Map thì thêm sản phẩm vào Map
         if (!uniqueClothesMap.containsKey(uniqueKey)) {
@@ -135,7 +134,8 @@ class Cart extends ChangeNotifier {
         documentSnapshot.data() as Map<String, dynamic>);
   }
 
-  Future<void> addItemToCart(Clother clother, int quantity, String size) async {
+  Future<void> addItemToCart(
+      Clother clother, int quantity, String size, String imagePath) async {
     try {
       User? currentUser = _authenticationService.getCurrentUser();
       if (currentUser == null) {
@@ -177,7 +177,7 @@ class Cart extends ChangeNotifier {
         UserCart cartItem = UserCart(
           productName: clother.name,
           price: clother.price.toDouble(),
-          imagePath: clother.imagePath,
+          imagePath: imagePath, // Sử dụng imagePath đã chọn
           description: clother.description,
           brand: clother.brand,
           color: clother.color,

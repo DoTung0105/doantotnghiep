@@ -109,6 +109,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
     return totalOrderAmount + _deliveryFee;
   }
 
+  // Hàm cập nhật hóa đơn vào FB
   Future<void> placeOrder() async {
     String status = 'Chờ xác nhận';
     String paymentMethod;
@@ -171,32 +172,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
 
     try {
       await newOrderRef.set(order.toMap());
-
-      for (var item in widget.selectedItems) {
-        QuerySnapshot productSnapshot = await FirebaseFirestore.instance
-            .collection('products')
-            .where('name', isEqualTo: item.productName)
-            .where('color', isEqualTo: item.color)
-            .where('size', isEqualTo: item.size)
-            .get();
-
-        for (var doc in productSnapshot.docs) {
-          var productData = doc.data() as Map<String, dynamic>;
-          int currentSold = productData['sold'] ?? 1;
-          int currentWareHouse = productData['wareHouse'] ?? 1;
-
-          int newSold = currentSold + item.quantity;
-          int newWareHouse = currentWareHouse - item.quantity;
-
-          await FirebaseFirestore.instance
-              .collection('products')
-              .doc(doc.id)
-              .update({
-            'sold': newSold,
-            'wareHouse': newWareHouse,
-          });
-        }
-      }
 
       Provider.of<Cart>(context, listen: false).clearCart(widget.selectedItems);
 
@@ -424,7 +399,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                 Row(
                                   children: [
                                     Container(
-                                      color: Colors.grey[200],
+                                      color: Colors.grey[100],
                                       child: Image.network(
                                         item.imagePath,
                                         width: 100,

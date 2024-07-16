@@ -8,7 +8,7 @@ class Clother with ChangeNotifier {
   final String imagePath;
   final String description;
   final String brand;
-  final String color;
+  String color;
   final String size;
   final double evaluate;
   int _sold;

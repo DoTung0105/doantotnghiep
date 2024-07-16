@@ -20,11 +20,32 @@ class _DetailPageState extends State<DetailPage> {
   int quantityCount = 1;
   String selectedSize = 'M';
   int wareHouse = 0;
+  Color selectedColor = Colors.transparent;
+  List<String> imageUrls = [];
+  List<String> availableColors = [];
+
+  // Map các giá trị chuỗi của màu sắc với các giá trị màu tương ứng trong Flutter
+  final Map<String, Color> colorMap = {
+    'Đen': Colors.black,
+    'Trắng': Colors.white,
+    'Đỏ': Colors.red,
+    'Xanh': Colors.blue,
+    'Vàng': Colors.yellow,
+    'Cam': Colors.orange,
+    'Xanh lá': Colors.green,
+    'Hồng': Colors.pink,
+    'Tím': Colors.purple,
+    // Thêm các màu khác nếu cần
+  };
 
   @override
   void initState() {
     super.initState();
+    fetchAvailableColors();
     fetchWareHouse(selectedSize);
+    fetchImagesByColor(widget.detailCol.color);
+    selectedColor = colorMap[widget.detailCol.color] ??
+        Colors.transparent; // Đặt màu mặc định nếu không tìm thấy
   }
 
   Future<void> fetchWareHouse(String size) async {
@@ -43,6 +64,50 @@ class _DetailPageState extends State<DetailPage> {
       }
     } catch (e) {
       print('Error fetching wareHouse: $e');
+    }
+  }
+
+  Future<void> fetchImagesByColor(String color) async {
+    try {
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('products')
+          .where('name', isEqualTo: widget.detailCol.name)
+          .where('brand', isEqualTo: widget.detailCol.brand)
+          .where('color', isEqualTo: color)
+          .get();
+
+      List<String> urls = querySnapshot.docs.map((doc) {
+        return doc['imagePath'] as String;
+      }).toList();
+
+      setState(() {
+        imageUrls = urls;
+      });
+    } catch (e) {
+      print('Error fetching images: $e');
+    }
+  }
+
+  Future<void> fetchAvailableColors() async {
+    try {
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('products')
+          .where('name', isEqualTo: widget.detailCol.name)
+          .where('brand', isEqualTo: widget.detailCol.brand)
+          .get();
+
+      List<String> colors = querySnapshot.docs
+          .map((doc) {
+            return doc['color'] as String;
+          })
+          .toSet()
+          .toList(); // Use toSet to remove duplicates
+
+      setState(() {
+        availableColors = colors;
+      });
+    } catch (e) {
+      print('Error fetching available colors: $e');
     }
   }
 
@@ -70,11 +135,25 @@ class _DetailPageState extends State<DetailPage> {
     });
   }
 
+  void selectColor(Color color, String colorName) {
+    setState(() {
+      selectedColor = color;
+      widget.detailCol.color = colorName;
+      fetchImagesByColor(colorName);
+      fetchWareHouse(selectedSize); // Cập nhật wareHouse khi màu thay đổi
+    });
+  }
+
   void addToCart() {
+    // Chọn imagePath đầu tiên từ danh sách imageUrls nếu có, nếu không sử dụng imagePath mặc định
+    String selectedImagePath =
+        imageUrls.isNotEmpty ? imageUrls.first : widget.detailCol.imagePath;
+
     Provider.of<Cart>(context, listen: false).addItemToCart(
       widget.detailCol,
       quantityCount,
       selectedSize,
+      selectedImagePath, // Thêm imagePath đã chọn vào tham số
     );
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -85,11 +164,15 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   void buyNow() {
+    // Chọn imagePath đầu tiên từ danh sách imageUrls nếu có, nếu không sử dụng imagePath mặc định
+    String selectedImagePath =
+        imageUrls.isNotEmpty ? imageUrls.first : widget.detailCol.imagePath;
+
     List<UserCart> selectedItems = [
       UserCart(
         productName: widget.detailCol.name,
         price: widget.detailCol.price,
-        imagePath: widget.detailCol.imagePath,
+        imagePath: selectedImagePath,
         description: widget.detailCol.description,
         brand: widget.detailCol.brand,
         color: widget.detailCol.color,
@@ -141,9 +224,15 @@ class _DetailPageState extends State<DetailPage> {
                     child: ListView(
                       children: [
                         // Image
-                        Image.network(
-                          clother.imagePath,
+                        SizedBox(
                           height: 300,
+                          child: imageUrls.isNotEmpty
+                              ? Image.network(imageUrls
+                                  .first) // Hiển thị ảnh đại diện đầu tiên
+                              : Image.network(
+                                  clother.imagePath,
+                                  height: 300,
+                                ),
                         ),
                         const SizedBox(height: 10),
 
@@ -190,7 +279,47 @@ class _DetailPageState extends State<DetailPage> {
                           style: const TextStyle(
                               fontSize: 25, color: Colors.black),
                         ),
-                        const SizedBox(height: 25),
+                        const SizedBox(height: 5),
+
+                        // Màu sắc
+                        Row(
+                          children: [
+                            SizedBox(
+                              height: 20,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                scrollDirection: Axis.horizontal,
+                                itemCount: availableColors.length,
+                                itemBuilder: (context, index) {
+                                  String colorName = availableColors[index];
+                                  Color colorValue = colorMap[colorName]!;
+                                  return GestureDetector(
+                                    onTap: () {
+                                      selectColor(colorValue, colorName);
+                                    },
+                                    child: Container(
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 3),
+                                      height: 20,
+                                      width: 20,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: colorValue,
+                                        border: Border.all(
+                                          color: selectedColor == colorValue
+                                              ? Colors.black
+                                              : Colors.black54,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 10),
 
                         // Description
                         Text(

@@ -80,7 +80,6 @@ class _ProductItemState extends State<ProductItem> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Hình ảnh nằm bên trái
           Column(
             children: [
               SizedBox(
@@ -120,11 +119,9 @@ class _ProductItemState extends State<ProductItem> {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  // Handle delete action
                                   Provider.of<ProductViewModel>(context,
                                           listen: false)
                                       .deleteProduct(widget.product.id);
-
                                   Navigator.of(context).pop();
                                 },
                                 child: Text('Xóa'),
@@ -155,26 +152,22 @@ class _ProductItemState extends State<ProductItem> {
               ),
             ],
           ),
-
           SizedBox(width: 10),
-          // Thông tin sản phẩm nằm bên phải
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Tên: ${widget.product.name}'),
                 Text(
-                    'Giá : ${NumberFormat('#,###').format(widget.product.price)}'),
+                    'Giá: ${NumberFormat('#,###').format(widget.product.price)}'),
                 AnimatedCrossFade(
                   duration: Duration(milliseconds: 100),
                   firstChild: Text(
-                    'Mô tả : ${_truncateDescription(widget.product.description, 40)}',
+                    'Mô tả: ${_truncateDescription(widget.product.description, 40)}',
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  secondChild: Text(
-                    'Mô tả : ${widget.product.description}',
-                  ),
+                  secondChild: Text('Mô tả: ${widget.product.description}'),
                   crossFadeState: isExpanded
                       ? CrossFadeState.showSecond
                       : CrossFadeState.showFirst,
@@ -194,8 +187,8 @@ class _ProductItemState extends State<ProductItem> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(child: Text('Size : ${widget.product.size}')),
-                    Expanded(child: Text('Màu : ${widget.product.color}')),
+                    Expanded(child: Text('Size: ${widget.product.size}')),
+                    Expanded(child: Text('Màu: ${widget.product.color}')),
                   ],
                 ),
                 Row(
@@ -203,15 +196,15 @@ class _ProductItemState extends State<ProductItem> {
                   children: [
                     Expanded(child: Text('Brand: ${widget.product.brand}')),
                     Expanded(
-                        child: Text('Đánh giá : ${widget.product.evaluate}')),
+                        child: Text('Đánh giá: ${widget.product.evaluate}')),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                        child: Text('Số lượt bán : ${widget.product.sold}')),
-                    Expanded(child: Text('Kho : ${widget.product.wareHouse}')),
+                        child: Text('Số lượt bán: ${widget.product.sold}')),
+                    Expanded(child: Text('Kho: ${widget.product.wareHouse}')),
                   ],
                 ),
               ],
@@ -335,6 +328,7 @@ class _EditProductPageState extends State<EditProductPage> {
       builder: (context, viewModel, child) {
         return Scaffold(
           appBar: AppBar(
+            backgroundColor: Colors.transparent,
             title: Text('Chỉnh sửa sản phẩm'),
             centerTitle: true,
           ),

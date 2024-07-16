@@ -30,7 +30,7 @@ class SuggestedProducts extends StatelessWidget {
                   sugPro.imagePath,
                   width: MediaQuery.of(context).size.width * 0.5,
                   height: MediaQuery.of(context).size.height * 0.2,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
                 Container(
                   decoration: BoxDecoration(
