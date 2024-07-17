@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fashionhub/animation/animation.dart';
 import 'package:fashionhub/model/user_model.dart';
 import 'package:fashionhub/model/userorder.dart';
@@ -15,6 +16,8 @@ class _Orders_ScreenState extends State<Orders_Screen> {
   late User_Order_ViewModel orderViewModel;
   String selectedStatus = 'Tất cả';
   String searchOrderId = '';
+  String searchPhoneNumber = '';
+  DateTime? searchDate;
 
   @override
   void initState() {
@@ -38,81 +41,179 @@ class _Orders_ScreenState extends State<Orders_Screen> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Row(
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.55,
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Nhập mã đơn hàng...',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                          borderRadius: BorderRadius.circular(30),
+              child: Column(children: [
+                Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.48,
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Nhập mã đơn hàng...',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 16.0),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {}); // Force rebuild to apply filter
+                            },
+                            icon: Icon(Icons.search),
+                          ),
                         ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {}); // Force rebuild to apply filter
-                          },
-                          icon: Icon(Icons.search),
-                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            searchOrderId = value;
+                          });
+                        },
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          searchOrderId = value;
-                        });
-                      },
                     ),
-                  ),
-                  SizedBox(width: 10.0),
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: selectedStatus,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                          borderRadius: BorderRadius.circular(
-                              30), // Điều chỉnh border radius
+                    SizedBox(width: 10.0),
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: selectedStatus,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                            borderRadius: BorderRadius.circular(
+                                30), // Điều chỉnh border radius
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 10.0),
                         ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                        dropdownColor: Colors.white,
+                        icon: Icon(Icons.arrow_drop_down), // Thêm icon dropdown
+                        iconSize: 30, // Điều chỉnh kích thước icon dropdown
+                        elevation: 5, // Điều chỉnh độ nổi của dropdown
+                        style: TextStyle(color: Colors.black),
+                        items: [
+                          'Tất cả',
+                          'Chờ xác nhận',
+                          'Đang giao',
+                          'Thành công',
+                          'Đã hủy',
+                        ].map((status) {
+                          return DropdownMenuItem<String>(
+                            value: status,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.2,
+                              child: Text(
+                                status,
+                                style: TextStyle(fontSize: 13),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStatus = value!;
+                          });
+                        },
                       ),
-                      dropdownColor: Colors.white,
-                      icon: Icon(Icons.arrow_drop_down), // Thêm icon dropdown
-                      iconSize: 30, // Điều chỉnh kích thước icon dropdown
-                      elevation: 5, // Điều chỉnh độ nổi của dropdown
-                      style: TextStyle(color: Colors.black),
-                      items: [
-                        'Tất cả',
-                        'Chờ xác nhận',
-                        'Đang giao',
-                        'Thành công',
-                        'Đã hủy',
-                      ].map((status) {
-                        return DropdownMenuItem<String>(
-                          value: status,
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.2,
-                            child: Text(
-                              status,
-                              style: TextStyle(fontSize: 13),
-                              overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width *
+                          0.48, // Điều chỉnh chiều rộng
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Nhập số điện thoại...',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 10.0),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {}); // Force rebuild to apply filter
+                            },
+                            icon: Icon(Icons.search),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            searchPhoneNumber = value;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.44,
+                          child: TextField(
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              hintText: 'Chọn ngày...',
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.black),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 10.0),
+                              suffixIcon: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.calendar_today),
+                                    onPressed: () async {
+                                      DateTime? pickedDate =
+                                          await showDatePicker(
+                                        context: context,
+                                        initialDate: DateTime.now(),
+                                        firstDate: DateTime(2000),
+                                        lastDate: DateTime(2101),
+                                      );
+                                      if (pickedDate != null) {
+                                        setState(() {
+                                          searchDate = pickedDate;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.clear),
+                                    onPressed: () {
+                                      setState(() {
+                                        searchDate = null;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            controller: TextEditingController(
+                              text: searchDate != null
+                                  ? DateFormat('dd/MM/yyyy').format(searchDate!)
+                                  : '',
                             ),
                           ),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedStatus = value!;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ]),
             ),
             Expanded(
               child: Consumer<User_Order_ViewModel>(
@@ -130,7 +231,18 @@ class _Orders_ScreenState extends State<Orders_Screen> {
                         order.orderId
                             .toLowerCase()
                             .contains(searchOrderId.toLowerCase());
-                    return matchesStatus && matchesOrderId;
+                    bool matchesPhoneNumber = searchPhoneNumber.isEmpty ||
+                        order.phone
+                            .toLowerCase()
+                            .contains(searchPhoneNumber.toLowerCase());
+                    bool matchesDate = searchDate == null ||
+                        DateFormat('dd/MM/yyyy')
+                                .format(order.orderday.toDate()) ==
+                            DateFormat('dd/MM/yyyy').format(searchDate!);
+                    return matchesStatus &&
+                        matchesOrderId &&
+                        matchesPhoneNumber &&
+                        matchesDate;
                   }).toList();
 
                   return ListView.builder(
@@ -305,11 +417,70 @@ class _Orders_ScreenState extends State<Orders_Screen> {
                                                               horizontal: 24),
                                                     ),
                                                     onPressed: () async {
+                                                      // Cập nhật trạng thái đơn hàng thành 'Thành công'
                                                       await orderViewModel
                                                           .updateOrderStatus(
                                                               order.orderId,
                                                               'Thành công');
-                                                      setState(() {});
+
+                                                      // Cập nhật số lượng kho và số lượng bán ra của từng sản phẩm
+                                                      for (var item
+                                                          in order.products) {
+                                                        QuerySnapshot
+                                                            productSnapshot =
+                                                            await FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'products')
+                                                                .where('name',
+                                                                    isEqualTo: item
+                                                                        .productName)
+                                                                .where('color',
+                                                                    isEqualTo: item
+                                                                        .color)
+                                                                .where('size',
+                                                                    isEqualTo:
+                                                                        item.size)
+                                                                .get();
+
+                                                        for (var doc
+                                                            in productSnapshot
+                                                                .docs) {
+                                                          var productData =
+                                                              doc.data() as Map<
+                                                                  String,
+                                                                  dynamic>;
+                                                          int currentSold =
+                                                              productData[
+                                                                      'sold'] ??
+                                                                  1;
+                                                          int currentWareHouse =
+                                                              productData[
+                                                                      'wareHouse'] ??
+                                                                  1;
+
+                                                          int newSold =
+                                                              currentSold +
+                                                                  item.quantity;
+                                                          int newWareHouse =
+                                                              currentWareHouse -
+                                                                  item.quantity;
+
+                                                          await FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  'products')
+                                                              .doc(doc.id)
+                                                              .update({
+                                                            'sold': newSold,
+                                                            'wareHouse':
+                                                                newWareHouse,
+                                                          });
+                                                        }
+                                                      }
+
+                                                      setState(
+                                                          () {}); // Cập nhật giao diện
                                                     },
                                                     child: Text('Thành công',
                                                         style: TextStyle(

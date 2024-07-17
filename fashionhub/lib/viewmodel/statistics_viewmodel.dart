@@ -33,7 +33,7 @@ class StatisticsViewModel extends ChangeNotifier {
 
       totalOrders = orders.length;
       cancelledOrders =
-          orders.where((order) => order.status == 'Đã huỷ').length;
+          orders.where((order) => order.status == 'Đã hủy').length;
       success = orders.where((order) => order.status == 'Thành công').length;
       shipping = orders.where((order) => order.status == 'Đang giao').length;
 
@@ -53,6 +53,7 @@ class StatisticsViewModel extends ChangeNotifier {
       }).fold(0.0, (prev, amount) => prev + amount);
 
       _calculateMonthlyRevenue();
+      //  calculateQuarterlyStatistics();
       notifyListeners();
     } catch (e) {
       print("Error fetching statistics: $e");
@@ -103,7 +104,7 @@ class StatisticsViewModel extends ChangeNotifier {
         .length;
     selectedMonthCancelledOrders = orders
         .where((order) =>
-            order.status == 'Đã huỷ' &&
+            order.status == 'Đã hủy' &&
             DateFormat('MM/yyyy').format(order.orderday.toDate()) == monthKey)
         .length;
     notifyListeners();
@@ -114,6 +115,78 @@ class StatisticsViewModel extends ChangeNotifier {
         .map((entry) => MonthlyRevenue(entry.key, entry.value))
         .toList();
   }
+
+  // Thống kê theo quý
+  Map<String, double> quarterlyRevenue = {};
+  int quarterlyApprovedOrders = 0;
+  int quarterlyCancelledOrders = 0;
+
+  void calculateQuarterlyStatistics(int year, String selectedQuarter) {
+    // Filter orders for the selected year and quarter
+    List<User_Order> filteredOrders = orders.where((order) {
+      DateTime orderDate = order.orderday.toDate();
+      return orderDate.year == year &&
+          _getQuarterFromDate(orderDate) == selectedQuarter;
+    }).toList();
+
+    // Calculate revenue and order counts
+    double totalRevenue = 0.0;
+    int approvedOrders = 0;
+    int cancelledOrders = 0;
+
+    for (var order in filteredOrders) {
+      if (order.status == 'Thành công') {
+        String cleanedPrice = order.totalPrice.replaceAll(RegExp(r'[^\d]'), '');
+        double totalPrice = double.tryParse(cleanedPrice) ?? 0.0;
+        totalRevenue += (totalPrice - order.fee);
+        approvedOrders++;
+      } else if (order.status == 'Đã hủy') {
+        cancelledOrders++;
+      }
+    }
+
+    quarterlyRevenue[selectedQuarter] = totalRevenue;
+    quarterlyApprovedOrders = approvedOrders;
+    quarterlyCancelledOrders = cancelledOrders;
+
+    notifyListeners();
+  }
+
+  String _getQuarterFromDate(DateTime date) {
+    int month = date.month;
+    if (month >= 1 && month <= 3) {
+      return '1';
+    } else if (month >= 4 && month <= 6) {
+      return '2';
+    } else if (month >= 7 && month <= 9) {
+      return '3';
+    } else {
+      return '4';
+    }
+  }
+
+  List<QuarterlyRevenue> getQuarterlyRevenueData() {
+    return quarterlyRevenue.entries
+        .map((entry) => QuarterlyRevenue(entry.key, entry.value))
+        .toList();
+  }
+
+  // Thống kê theo năm
+  Map<int, double> yearlyRevenue = {};
+
+  void calculateYearlyRevenue(int year) {
+    double totalRevenue = 0.0;
+    for (var order in orders) {
+      if (order.status == 'Thành công' &&
+          order.orderday.toDate().year == year) {
+        String cleanedPrice = order.totalPrice.replaceAll(RegExp(r'[^\d]'), '');
+        double totalPrice = double.tryParse(cleanedPrice) ?? 0.0;
+        totalRevenue += (totalPrice - order.fee);
+      }
+    }
+    yearlyRevenue[year] = totalRevenue;
+    notifyListeners();
+  }
 }
 
 class MonthlyRevenue {
@@ -121,4 +194,11 @@ class MonthlyRevenue {
   final double revenue;
 
   MonthlyRevenue(this.month, this.revenue);
+}
+
+class QuarterlyRevenue {
+  final String quarter;
+  final double revenue;
+
+  QuarterlyRevenue(this.quarter, this.revenue);
 }
